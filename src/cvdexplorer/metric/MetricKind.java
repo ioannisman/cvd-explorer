@@ -1,6 +1,7 @@
 package cvdexplorer.metric;
 
 public enum MetricKind {
-    NEAREST,
-    FARTHEST
+    MINIMUM_DISTANCE,
+    MAXIMUM_DISTANCE,
+    SUM_OF_DISTANCES
 }

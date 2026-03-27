@@ -29,7 +29,7 @@ public final class SceneState {
 
     @GadgetEnum(enumClass = MetricKind.class)
     @Properties(name = "Metric (m)")
-    public MetricKind metricKind = MetricKind.NEAREST;
+    public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
     @GadgetBoolean
     @Properties(name = "Show diagram (d)")
@@ -112,7 +112,11 @@ public final class SceneState {
     }
 
     public void cycleMetric() {
-        metricKind = metricKind == MetricKind.NEAREST ? MetricKind.FARTHEST : MetricKind.NEAREST;
+        metricKind = switch (metricKind) {
+            case MINIMUM_DISTANCE -> MetricKind.MAXIMUM_DISTANCE;
+            case MAXIMUM_DISTANCE -> MetricKind.SUM_OF_DISTANCES;
+            case SUM_OF_DISTANCES -> MetricKind.MINIMUM_DISTANCE;
+        };
     }
 
     public void copyFrom(SceneState other) {

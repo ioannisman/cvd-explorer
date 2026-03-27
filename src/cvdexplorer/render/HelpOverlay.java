@@ -17,7 +17,7 @@ public final class HelpOverlay {
                 "",
                 "Controls:",
                 "    h               - Toggle help",
-                "    m               - Cycle nearest / farthest metric",
+                "    m               - Cycle MINIMUM_DISTANCE / MAXIMUM_DISTANCE / SUM_OF_DISTANCES",
                 "    p               - Toggle cluster members",
                 "    d               - Toggle raster diagram",
                 "    g               - Toggle snap to grid",
