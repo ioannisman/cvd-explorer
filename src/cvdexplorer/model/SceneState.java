@@ -4,6 +4,7 @@ import cvdexplorer.metric.MetricKind;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.gadgets.annotations.GadgetBoolean;
 import xyz.marsavic.drawingfx.gadgets.annotations.GadgetEnum;
+import xyz.marsavic.drawingfx.gadgets.annotations.GadgetInteger;
 import xyz.marsavic.drawingfx.gadgets.annotations.Properties;
 import xyz.marsavic.geometry.Vector;
 
@@ -11,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SceneState {
+    public static final int MAX_CLUSTERS = 32;
+
+    @GadgetInteger(min = 1, max = MAX_CLUSTERS)
+    @Properties(name = "Number of clusters")
+    public int numberOfClusters = 1;
+
     @GadgetEnum(enumClass = MetricKind.class)
     @Properties(name = "Metric (m)")
     public MetricKind metricKind = MetricKind.NEAREST;
@@ -74,6 +81,7 @@ public final class SceneState {
                         new PointMember(Vector.xy(110, 310))
                 )
         ));
+        state.numberOfClusters = state.clusters.size();
         return state;
     }
 
@@ -99,10 +107,36 @@ public final class SceneState {
         showMembers = other.showMembers;
         showHelp = other.showHelp;
         snapToGrid = other.snapToGrid;
+        numberOfClusters = other.numberOfClusters;
 
         clusters.clear();
         for (ClusterSite cluster : other.clusters) {
             clusters.add(new ClusterSite(cluster.name(), cluster.color(), cluster.members()));
         }
+        if (numberOfClusters != clusters.size()) {
+            numberOfClusters = clusters.size();
+        }
+    }
+
+    public void ensureClusterCountMatchesGadget() {
+        numberOfClusters = Math.max(1, Math.min(MAX_CLUSTERS, numberOfClusters));
+        while (clusters.size() < numberOfClusters) {
+            clusters.add(defaultCluster(clusters.size()));
+        }
+        while (clusters.size() > numberOfClusters) {
+            clusters.remove(clusters.size() - 1);
+        }
+    }
+
+    private static ClusterSite defaultCluster(int index) {
+        double hue = (360 * index * 0.618033988749895) % 360;
+        Color color = Color.hsb(hue, 0.65, 0.95);
+        double x = -280 + (index % 5) * 140;
+        double y = -200 + (index / 5) * 140;
+        return new ClusterSite(
+                "Cluster " + (index + 1),
+                color,
+                List.of(new PointMember(Vector.xy(x, y)))
+        );
     }
 }

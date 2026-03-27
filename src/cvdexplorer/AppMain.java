@@ -49,6 +49,7 @@ public class AppMain implements Drawing {
 
     @Override
     public void draw(View view) {
+        state.ensureClusterCountMatchesGadget();
         normalizeSelection();
 
         view.addTransformation(camera.getTransformation());
