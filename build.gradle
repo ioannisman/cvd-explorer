@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.gradleup.shadow' version '9.4.0'
+}
+
+group = 'cvd'
+version = '0.1.0-SNAPSHOT'
+
+def javafxModules = ['javafx.controls']
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+            exclude 'test/**'
+        }
+        resources {
+            srcDirs = ['src']
+            exclude '**/*.java', 'test/**'
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+dependencies {
+    implementation files(
+            'lib/drawing-fx-2-2022-03-18.jar',
+            'lib/mars-bits-2026-03-18.jar'
+    )
+
+    testImplementation platform('org.junit:junit-bom:5.14.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'cvdexplorer.AppMain'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['--add-modules', javafxModules.join(',')]
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    jvmArgs += ['--add-modules', javafxModules.join(',')]
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat 'full'
+    }
+}
+
+tasks.named('run') {
+    jvmArgs += ['--add-modules', javafxModules.join(',')]
+    workingDir = projectDir
+}
+
+tasks.shadowJar {
+    mergeServiceFiles()
+    archiveFileName = 'cvd-explorer-all.jar'
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
