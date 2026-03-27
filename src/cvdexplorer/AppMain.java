@@ -47,9 +47,19 @@ public class AppMain implements Drawing {
     private int selectedClusterIndex = -1;
     private int selectedMemberIndex = -1;
 
+    private int prevGadgetActiveClusterOneBased = 0;
+
     @Override
     public void draw(View view) {
         state.ensureClusterCountMatchesGadget();
+        state.ensureActiveClusterMemberCount();
+
+        int g = state.activeClusterOneBased;
+        if (g != prevGadgetActiveClusterOneBased) {
+            activeClusterIndex = g - 1;
+            prevGadgetActiveClusterOneBased = g;
+        }
+
         normalizeSelection();
 
         view.addTransformation(camera.getTransformation());
@@ -108,7 +118,7 @@ public class AppMain implements Drawing {
     private void drawMembers(View view, PreparedScene preparedScene) {
         for (int clusterIndex = 0; clusterIndex < preparedScene.clusters().size(); clusterIndex++) {
             ClusterSite cluster = preparedScene.clusters().get(clusterIndex);
-            boolean activeCluster = clusterIndex == activeClusterIndex;
+            boolean activeCluster = activeClusterIndex >= 0 && clusterIndex == activeClusterIndex;
             for (int memberIndex = 0; memberIndex < cluster.size(); memberIndex++) {
                 ClusterMember member = cluster.members().get(memberIndex);
                 boolean selected = clusterIndex == selectedClusterIndex && memberIndex == selectedMemberIndex;
@@ -133,6 +143,8 @@ public class AppMain implements Drawing {
                 selectedClusterIndex = selection.clusterIndex();
                 selectedMemberIndex = selection.memberIndex();
                 activeClusterIndex = selection.clusterIndex();
+                state.activeClusterOneBased = selection.clusterIndex() + 1;
+                prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
                 draggingStartPoint = pointerWorld;
             }
         }
@@ -163,15 +175,21 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.M)) state.cycleMetric();
 
         if (event.isKeyPress(KeyCode.E)) {
-            int base = activeClusterIndex < 0 ? -1 : activeClusterIndex;
-            activeClusterIndex = (base + 1) % state.clusterCount();
+            int n = state.clusterCount();
+            if (n > 0) {
+                state.activeClusterOneBased = state.activeClusterOneBased >= n ? 1 : state.activeClusterOneBased + 1;
+                activeClusterIndex = state.activeClusterOneBased - 1;
+                prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            }
         }
 
         if (event.isKeyPress(KeyCode.A)) {
-            int clusterIdx = activeClusterIndex >= 0 ? activeClusterIndex : 0;
+            int clusterIdx = state.activeClusterOneBased - 1;
             ClusterSite cluster = state.clusters().get(clusterIdx);
             cluster.addMember(new PointMember(pointerWorld));
             activeClusterIndex = clusterIdx;
+            prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            state.targetPointCountForActiveCluster = cluster.size();
             selectedClusterIndex = clusterIdx;
             selectedMemberIndex = cluster.size() - 1;
         }
@@ -181,12 +199,16 @@ public class AppMain implements Drawing {
             if (cluster.size() > 1) {
                 cluster.removeMember(selectedMemberIndex);
                 selectedMemberIndex = Math.min(selectedMemberIndex, cluster.size() - 1);
+                if (selectedClusterIndex == state.activeClusterOneBased - 1) {
+                    state.targetPointCountForActiveCluster = cluster.size();
+                }
             }
         }
 
         if (event.isKeyPress(KeyCode.N)) {
             state.copyFrom(SceneState.demo());
-            activeClusterIndex = 0;
+            activeClusterIndex = state.activeClusterOneBased - 1;
+            prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
             clearSelection();
         }
     }

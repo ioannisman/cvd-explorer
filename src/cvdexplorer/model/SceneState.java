@@ -13,10 +13,19 @@ import java.util.List;
 
 public final class SceneState {
     public static final int MAX_CLUSTERS = 32;
+    public static final int MAX_POINTS_PER_CLUSTER = 32;
 
     @GadgetInteger(min = 1, max = MAX_CLUSTERS)
     @Properties(name = "Number of clusters")
     public int numberOfClusters = 1;
+
+    @GadgetInteger(min = 1, max = MAX_CLUSTERS)
+    @Properties(name = "Active cluster")
+    public int activeClusterOneBased = 1;
+
+    @GadgetInteger(min = 1, max = MAX_POINTS_PER_CLUSTER)
+    @Properties(name = "Points in active cluster")
+    public int targetPointCountForActiveCluster = 1;
 
     @GadgetEnum(enumClass = MetricKind.class)
     @Properties(name = "Metric (m)")
@@ -40,6 +49,8 @@ public final class SceneState {
 
     private final List<ClusterSite> clusters = new ArrayList<>();
     private final Color backgroundColor = Color.gray(0.92);
+
+    private int lastActiveClusterOneBasedForMemberSync = -1;
 
     public static SceneState demo() {
         SceneState state = new SceneState();
@@ -82,6 +93,9 @@ public final class SceneState {
                 )
         ));
         state.numberOfClusters = state.clusters.size();
+        state.activeClusterOneBased = 1;
+        state.targetPointCountForActiveCluster = state.clusters.get(0).size();
+        state.lastActiveClusterOneBasedForMemberSync = -1;
         return state;
     }
 
@@ -108,6 +122,9 @@ public final class SceneState {
         showHelp = other.showHelp;
         snapToGrid = other.snapToGrid;
         numberOfClusters = other.numberOfClusters;
+        activeClusterOneBased = other.activeClusterOneBased;
+        targetPointCountForActiveCluster = other.targetPointCountForActiveCluster;
+        lastActiveClusterOneBasedForMemberSync = -1;
 
         clusters.clear();
         for (ClusterSite cluster : other.clusters) {
@@ -116,6 +133,8 @@ public final class SceneState {
         if (numberOfClusters != clusters.size()) {
             numberOfClusters = clusters.size();
         }
+        int n = Math.max(1, clusters.size());
+        activeClusterOneBased = Math.max(1, Math.min(n, activeClusterOneBased));
     }
 
     public void ensureClusterCountMatchesGadget() {
@@ -126,6 +145,61 @@ public final class SceneState {
         while (clusters.size() > numberOfClusters) {
             clusters.remove(clusters.size() - 1);
         }
+        activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
+    }
+
+    public void ensureActiveClusterMemberCount() {
+        if (clusters.isEmpty()) {
+            return;
+        }
+
+        activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
+        targetPointCountForActiveCluster = Math.max(
+                1,
+                Math.min(MAX_POINTS_PER_CLUSTER, targetPointCountForActiveCluster)
+        );
+
+        if (activeClusterOneBased != lastActiveClusterOneBasedForMemberSync) {
+            targetPointCountForActiveCluster = clusters.get(activeClusterOneBased - 1).size();
+            lastActiveClusterOneBasedForMemberSync = activeClusterOneBased;
+        }
+
+        int clusterIndex = activeClusterOneBased - 1;
+        ClusterSite cluster = clusters.get(clusterIndex);
+
+        while (cluster.size() < targetPointCountForActiveCluster) {
+            cluster.addMember(new PointMember(jitteredNewPoint(cluster, clusterIndex, cluster.size())));
+        }
+        while (cluster.size() > targetPointCountForActiveCluster) {
+            cluster.removeMember(cluster.size() - 1);
+        }
+    }
+
+    private static Vector centroid(List<ClusterMember> members) {
+        double sx = 0.0;
+        double sy = 0.0;
+        for (ClusterMember m : members) {
+            Vector a = m.anchor();
+            sx += a.x();
+            sy += a.y();
+        }
+        int n = members.size();
+        return Vector.xy(sx / n, sy / n);
+    }
+
+    private static Vector jitteredNewPoint(ClusterSite cluster, int clusterIndex, int newMemberIndex) {
+        List<ClusterMember> members = cluster.members();
+        Vector c;
+        if (members.isEmpty()) {
+            double x = -280 + (clusterIndex % 5) * 140;
+            double y = -200 + (clusterIndex / 5) * 140;
+            c = Vector.xy(x, y);
+        } else {
+            c = centroid(members);
+        }
+        double angle = 2 * Math.PI * (newMemberIndex * 0.618033988749895);
+        double radius = 18.0 + 6.0 * (newMemberIndex % 7);
+        return c.add(Vector.polar(radius, angle));
     }
 
     private static ClusterSite defaultCluster(int index) {
