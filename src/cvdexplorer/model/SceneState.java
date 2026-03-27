@@ -47,6 +47,10 @@ public final class SceneState {
     @Properties(name = "Snap to grid (g)")
     public boolean snapToGrid = false;
 
+    @GadgetBoolean
+    @Properties(name = "Distance shading (s)")
+    public boolean showShading = true;
+
     private final List<ClusterSite> clusters = new ArrayList<>();
     private final Color backgroundColor = Color.gray(0.92);
 
@@ -125,6 +129,7 @@ public final class SceneState {
         showMembers = other.showMembers;
         showHelp = other.showHelp;
         snapToGrid = other.snapToGrid;
+        showShading = other.showShading;
         numberOfClusters = other.numberOfClusters;
         activeClusterOneBased = other.activeClusterOneBased;
         targetPointCountForActiveCluster = other.targetPointCountForActiveCluster;

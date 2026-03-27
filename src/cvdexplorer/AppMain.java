@@ -82,7 +82,11 @@ public class AppMain implements Drawing {
     private void drawDiagram(View view, PreparedScene preparedScene) {
         Transformation transform = view.transformation();
         Box imageBox = view.nativeBox().positive();
-        ClusterColorizer colorizer = new ClusterColorizer(preparedScene.clusters(), state.backgroundColor());
+        ClusterColorizer colorizer = new ClusterColorizer(
+                preparedScene.clusters(),
+                state.backgroundColor(),
+                state.showShading
+        );
         Image diagram = rasterDiagramRenderer.render(
                 transform.inverse(),
                 imageBox,
@@ -172,6 +176,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.P)) state.showMembers ^= true;
         if (event.isKeyPress(KeyCode.D)) state.showDiagram ^= true;
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
+        if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
         if (event.isKeyPress(KeyCode.M)) state.cycleMetric();
 
         if (event.isKeyPress(KeyCode.E)) {
