@@ -4,10 +4,11 @@ import cvdexplorer.core.ScenePreparation;
 import cvdexplorer.core.ScenePreparation.PreparedScene;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
-import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
+import cvdexplorer.model.SiteMemberFactory;
 import cvdexplorer.render.ClusterColorizer;
 import cvdexplorer.render.HelpOverlay;
+import cvdexplorer.render.MemberOverlayRenderer;
 import cvdexplorer.render.RasterDiagramRenderer;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -46,6 +47,7 @@ public class AppMain implements Drawing {
     private int activeClusterIndex = 0;
     private int selectedClusterIndex = -1;
     private int selectedMemberIndex = -1;
+    private int selectedHandleIndex = -1;
 
     private int prevGadgetActiveClusterOneBased = 0;
 
@@ -120,32 +122,37 @@ public class AppMain implements Drawing {
     }
 
     private void drawMembers(View view, PreparedScene preparedScene) {
+        double handleR = pointRadius * pixelWidth;
         for (int clusterIndex = 0; clusterIndex < preparedScene.clusters().size(); clusterIndex++) {
             ClusterSite cluster = preparedScene.clusters().get(clusterIndex);
             boolean activeCluster = activeClusterIndex >= 0 && clusterIndex == activeClusterIndex;
             for (int memberIndex = 0; memberIndex < cluster.size(); memberIndex++) {
                 ClusterMember member = cluster.members().get(memberIndex);
-                boolean selected = clusterIndex == selectedClusterIndex && memberIndex == selectedMemberIndex;
-                double radius = pointRadius * pixelWidth;
-
-                view.setFill(cluster.color());
-                view.fillCircleCentered(member.anchor(), radius);
-
-                view.setLineWidth((selected ? 4.0 : activeCluster ? 2.5 : 1.5) * pixelWidth);
-                view.setStroke(selected ? Color.BLACK : activeCluster ? Color.WHITE : Color.gray(0.1, 0.75));
-                view.strokeCircleCentered(member.anchor(), radius);
+                boolean memberSelected = clusterIndex == selectedClusterIndex && memberIndex == selectedMemberIndex;
+                int handleSel = memberSelected ? selectedHandleIndex : -1;
+                MemberOverlayRenderer.drawMember(
+                        view,
+                        member,
+                        cluster.color(),
+                        activeCluster,
+                        memberSelected,
+                        handleSel,
+                        handleR,
+                        pixelWidth
+                );
             }
         }
     }
 
     private void updateSelectionStart(InputEvent event, Vector pointerWorld) {
         if (!dragging && event.isMouseButtonPress(1)) {
-            Selection selection = nearestMember(pointerWorld, mouseReach * pixelWidth);
+            Selection selection = nearestHandle(pointerWorld, mouseReach * pixelWidth);
             if (selection == null) {
                 clearSelectionAndActiveCluster();
             } else {
                 selectedClusterIndex = selection.clusterIndex();
                 selectedMemberIndex = selection.memberIndex();
+                selectedHandleIndex = selection.handleIndex();
                 activeClusterIndex = selection.clusterIndex();
                 state.activeClusterOneBased = selection.clusterIndex() + 1;
                 prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
@@ -167,7 +174,9 @@ public class AppMain implements Drawing {
 
     private void applyPointerEdits(Vector pointerWorld) {
         if (dragging && hasSelection()) {
-            state.clusters().get(selectedClusterIndex).setMember(selectedMemberIndex, new PointMember(pointerWorld));
+            ClusterSite cluster = state.clusters().get(selectedClusterIndex);
+            ClusterMember member = cluster.members().get(selectedMemberIndex);
+            cluster.setMember(selectedMemberIndex, member.withHandle(selectedHandleIndex, pointerWorld));
         }
     }
 
@@ -191,12 +200,13 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.A)) {
             int clusterIdx = state.activeClusterOneBased - 1;
             ClusterSite cluster = state.clusters().get(clusterIdx);
-            cluster.addMember(new PointMember(pointerWorld));
+            cluster.addMember(SiteMemberFactory.createDefault(state.siteMemberKind, clusterIdx, cluster.size(), pointerWorld));
             activeClusterIndex = clusterIdx;
             prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
             state.targetPointCountForActiveCluster = cluster.size();
             selectedClusterIndex = clusterIdx;
             selectedMemberIndex = cluster.size() - 1;
+            selectedHandleIndex = 0;
         }
 
         if (event.isKeyPress(KeyCode.X) && hasSelection()) {
@@ -204,6 +214,7 @@ public class AppMain implements Drawing {
             if (cluster.size() > 1) {
                 cluster.removeMember(selectedMemberIndex);
                 selectedMemberIndex = Math.min(selectedMemberIndex, cluster.size() - 1);
+                selectedHandleIndex = Math.min(selectedHandleIndex, cluster.members().get(selectedMemberIndex).handleCount() - 1);
                 if (selectedClusterIndex == state.activeClusterOneBased - 1) {
                     state.targetPointCountForActiveCluster = cluster.size();
                 }
@@ -233,17 +244,20 @@ public class AppMain implements Drawing {
         applyKeys(event, pointer);
     }
 
-    private Selection nearestMember(Vector pointerWorld, double radiusLimit) {
+    private Selection nearestHandle(Vector pointerWorld, double radiusLimit) {
         Selection best = null;
         double bestDistance = Double.POSITIVE_INFINITY;
 
         for (int clusterIndex = 0; clusterIndex < state.clusterCount(); clusterIndex++) {
             ClusterSite cluster = state.clusters().get(clusterIndex);
             for (int memberIndex = 0; memberIndex < cluster.size(); memberIndex++) {
-                double distance = cluster.members().get(memberIndex).anchor().distanceTo(pointerWorld);
-                if (distance < bestDistance && distance < radiusLimit) {
-                    bestDistance = distance;
-                    best = new Selection(clusterIndex, memberIndex);
+                ClusterMember member = cluster.members().get(memberIndex);
+                for (int h = 0; h < member.handleCount(); h++) {
+                    double distance = member.getHandle(h).distanceTo(pointerWorld);
+                    if (distance < bestDistance && distance < radiusLimit) {
+                        bestDistance = distance;
+                        best = new Selection(clusterIndex, memberIndex, h);
+                    }
                 }
             }
         }
@@ -252,12 +266,13 @@ public class AppMain implements Drawing {
     }
 
     private boolean hasSelection() {
-        return selectedClusterIndex >= 0 && selectedMemberIndex >= 0;
+        return selectedClusterIndex >= 0 && selectedMemberIndex >= 0 && selectedHandleIndex >= 0;
     }
 
     private void clearSelection() {
         selectedClusterIndex = -1;
         selectedMemberIndex = -1;
+        selectedHandleIndex = -1;
         dragging = false;
         draggingStartPoint = null;
     }
@@ -290,10 +305,16 @@ public class AppMain implements Drawing {
         ClusterSite cluster = state.clusters().get(selectedClusterIndex);
         if (selectedMemberIndex >= cluster.size()) {
             clearSelection();
+            return;
+        }
+
+        ClusterMember member = cluster.members().get(selectedMemberIndex);
+        if (selectedHandleIndex >= member.handleCount()) {
+            selectedHandleIndex = member.handleCount() - 1;
         }
     }
 
-    private record Selection(int clusterIndex, int memberIndex) {
+    private record Selection(int clusterIndex, int memberIndex, int handleIndex) {
     }
 
     public static void main(String[] args) {
