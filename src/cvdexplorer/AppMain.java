@@ -10,6 +10,7 @@ import cvdexplorer.render.ClusterColorizer;
 import cvdexplorer.render.HelpOverlay;
 import cvdexplorer.render.MemberOverlayRenderer;
 import cvdexplorer.render.RasterDiagramRenderer;
+import cvdexplorer.render.SkeletonOverlayRenderer;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.application.DrawingApplication;
@@ -36,6 +37,7 @@ public class AppMain implements Drawing {
 
     private final CameraSimple camera = new CameraSimple(F_R_R.cutoff01(t -> F_R_R.power(t, 8)));
     private final RasterDiagramRenderer rasterDiagramRenderer = new RasterDiagramRenderer();
+    private final SkeletonOverlayRenderer skeletonOverlayRenderer = new SkeletonOverlayRenderer();
 
     private final double pointRadius = 6.0;
     private final double mouseReach = 10.0;
@@ -70,7 +72,7 @@ public class AppMain implements Drawing {
         DrawingUtils.clear(view, state.backgroundColor());
 
         PreparedScene preparedScene = ScenePreparation.prepare(state);
-        if (state.showDiagram) {
+        if (state.showDiagram || state.showSkeleton) {
             drawDiagram(view, preparedScene);
         }
         if (state.showMembers) {
@@ -89,19 +91,26 @@ public class AppMain implements Drawing {
                 state.backgroundColor(),
                 state.showShading
         );
-        Image diagram = rasterDiagramRenderer.render(
+        RasterDiagramRenderer.RenderResult result = rasterDiagramRenderer.render(
                 transform.inverse(),
                 imageBox,
                 p -> classify(p, preparedScene),
-                colorizer::color
+                state.showDiagram ? colorizer::color : null
         );
 
-        if (diagram == null) {
+        if (result == null) {
             return;
         }
 
         view.setTransformation(Transformation.IDENTITY);
-        view.drawImage(imageBox, diagram);
+        Image diagram = result.image();
+        if (diagram != null) {
+            view.drawImage(imageBox, diagram);
+        }
+        if (state.showSkeleton) {
+            Image skeleton = skeletonOverlayRenderer.render(result.ownershipGrid());
+            view.drawImage(imageBox, skeleton);
+        }
         view.setTransformation(transform);
     }
 
@@ -184,6 +193,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.H)) state.showHelp ^= true;
         if (event.isKeyPress(KeyCode.P)) state.showMembers ^= true;
         if (event.isKeyPress(KeyCode.D)) state.showDiagram ^= true;
+        if (event.isKeyPress(KeyCode.K)) state.showSkeleton ^= true;
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
         if (event.isKeyPress(KeyCode.M)) state.cycleMetric();

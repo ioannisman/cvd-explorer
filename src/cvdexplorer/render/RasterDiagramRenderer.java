@@ -15,6 +15,15 @@ public class RasterDiagramRenderer {
     public record Classification(int clusterIndex, double score) {
     }
 
+    public record OwnershipGrid(int width, int height, int[] clusterIndices) {
+        public int clusterIndexAt(int x, int y) {
+            return clusterIndices[y * width + x];
+        }
+    }
+
+    public record RenderResult(Image image, OwnershipGrid ownershipGrid) {
+    }
+
     @FunctionalInterface
     public interface Classifier {
         Classification classify(Vector point);
@@ -26,10 +35,11 @@ public class RasterDiagramRenderer {
     }
 
     private int[] pixels;
+    private int[] clusterIndices;
     private int sizeYp = 0;
     private int sizeXp = 0;
 
-    public Image render(
+    public RenderResult render(
             Transformation tFromPixels,
             Box bImage,
             Classifier classifier,
@@ -49,15 +59,24 @@ public class RasterDiagramRenderer {
                 Vector pixelCenter = Vector.xy(x + 0.5, y + 0.5);
                 Vector point = tFromPixels.applyTo(pixelCenter);
                 Classification classification = classifier.classify(point);
-                pixels[y * sizeX + x] = colorizer.color(classification);
+                int index = y * sizeX + x;
+                clusterIndices[index] = classification.clusterIndex();
+                if (colorizer != null) {
+                    pixels[index] = colorizer.color(classification);
+                }
             }
         });
 
-        PixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
-        IntBuffer buffer = IntBuffer.wrap(pixels);
-        PixelBuffer<IntBuffer> pixelBuffer = new PixelBuffer<>(sizeX, sizeY, buffer, pixelFormat);
-        pixelBuffer.updateBuffer(pb -> null);
-        return new WritableImage(pixelBuffer);
+        Image image = null;
+        if (colorizer != null) {
+            PixelFormat<IntBuffer> pixelFormat = PixelFormat.getIntArgbPreInstance();
+            IntBuffer buffer = IntBuffer.wrap(pixels);
+            PixelBuffer<IntBuffer> pixelBuffer = new PixelBuffer<>(sizeX, sizeY, buffer, pixelFormat);
+            pixelBuffer.updateBuffer(pb -> null);
+            image = new WritableImage(pixelBuffer);
+        }
+
+        return new RenderResult(image, new OwnershipGrid(sizeX, sizeY, clusterIndices));
     }
 
     private void ensureBuffers(int sizeX, int sizeY) {
@@ -65,6 +84,7 @@ public class RasterDiagramRenderer {
             sizeYp = sizeY;
             sizeXp = sizeX;
             pixels = new int[sizeY * sizeX];
+            clusterIndices = new int[sizeY * sizeX];
         }
     }
 }

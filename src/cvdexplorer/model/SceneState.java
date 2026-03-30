@@ -44,6 +44,10 @@ public final class SceneState {
     public boolean showMembers = true;
 
     @GadgetBoolean
+    @Properties(name = "Show skeleton (k)")
+    public boolean showSkeleton = false;
+
+    @GadgetBoolean
     @Properties(name = "Show help (h)")
     public boolean showHelp = true;
 
@@ -132,6 +136,7 @@ public final class SceneState {
         metricKind = other.metricKind;
         showDiagram = other.showDiagram;
         showMembers = other.showMembers;
+        showSkeleton = other.showSkeleton;
         showHelp = other.showHelp;
         snapToGrid = other.snapToGrid;
         showShading = other.showShading;

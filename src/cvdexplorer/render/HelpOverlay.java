@@ -21,6 +21,7 @@ public final class HelpOverlay {
                 "    s               - Toggle distance shading (gadget)",
                 "    p               - Toggle cluster members",
                 "    d               - Toggle raster diagram",
+                "    k               - Toggle skeleton overlay",
                 "    g               - Toggle snap to grid",
                 "    e               - Cycle active cluster",
                 "    a               - Add member (type from gadget) at pointer",
