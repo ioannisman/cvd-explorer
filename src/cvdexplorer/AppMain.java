@@ -2,6 +2,8 @@ package cvdexplorer;
 
 import cvdexplorer.core.ScenePreparation;
 import cvdexplorer.core.ScenePreparation.PreparedScene;
+import cvdexplorer.io.SceneFileIo;
+import cvdexplorer.io.SceneJsonException;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.SceneState;
@@ -11,8 +13,14 @@ import cvdexplorer.render.HelpOverlay;
 import cvdexplorer.render.MemberOverlayRenderer;
 import cvdexplorer.render.RasterDiagramRenderer;
 import cvdexplorer.render.SkeletonOverlayRenderer;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+
+import java.io.File;
+import java.io.IOException;
 import xyz.marsavic.drawingfx.application.DrawingApplication;
 import xyz.marsavic.drawingfx.application.Options;
 import xyz.marsavic.drawingfx.drawing.Drawing;
@@ -52,6 +60,9 @@ public class AppMain implements Drawing {
     private int selectedHandleIndex = -1;
 
     private int prevGadgetActiveClusterOneBased = 0;
+
+    // After FileChooser, Control can stay pressed in InputState; ignore it for camera until released.
+    private boolean ignoreControlModifierForCamera;
 
     @Override
     public void draw(View view) {
@@ -249,7 +260,21 @@ public class AppMain implements Drawing {
 
     @Override
     public void receiveEvent(View view, InputEvent event, InputState inputState, Vector pointerWorld, Vector pointerViewBase) {
-        if (inputState.keyPressed(KeyCode.CONTROL)) {
+        if (ignoreControlModifierForCamera
+                && (!inputState.keyPressed(KeyCode.CONTROL) || event.isKeyRelease(KeyCode.CONTROL))) {
+            ignoreControlModifierForCamera = false;
+        }
+
+        if (event.isKeyPress(KeyCode.S) && inputState.keyPressed(KeyCode.CONTROL)) {
+            saveSceneToFile();
+            return;
+        }
+        if (event.isKeyPress(KeyCode.O) && inputState.keyPressed(KeyCode.CONTROL)) {
+            loadSceneFromFile();
+            return;
+        }
+        boolean controlForCamera = inputState.keyPressed(KeyCode.CONTROL) && !ignoreControlModifierForCamera;
+        if (controlForCamera && !event.isKey()) {
             camera.receiveEvent(view, event, inputState, pointerWorld, pointerViewBase);
             return;
         }
@@ -333,6 +358,66 @@ public class AppMain implements Drawing {
     }
 
     private record Selection(int clusterIndex, int memberIndex, int handleIndex) {
+    }
+
+    /** FileChooser needs a window; any showing JavaFX window is enough. */
+    private static Window firstShowingWindow() {
+        for (Window w : Window.getWindows()) {
+            if (w.isShowing()) {
+                return w;
+            }
+        }
+        return null;
+    }
+
+    private void afterNativeFileDialog() {
+        ignoreControlModifierForCamera = true;
+        Window w = firstShowingWindow();
+        if (w != null) {
+            Platform.runLater(w::requestFocus);
+        }
+    }
+
+    private void saveSceneToFile() {
+        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind).
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save scene");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON scene", "*.json"));
+        File file = chooser.showSaveDialog(firstShowingWindow());
+        afterNativeFileDialog();
+        if (file == null) {
+            return;
+        }
+        if (!file.getName().toLowerCase().endsWith(".json")) {
+            file = new File(file.getParentFile(), file.getName() + ".json");
+        }
+        try {
+            SceneFileIo.save(file.toPath(), state);
+        } catch (IOException e) {
+            System.err.println("Save failed: " + e.getMessage());
+        }
+    }
+
+    private void loadSceneFromFile() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Load scene");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON scene", "*.json"));
+        File file = chooser.showOpenDialog(firstShowingWindow());
+        afterNativeFileDialog();
+        if (file == null) {
+            return;
+        }
+        try {
+            SceneFileIo.load(state, file.toPath());
+            // Match gadget-driven active cluster and clear stale selection indices.
+            activeClusterIndex = state.activeClusterOneBased - 1;
+            prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            clearSelection();
+        } catch (SceneJsonException e) {
+            System.err.println("Load failed: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Load failed: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) {

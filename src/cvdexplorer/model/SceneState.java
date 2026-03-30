@@ -132,6 +132,27 @@ public final class SceneState {
         };
     }
 
+    /**
+     * Replaces all clusters and metric authoring fields from a loaded file.
+     * View toggles and camera are unchanged. Gadget fields are normalized to the new cluster list.
+     */
+    public void applyLoadedScene(MetricKind newMetricKind, SiteMemberKind newSiteMemberKind, List<ClusterSite> newClusters) {
+        if (newClusters.isEmpty() || newClusters.size() > MAX_CLUSTERS) {
+            throw new IllegalArgumentException("Cluster list must be non-empty and at most " + MAX_CLUSTERS);
+        }
+        metricKind = newMetricKind;
+        siteMemberKind = newSiteMemberKind;
+        clusters.clear();
+        for (ClusterSite site : newClusters) {
+            clusters.add(site);
+        }
+        numberOfClusters = clusters.size();
+        activeClusterOneBased = Math.max(1, Math.min(numberOfClusters, activeClusterOneBased));
+        targetPointCountForActiveCluster = clusters.get(activeClusterOneBased - 1).size();
+        // Keeps ensureActiveClusterMemberCount from fighting the loaded member lists.
+        lastActiveClusterOneBasedForMemberSync = activeClusterOneBased;
+    }
+
     public void copyFrom(SceneState other) {
         metricKind = other.metricKind;
         showDiagram = other.showDiagram;

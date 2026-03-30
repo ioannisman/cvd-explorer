@@ -27,6 +27,8 @@ public final class HelpOverlay {
                 "    a               - Add member (type from gadget) at pointer",
                 "    x               - Remove selected member",
                 "    n               - Reset the demo scene",
+                "    Ctrl+s          - Save scene (JSON)",
+                "    Ctrl+o          - Load scene (JSON)",
                 "    Mouse left      - Select/drag a handle; empty space clears highlight",
                 "    Ctrl            - Control the view:",
                 "      + Mouse left      - Pan",
