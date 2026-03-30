@@ -108,8 +108,16 @@ public class AppMain implements Drawing {
             view.drawImage(imageBox, diagram);
         }
         if (state.showSkeleton) {
-            Image skeleton = skeletonOverlayRenderer.render(result.ownershipGrid());
-            view.drawImage(imageBox, skeleton);
+            Transformation tFromPixels = transform.inverse();
+            skeletonOverlayRenderer.draw(
+                    view,
+                    result.ownershipGrid(),
+                    // Reuse the active metric so the contour position tracks the true cluster boundary.
+                    (pixelPoint, clusterIndex) -> preparedScene.metric().score(
+                            tFromPixels.applyTo(pixelPoint),
+                            preparedScene.clusters().get(clusterIndex)
+                    )
+            );
         }
         view.setTransformation(transform);
     }
