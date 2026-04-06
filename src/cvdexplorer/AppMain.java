@@ -21,6 +21,8 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import xyz.marsavic.drawingfx.application.DrawingApplication;
 import xyz.marsavic.drawingfx.application.Options;
 import xyz.marsavic.drawingfx.drawing.Drawing;
@@ -60,6 +62,9 @@ public class AppMain implements Drawing {
     private int selectedHandleIndex = -1;
 
     private int prevGadgetActiveClusterOneBased = 0;
+
+    private List<Selection> coMovingHandles = List.of();
+    private Vector snapTargetPosition = null;
 
     // After FileChooser, Control can stay pressed in InputState; ignore it for camera until released.
     private boolean ignoreControlModifierForCamera;
@@ -170,6 +175,9 @@ public class AppMain implements Drawing {
                 );
             }
         }
+        if (snapTargetPosition != null) {
+            MemberOverlayRenderer.drawSnapIndicator(view, snapTargetPosition, handleR, pixelWidth);
+        }
     }
 
     private void updateSelectionStart(InputEvent event, Vector pointerWorld) {
@@ -177,6 +185,7 @@ public class AppMain implements Drawing {
             Selection selection = nearestHandle(pointerWorld, mouseReach * pixelWidth);
             if (selection == null) {
                 clearSelectionAndActiveCluster();
+                coMovingHandles = List.of();
             } else {
                 selectedClusterIndex = selection.clusterIndex();
                 selectedMemberIndex = selection.memberIndex();
@@ -185,6 +194,8 @@ public class AppMain implements Drawing {
                 state.activeClusterOneBased = selection.clusterIndex() + 1;
                 prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
                 draggingStartPoint = pointerWorld;
+                coMovingHandles = findColocatedHandles(
+                        selectedClusterIndex, selectedMemberIndex, selectedHandleIndex);
             }
         }
     }
@@ -197,14 +208,36 @@ public class AppMain implements Drawing {
         } else {
             dragging = false;
             draggingStartPoint = null;
+            coMovingHandles = List.of();
+            snapTargetPosition = null;
         }
     }
 
-    private void applyPointerEdits(Vector pointerWorld) {
+    private void applyPointerEdits(Vector position, InputState inputState) {
         if (dragging && hasSelection()) {
+            Vector target = position;
+            if (state.snapToHandles) {
+                target = snapToNearestHandle(position, mouseReach * pixelWidth,
+                        selectedClusterIndex, selectedMemberIndex, selectedHandleIndex);
+                snapTargetPosition = target.equals(position) ? null : target;
+            } else {
+                snapTargetPosition = null;
+            }
+
             ClusterSite cluster = state.clusters().get(selectedClusterIndex);
             ClusterMember member = cluster.members().get(selectedMemberIndex);
-            cluster.setMember(selectedMemberIndex, member.withHandle(selectedHandleIndex, pointerWorld));
+            cluster.setMember(selectedMemberIndex, member.withHandle(selectedHandleIndex, target));
+
+            boolean shiftHeld = inputState.keyPressed(KeyCode.SHIFT);
+            if (!shiftHeld) {
+                for (Selection co : coMovingHandles) {
+                    ClusterSite coCluster = state.clusters().get(co.clusterIndex());
+                    ClusterMember coMember = coCluster.members().get(co.memberIndex());
+                    coCluster.setMember(co.memberIndex(), coMember.withHandle(co.handleIndex(), target));
+                }
+            }
+        } else {
+            snapTargetPosition = null;
         }
     }
 
@@ -214,6 +247,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.D)) state.showDiagram ^= true;
         if (event.isKeyPress(KeyCode.K)) state.showSkeleton ^= true;
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
+        if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
         if (event.isKeyPress(KeyCode.M)) state.cycleMetric();
 
@@ -283,7 +317,7 @@ public class AppMain implements Drawing {
 
         updateSelectionStart(event, pointerWorld);
         updateDraggingState(inputState, pointerWorld);
-        applyPointerEdits(pointer);
+        applyPointerEdits(pointer, inputState);
         applyKeys(event, pointer);
     }
 
@@ -308,6 +342,52 @@ public class AppMain implements Drawing {
         return best;
     }
 
+    private Vector snapToNearestHandle(Vector position, double snapRadius,
+            int excludeCluster, int excludeMember, int excludeHandle) {
+        double bestDistance = Double.POSITIVE_INFINITY;
+        Vector bestPosition = null;
+
+        for (int ci = 0; ci < state.clusterCount(); ci++) {
+            ClusterSite cluster = state.clusters().get(ci);
+            for (int mi = 0; mi < cluster.size(); mi++) {
+                ClusterMember member = cluster.members().get(mi);
+                for (int h = 0; h < member.handleCount(); h++) {
+                    if (ci == excludeCluster && mi == excludeMember && h == excludeHandle) {
+                        continue;
+                    }
+                    Vector handlePos = member.getHandle(h);
+                    double distance = handlePos.distanceTo(position);
+                    if (distance < bestDistance && distance < snapRadius) {
+                        bestDistance = distance;
+                        bestPosition = handlePos;
+                    }
+                }
+            }
+        }
+
+        return bestPosition != null ? bestPosition : position;
+    }
+
+    private List<Selection> findColocatedHandles(int clusterIndex, int memberIndex, int handleIndex) {
+        ClusterSite cluster = state.clusters().get(clusterIndex);
+        Vector position = cluster.members().get(memberIndex).getHandle(handleIndex);
+        List<Selection> result = new ArrayList<>();
+
+        for (int mi = 0; mi < cluster.size(); mi++) {
+            ClusterMember member = cluster.members().get(mi);
+            for (int h = 0; h < member.handleCount(); h++) {
+                if (mi == memberIndex && h == handleIndex) {
+                    continue;
+                }
+                if (member.getHandle(h).equals(position)) {
+                    result.add(new Selection(clusterIndex, mi, h));
+                }
+            }
+        }
+
+        return result;
+    }
+
     private boolean hasSelection() {
         return selectedClusterIndex >= 0 && selectedMemberIndex >= 0 && selectedHandleIndex >= 0;
     }
@@ -318,6 +398,8 @@ public class AppMain implements Drawing {
         selectedHandleIndex = -1;
         dragging = false;
         draggingStartPoint = null;
+        coMovingHandles = List.of();
+        snapTargetPosition = null;
     }
 
     private void clearSelectionAndActiveCluster() {

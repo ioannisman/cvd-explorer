@@ -56,6 +56,10 @@ public final class SceneState {
     public boolean snapToGrid = false;
 
     @GadgetBoolean
+    @Properties(name = "Snap to handles (f)")
+    public boolean snapToHandles = false;
+
+    @GadgetBoolean
     @Properties(name = "Distance shading (s)")
     public boolean showShading = true;
 
@@ -160,6 +164,7 @@ public final class SceneState {
         showSkeleton = other.showSkeleton;
         showHelp = other.showHelp;
         snapToGrid = other.snapToGrid;
+        snapToHandles = other.snapToHandles;
         showShading = other.showShading;
         siteMemberKind = other.siteMemberKind;
         numberOfClusters = other.numberOfClusters;
