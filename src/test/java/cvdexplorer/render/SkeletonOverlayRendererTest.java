@@ -15,43 +15,32 @@ class SkeletonOverlayRendererTest {
         RasterDiagramRenderer.OwnershipGrid ownershipGrid = new RasterDiagramRenderer.OwnershipGrid(
                 3,
                 2,
-                new int[] {
-                        0, 0, 0,
-                        0, 0, 0
+                new long[] {
+                        1L, 1L, 1L,
+                        1L, 1L, 1L
                 }
         );
 
-        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(
-                ownershipGrid,
-                (point, clusterIndex) -> clusterIndex
-        );
+        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(ownershipGrid);
 
         assertTrue(segments.isEmpty());
     }
 
     @Test
-    void extractSegmentsInterpolateSingleContourCrossing() {
+    void extractSegmentsUseEdgeMidpointsForSingleBoundary() {
         RasterDiagramRenderer.OwnershipGrid ownershipGrid = new RasterDiagramRenderer.OwnershipGrid(
                 2,
                 2,
-                new int[] {
-                        0, 1,
-                        0, 1
+                new long[] {
+                        1L, 2L,
+                        1L, 2L
                 }
         );
 
-        // The two scores balance at x = 0.85, so the contour should shift off the midpoint.
-        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(
-                ownershipGrid,
-                (point, clusterIndex) -> switch (clusterIndex) {
-                    case 0 -> point.x();
-                    case 1 -> 1.7 - point.x();
-                    default -> 10.0;
-                }
-        );
+        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(ownershipGrid);
 
         assertEquals(1, segments.size());
-        assertHasSegment(segments, 0.85, 0.5, 0.85, 1.5);
+        assertHasSegment(segments, 1.0, 0.5, 1.0, 1.5);
     }
 
     @Test
@@ -59,27 +48,18 @@ class SkeletonOverlayRendererTest {
         RasterDiagramRenderer.OwnershipGrid ownershipGrid = new RasterDiagramRenderer.OwnershipGrid(
                 2,
                 2,
-                new int[] {
-                        0, 1,
-                        2, 2
+                new long[] {
+                        1L, 2L,
+                        4L, 4L
                 }
         );
 
-        // Three owners in one cell currently produce a small center junction.
-        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(
-                ownershipGrid,
-                (point, clusterIndex) -> switch (clusterIndex) {
-                    case 0 -> point.x() + point.y();
-                    case 1 -> 2.2 - point.x();
-                    case 2 -> 2.1 - point.y();
-                    default -> 10.0;
-                }
-        );
+        List<SkeletonOverlayRenderer.Segment> segments = SkeletonOverlayRenderer.extractSegments(ownershipGrid);
 
         assertEquals(3, segments.size());
-        assertHasSegment(segments, 0.85, 0.5, 1.0, 1.0);
-        assertHasSegment(segments, 1.5, 1.4, 1.0, 1.0);
-        assertHasSegment(segments, 0.5, 0.8, 1.0, 1.0);
+        assertHasSegment(segments, 1.0, 0.5, 1.0, 1.0);
+        assertHasSegment(segments, 1.5, 1.0, 1.0, 1.0);
+        assertHasSegment(segments, 0.5, 1.0, 1.0, 1.0);
     }
 
     private static void assertHasSegment(

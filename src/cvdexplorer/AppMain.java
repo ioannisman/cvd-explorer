@@ -1,5 +1,6 @@
 package cvdexplorer;
 
+import cvdexplorer.core.ClusterOwnershipSelector;
 import cvdexplorer.core.ScenePreparation;
 import cvdexplorer.core.ScenePreparation.PreparedScene;
 import cvdexplorer.io.SceneFileIo;
@@ -124,34 +125,26 @@ public class AppMain implements Drawing {
             view.drawImage(imageBox, diagram);
         }
         if (state.showSkeleton) {
-            Transformation tFromPixels = transform.inverse();
-            skeletonOverlayRenderer.draw(
-                    view,
-                    result.ownershipGrid(),
-                    // Reuse the active metric so the contour position tracks the true cluster boundary.
-                    (pixelPoint, clusterIndex) -> preparedScene.metric().score(
-                            tFromPixels.applyTo(pixelPoint),
-                            preparedScene.clusters().get(clusterIndex)
-                    )
-            );
+            skeletonOverlayRenderer.draw(view, result.ownershipGrid());
         }
         view.setTransformation(transform);
     }
 
     private RasterDiagramRenderer.Classification classify(Vector point, PreparedScene preparedScene) {
-        int bestIndex = -1;
-        double bestScore = Double.POSITIVE_INFINITY;
-
+        List<ClusterOwnershipSelector.ClusterScore> clusterScores =
+                new ArrayList<>(preparedScene.clusters().size());
         for (int clusterIndex = 0; clusterIndex < preparedScene.clusters().size(); clusterIndex++) {
             ClusterSite cluster = preparedScene.clusters().get(clusterIndex);
             double score = preparedScene.metric().score(point, cluster);
-            if ((score < bestScore) || ((score == bestScore) && (clusterIndex < bestIndex))) {
-                bestIndex = clusterIndex;
-                bestScore = score;
-            }
+            clusterScores.add(new ClusterOwnershipSelector.ClusterScore(clusterIndex, score));
         }
 
-        return new RasterDiagramRenderer.Classification(bestIndex, bestScore);
+        ClusterOwnershipSelector.RegionMembership regionMembership =
+                preparedScene.ownershipSelector().select(clusterScores);
+        return new RasterDiagramRenderer.Classification(
+                regionMembership.clusterMask(),
+                regionMembership.boundaryScore()
+        );
     }
 
     private void drawMembers(View view, PreparedScene preparedScene) {
@@ -250,6 +243,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
         if (event.isKeyPress(KeyCode.M)) state.cycleMetric();
+        if (event.isKeyPress(KeyCode.J)) state.cycleOrderK();
 
         if (event.isKeyPress(KeyCode.E)) {
             int n = state.clusterCount();
@@ -461,7 +455,7 @@ public class AppMain implements Drawing {
     }
 
     private void saveSceneToFile() {
-        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind).
+        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, orderKOneBased, siteMemberKind).
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save scene");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON scene", "*.json"));

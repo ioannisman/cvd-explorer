@@ -23,6 +23,7 @@ class SceneJsonCodecTest {
     void encodeDecodeRoundTripPreservesClustersMetricAndMembers() throws Exception {
         SceneState source = new SceneState();
         source.metricKind = MetricKind.SUM_OF_DISTANCES;
+        source.orderKOneBased = 1;
         source.siteMemberKind = SiteMemberKind.LINE_SEGMENT;
         source.clusters().clear();
         source.clusters().add(new ClusterSite(
@@ -51,6 +52,7 @@ class SceneJsonCodecTest {
         SceneJsonCodec.applyJson(restored, json);
 
         assertEquals(MetricKind.SUM_OF_DISTANCES, restored.metricKind);
+        assertEquals(1, restored.orderKOneBased);
         assertEquals(SiteMemberKind.LINE_SEGMENT, restored.siteMemberKind);
         assertEquals(2, restored.clusters().size());
 
@@ -75,5 +77,70 @@ class SceneJsonCodecTest {
         SceneState state = SceneState.demo();
         SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
         assertTrue(ex.getMessage().contains("version"));
+    }
+
+    @Test
+    void missingOrderKDefaultsToOneForOlderFiles() throws Exception {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MINIMUM_DISTANCE",
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": { "r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0 },
+                      "members": [
+                        { "kind": "POINT", "x": 1.0, "y": 2.0 }
+                      ]
+                    }
+                  ]
+                }
+                """;
+
+        SceneState state = new SceneState();
+        SceneJsonCodec.applyJson(state, json);
+
+        assertEquals(1, state.orderKOneBased);
+    }
+
+    @Test
+    void legacyNeighborOrderFieldStillLoadsIntoOrderK() throws Exception {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MINIMUM_DISTANCE",
+                  "neighborOrderOneBased": 2,
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": { "r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0 },
+                      "members": [
+                        { "kind": "POINT", "x": 1.0, "y": 2.0 }
+                      ]
+                    },
+                    {
+                      "name": "Beta",
+                      "color": { "r": 0.4, "g": 0.5, "b": 0.6, "opacity": 1.0 },
+                      "members": [
+                        { "kind": "POINT", "x": 3.0, "y": 4.0 }
+                      ]
+                    },
+                    {
+                      "name": "Gamma",
+                      "color": { "r": 0.7, "g": 0.8, "b": 0.9, "opacity": 1.0 },
+                      "members": [
+                        { "kind": "POINT", "x": 5.0, "y": 6.0 }
+                      ]
+                    }
+                  ]
+                }
+                """;
+
+        SceneState state = new SceneState();
+        SceneJsonCodec.applyJson(state, json);
+
+        assertEquals(2, state.orderKOneBased);
     }
 }

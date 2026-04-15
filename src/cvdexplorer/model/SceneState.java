@@ -35,6 +35,10 @@ public final class SceneState {
     @Properties(name = "Metric (m)")
     public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
+    @GadgetInteger(min = 1, max = MAX_CLUSTERS)
+    @Properties(name = "Order k")
+    public int orderKOneBased = 1;
+
     @GadgetBoolean
     @Properties(name = "Show diagram (d)")
     public boolean showDiagram = true;
@@ -136,21 +140,41 @@ public final class SceneState {
         };
     }
 
+    public void cycleOrderK() {
+        int maxOrder = maxOrderK();
+        orderKOneBased = orderKOneBased >= maxOrder ? 1 : orderKOneBased + 1;
+    }
+
     /**
      * Replaces all clusters and metric authoring fields from a loaded file.
      * View toggles and camera are unchanged. Gadget fields are normalized to the new cluster list.
      */
     public void applyLoadedScene(MetricKind newMetricKind, SiteMemberKind newSiteMemberKind, List<ClusterSite> newClusters) {
+        applyLoadedScene(newMetricKind, 1, newSiteMemberKind, newClusters);
+    }
+
+    /**
+     * Replaces all clusters and metric authoring fields from a loaded file.
+     * View toggles and camera are unchanged. Gadget fields are normalized to the new cluster list.
+     */
+    public void applyLoadedScene(
+            MetricKind newMetricKind,
+            int newOrderKOneBased,
+            SiteMemberKind newSiteMemberKind,
+            List<ClusterSite> newClusters
+    ) {
         if (newClusters.isEmpty() || newClusters.size() > MAX_CLUSTERS) {
             throw new IllegalArgumentException("Cluster list must be non-empty and at most " + MAX_CLUSTERS);
         }
         metricKind = newMetricKind;
+        orderKOneBased = newOrderKOneBased;
         siteMemberKind = newSiteMemberKind;
         clusters.clear();
         for (ClusterSite site : newClusters) {
             clusters.add(site);
         }
         numberOfClusters = clusters.size();
+        normalizeOrderK();
         activeClusterOneBased = Math.max(1, Math.min(numberOfClusters, activeClusterOneBased));
         targetPointCountForActiveCluster = clusters.get(activeClusterOneBased - 1).size();
         // Keeps ensureActiveClusterMemberCount from fighting the loaded member lists.
@@ -159,6 +183,7 @@ public final class SceneState {
 
     public void copyFrom(SceneState other) {
         metricKind = other.metricKind;
+        orderKOneBased = other.orderKOneBased;
         showDiagram = other.showDiagram;
         showMembers = other.showMembers;
         showSkeleton = other.showSkeleton;
@@ -179,6 +204,7 @@ public final class SceneState {
         if (numberOfClusters != clusters.size()) {
             numberOfClusters = clusters.size();
         }
+        normalizeOrderK();
         int n = Math.max(1, clusters.size());
         activeClusterOneBased = Math.max(1, Math.min(n, activeClusterOneBased));
     }
@@ -191,7 +217,16 @@ public final class SceneState {
         while (clusters.size() > numberOfClusters) {
             clusters.remove(clusters.size() - 1);
         }
+        normalizeOrderK();
         activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
+    }
+
+    public int maxOrderK() {
+        return Math.max(1, clusters.size() - 1);
+    }
+
+    public void normalizeOrderK() {
+        orderKOneBased = Math.max(1, Math.min(maxOrderK(), orderKOneBased));
     }
 
     public void ensureActiveClusterMemberCount() {

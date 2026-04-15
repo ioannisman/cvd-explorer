@@ -81,6 +81,7 @@ public final class SceneJsonCodec {
         SceneFileV1 root = new SceneFileV1();
         root.version = CURRENT_VERSION;
         root.metricKind = state.metricKind.name();
+        root.orderKOneBased = state.orderKOneBased;
         root.siteMemberKind = state.siteMemberKind.name();
         root.clusters = clusters;
         return root;
@@ -98,11 +99,17 @@ public final class SceneJsonCodec {
         }
 
         MetricKind metricKind;
+        int orderKOneBased = 1;
         SiteMemberKind siteMemberKind;
         try {
             metricKind = MetricKind.valueOf(dto.metricKind);
         } catch (Exception e) {
             throw new SceneJsonException("Unknown metricKind: " + dto.metricKind);
+        }
+        if (dto.orderKOneBased != null) {
+            orderKOneBased = dto.orderKOneBased;
+        } else if (dto.neighborOrderOneBased != null) {
+            orderKOneBased = dto.neighborOrderOneBased;
         }
         try {
             siteMemberKind = SiteMemberKind.valueOf(dto.siteMemberKind);
@@ -132,7 +139,7 @@ public final class SceneJsonCodec {
         }
 
         // View toggles unchanged; gadget counts follow the new cluster list.
-        state.applyLoadedScene(metricKind, siteMemberKind, loaded);
+        state.applyLoadedScene(metricKind, orderKOneBased, siteMemberKind, loaded);
     }
 
     private static List<ClusterMember> parseMembers(List<MemberJson> members, String clusterName) throws SceneJsonException {
@@ -167,6 +174,8 @@ public final class SceneJsonCodec {
     static final class SceneFileV1 {
         String version;
         String metricKind;
+        Integer orderKOneBased;
+        Integer neighborOrderOneBased;
         String siteMemberKind;
         List<ClusterJson> clusters;
     }

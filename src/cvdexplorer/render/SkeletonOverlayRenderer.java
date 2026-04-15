@@ -11,18 +11,8 @@ public final class SkeletonOverlayRenderer {
     public record Segment(Vector a, Vector b) {
     }
 
-    @FunctionalInterface
-    public interface PixelClusterScorer {
-        // Pixel-space helper used to refine crossings without rebuilding the ownership grid.
-        double score(Vector pixelPoint, int clusterIndex);
-    }
-
-    public void draw(
-            View view,
-            RasterDiagramRenderer.OwnershipGrid ownershipGrid,
-            PixelClusterScorer scorer
-    ) {
-        List<Segment> segments = extractSegments(ownershipGrid, scorer);
+    public void draw(View view, RasterDiagramRenderer.OwnershipGrid ownershipGrid) {
+        List<Segment> segments = extractSegments(ownershipGrid);
         if (segments.isEmpty()) {
             return;
         }
@@ -36,8 +26,7 @@ public final class SkeletonOverlayRenderer {
     }
 
     static List<Segment> extractSegments(
-            RasterDiagramRenderer.OwnershipGrid ownershipGrid,
-            PixelClusterScorer scorer
+            RasterDiagramRenderer.OwnershipGrid ownershipGrid
     ) {
         int width = ownershipGrid.width();
         int height = ownershipGrid.height();
@@ -49,32 +38,24 @@ public final class SkeletonOverlayRenderer {
 
         for (int y = 0; y < height - 1; y++) {
             for (int x = 0; x < width - 1; x++) {
-                int topLeft = ownershipGrid.clusterIndexAt(x, y);
-                int topRight = ownershipGrid.clusterIndexAt(x + 1, y);
-                int bottomLeft = ownershipGrid.clusterIndexAt(x, y + 1);
-                int bottomRight = ownershipGrid.clusterIndexAt(x + 1, y + 1);
+                long topLeft = ownershipGrid.regionMaskAt(x, y);
+                long topRight = ownershipGrid.regionMaskAt(x + 1, y);
+                long bottomLeft = ownershipGrid.regionMaskAt(x, y + 1);
+                long bottomRight = ownershipGrid.regionMaskAt(x + 1, y + 1);
 
-                // The ownership grid tells us which cell edges the contour must cross.
+                // Different order-k membership sets indicate a boundary between cells.
                 List<Vector> crossings = new ArrayList<>(4);
                 if (topLeft != topRight) {
-                    Vector a = Vector.xy(x + 0.5, y + 0.5);
-                    Vector b = Vector.xy(x + 1.5, y + 0.5);
-                    crossings.add(interpolateCrossing(a, b, topLeft, topRight, scorer));
+                    crossings.add(Vector.xy(x + 1.0, y + 0.5));
                 }
                 if (topRight != bottomRight) {
-                    Vector a = Vector.xy(x + 1.5, y + 0.5);
-                    Vector b = Vector.xy(x + 1.5, y + 1.5);
-                    crossings.add(interpolateCrossing(a, b, topRight, bottomRight, scorer));
+                    crossings.add(Vector.xy(x + 1.5, y + 1.0));
                 }
                 if (bottomLeft != bottomRight) {
-                    Vector a = Vector.xy(x + 0.5, y + 1.5);
-                    Vector b = Vector.xy(x + 1.5, y + 1.5);
-                    crossings.add(interpolateCrossing(a, b, bottomLeft, bottomRight, scorer));
+                    crossings.add(Vector.xy(x + 1.0, y + 1.5));
                 }
                 if (topLeft != bottomLeft) {
-                    Vector a = Vector.xy(x + 0.5, y + 0.5);
-                    Vector b = Vector.xy(x + 0.5, y + 1.5);
-                    crossings.add(interpolateCrossing(a, b, topLeft, bottomLeft, scorer));
+                    crossings.add(Vector.xy(x + 0.5, y + 1.0));
                 }
 
                 if (crossings.size() == 2) {
@@ -90,29 +71,5 @@ public final class SkeletonOverlayRenderer {
         }
 
         return segments;
-    }
-
-    private static Vector interpolateCrossing(
-            Vector a,
-            Vector b,
-            int ownerA,
-            int ownerB,
-            PixelClusterScorer scorer
-    ) {
-        // Interpolate the zero of score(ownerA) - score(ownerB) along the edge.
-        double diffA = scorer.score(a, ownerA) - scorer.score(a, ownerB);
-        double diffB = scorer.score(b, ownerA) - scorer.score(b, ownerB);
-        double denominator = diffA - diffB;
-
-        double t;
-        if (Math.abs(denominator) < 1e-9) {
-            // Flat edges fall back to the midpoint.
-            t = 0.5;
-        } else {
-            t = diffA / denominator;
-            t = Math.max(0.0, Math.min(1.0, t));
-        }
-
-        return a.add(b.sub(a).mul(t));
     }
 }

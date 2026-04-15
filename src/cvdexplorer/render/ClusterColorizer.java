@@ -7,6 +7,7 @@ import java.util.List;
 
 public final class ClusterColorizer {
     private static final double SHADING_SCORE_SCALE = 480.0;
+    private static final int STRIPE_WIDTH_PIXELS = 8;
 
     private final List<ClusterSite> clusters;
     private final Color background;
@@ -18,17 +19,36 @@ public final class ClusterColorizer {
         this.shadingEnabled = shadingEnabled;
     }
 
-    public int color(RasterDiagramRenderer.Classification classification) {
-        if (classification.clusterIndex() < 0) {
+    public int color(int x, int y, RasterDiagramRenderer.Classification classification) {
+        if (classification.clusterMask() == 0L) {
             return toArgb(background);
         }
 
-        ClusterSite cluster = clusters.get(classification.clusterIndex());
+        ClusterSite cluster = clusterForStripe(classification.clusterMask(), stripeOrdinal(x, y, classification.clusterMask()));
         double brightness = shadingEnabled
-                ? 0.6 + 0.4 * Math.exp(-classification.score() / SHADING_SCORE_SCALE)
+                ? 0.6 + 0.4 * Math.exp(-classification.boundaryScore() / SHADING_SCORE_SCALE)
                 : 1.0;
         Color shaded = cluster.color().deriveColor(0.0, 1.0, brightness, 1.0);
         return toArgb(shaded);
+    }
+
+    private int stripeOrdinal(int x, int y, long clusterMask) {
+        int stripeIndex = (x + y) / STRIPE_WIDTH_PIXELS;
+        return Math.floorMod(stripeIndex, Long.bitCount(clusterMask));
+    }
+
+    private ClusterSite clusterForStripe(long clusterMask, int ordinal) {
+        long remaining = clusterMask;
+        int remainingOrdinal = ordinal;
+        while (remaining != 0L) {
+            int clusterIndex = Long.numberOfTrailingZeros(remaining);
+            if (remainingOrdinal == 0) {
+                return clusters.get(clusterIndex);
+            }
+            remaining &= remaining - 1;
+            remainingOrdinal--;
+        }
+        throw new IllegalArgumentException("clusterMask must contain at least one cluster");
     }
 
     private static int toArgb(Color color) {

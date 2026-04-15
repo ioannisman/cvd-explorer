@@ -19,7 +19,13 @@ public final class ScenePreparation {
     }
 
     public static PreparedScene prepare(SceneState state) {
-        return new PreparedScene(List.copyOf(state.clusters()), metricFor(state.metricKind));
+        int orderKOneBased = Math.max(1, Math.min(state.maxOrderK(), state.orderKOneBased));
+        return new PreparedScene(
+                List.copyOf(state.clusters()),
+                metricFor(state.metricKind),
+                new OrderKOwnershipSelector(orderKOneBased),
+                orderKOneBased
+        );
     }
 
     private static ClusterMetric metricFor(MetricKind metricKind) {
@@ -30,6 +36,11 @@ public final class ScenePreparation {
         };
     }
 
-    public record PreparedScene(List<ClusterSite> clusters, ClusterMetric metric) {
+    public record PreparedScene(
+            List<ClusterSite> clusters,
+            ClusterMetric metric,
+            ClusterOwnershipSelector ownershipSelector,
+            int orderKOneBased
+    ) {
     }
 }

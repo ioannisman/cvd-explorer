@@ -12,12 +12,12 @@ import java.nio.IntBuffer;
 import java.util.stream.IntStream;
 
 public class RasterDiagramRenderer {
-    public record Classification(int clusterIndex, double score) {
+    public record Classification(long clusterMask, double boundaryScore) {
     }
 
-    public record OwnershipGrid(int width, int height, int[] clusterIndices) {
-        public int clusterIndexAt(int x, int y) {
-            return clusterIndices[y * width + x];
+    public record OwnershipGrid(int width, int height, long[] regionMasks) {
+        public long regionMaskAt(int x, int y) {
+            return regionMasks[y * width + x];
         }
     }
 
@@ -31,11 +31,11 @@ public class RasterDiagramRenderer {
 
     @FunctionalInterface
     public interface Colorizer {
-        int color(Classification classification);
+        int color(int x, int y, Classification classification);
     }
 
     private int[] pixels;
-    private int[] clusterIndices;
+    private long[] regionMasks;
     private int sizeYp = 0;
     private int sizeXp = 0;
 
@@ -60,9 +60,9 @@ public class RasterDiagramRenderer {
                 Vector point = tFromPixels.applyTo(pixelCenter);
                 Classification classification = classifier.classify(point);
                 int index = y * sizeX + x;
-                clusterIndices[index] = classification.clusterIndex();
+                regionMasks[index] = classification.clusterMask();
                 if (colorizer != null) {
-                    pixels[index] = colorizer.color(classification);
+                    pixels[index] = colorizer.color(x, y, classification);
                 }
             }
         });
@@ -76,7 +76,7 @@ public class RasterDiagramRenderer {
             image = new WritableImage(pixelBuffer);
         }
 
-        return new RenderResult(image, new OwnershipGrid(sizeX, sizeY, clusterIndices));
+        return new RenderResult(image, new OwnershipGrid(sizeX, sizeY, regionMasks));
     }
 
     private void ensureBuffers(int sizeX, int sizeY) {
@@ -84,7 +84,7 @@ public class RasterDiagramRenderer {
             sizeYp = sizeY;
             sizeXp = sizeX;
             pixels = new int[sizeY * sizeX];
-            clusterIndices = new int[sizeY * sizeX];
+            regionMasks = new long[sizeY * sizeX];
         }
     }
 }
