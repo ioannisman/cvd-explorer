@@ -2,5 +2,6 @@ package cvdexplorer.model;
 
 public enum SiteMemberKind {
     POINT,
-    LINE_SEGMENT
+    LINE_SEGMENT,
+    CIRCLE
 }

@@ -1,6 +1,7 @@
 package cvdexplorer.io;
 
 import cvdexplorer.metric.MetricKind;
+import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
@@ -30,7 +31,8 @@ class SceneJsonCodecTest {
                 Color.color(0.2, 0.4, 0.6, 0.95),
                 List.of(
                         new PointMember(Vector.xy(10, -20)),
-                        new SegmentMember(Vector.xy(0, 0), Vector.xy(100, 5))
+                        new SegmentMember(Vector.xy(0, 0), Vector.xy(100, 5)),
+                        new CircleMember(Vector.xy(20, 30), Vector.xy(26, 30))
                 )
         ));
         source.clusters().add(new ClusterSite(
@@ -56,13 +58,17 @@ class SceneJsonCodecTest {
 
         ClusterSite a = restored.clusters().get(0);
         assertEquals("Alpha", a.name());
-        assertEquals(2, a.members().size());
+        assertEquals(3, a.members().size());
         PointMember p = (PointMember) a.members().get(0);
         assertEquals(10.0, p.position().x(), 1e-9);
         assertEquals(-20.0, p.position().y(), 1e-9);
         SegmentMember s = (SegmentMember) a.members().get(1);
         assertEquals(0.0, s.a().x(), 1e-9);
         assertEquals(100.0, s.b().x(), 1e-9);
+        CircleMember c = (CircleMember) a.members().get(2);
+        assertEquals(20.0, c.center().x(), 1e-9);
+        assertEquals(30.0, c.center().y(), 1e-9);
+        assertEquals(6.0, c.radius(), 1e-9);
 
         ClusterSite b = restored.clusters().get(1);
         assertEquals("Beta", b.name());
@@ -75,5 +81,30 @@ class SceneJsonCodecTest {
         SceneState state = SceneState.demo();
         SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
         assertTrue(ex.getMessage().contains("version"));
+    }
+
+    @Test
+    void rejectsNegativeCircleRadius() {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MINIMUM_DISTANCE",
+                  "siteMemberKind": "CIRCLE",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [
+                        {"kind": "CIRCLE", "cx": 1.0, "cy": 2.0, "radius": -4.0}
+                      ]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+
+        SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
+
+        assertTrue(ex.getMessage().contains("radius"));
     }
 }

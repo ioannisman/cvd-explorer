@@ -1,5 +1,7 @@
 package cvdexplorer.render;
 
+import cvdexplorer.HandleVisibility;
+import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.SegmentMember;
 import javafx.scene.paint.Color;
@@ -31,10 +33,17 @@ public final class MemberOverlayRenderer {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
             view.strokeLineSegment(sm.a(), sm.b());
+        } else if (member instanceof CircleMember cm) {
+            view.setLineWidth(lw);
+            view.setStroke(memberSelected ? SELECTION_STROKE : edge);
+            view.strokeCircleCentered(cm.center(), cm.radius());
         }
 
         view.setLineWidth(lw);
         for (int h = 0; h < member.handleCount(); h++) {
+            if (!HandleVisibility.isVisible(member, h, memberSelected)) {
+                continue;
+            }
             boolean handleSelected = memberSelected && h == selectedHandleIndex;
             view.setFill(clusterColor);
             view.fillCircleCentered(member.getHandle(h), handleRadiusWorld);

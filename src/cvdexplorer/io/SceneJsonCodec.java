@@ -1,6 +1,7 @@
 package cvdexplorer.io;
 
 import cvdexplorer.metric.MetricKind;
+import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.PointMember;
@@ -62,6 +63,13 @@ public final class SceneJsonCodec {
                     mj.ay = sm.a().y();
                     mj.bx = sm.b().x();
                     mj.by = sm.b().y();
+                    members.add(mj);
+                } else if (member instanceof CircleMember cm) {
+                    MemberJson mj = new MemberJson();
+                    mj.kind = "CIRCLE";
+                    mj.cx = cm.center().x();
+                    mj.cy = cm.center().y();
+                    mj.radius = cm.radius();
                     members.add(mj);
                 }
             }
@@ -154,6 +162,17 @@ public final class SceneJsonCodec {
                     }
                     out.add(new SegmentMember(Vector.xy(mj.ax, mj.ay), Vector.xy(mj.bx, mj.by)));
                 }
+                case "CIRCLE" -> {
+                    if (mj.cx == null || mj.cy == null || mj.radius == null) {
+                        throw new SceneJsonException("CIRCLE member requires cx, cy, radius in cluster " + clusterName);
+                    }
+                    if (mj.radius < 0.0) {
+                        throw new SceneJsonException("CIRCLE member radius must be non-negative in cluster " + clusterName);
+                    }
+                    Vector center = Vector.xy(mj.cx, mj.cy);
+                    Vector radiusHandle = center.add(Vector.xy(mj.radius, 0.0));
+                    out.add(new CircleMember(center, radiusHandle));
+                }
                 default -> throw new SceneJsonException("Unknown member kind: " + mj.kind + " in cluster " + clusterName);
             }
         }
@@ -192,5 +211,8 @@ public final class SceneJsonCodec {
         Double ay;
         Double bx;
         Double by;
+        Double cx;
+        Double cy;
+        Double radius;
     }
 }

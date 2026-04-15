@@ -329,7 +329,11 @@ public class AppMain implements Drawing {
             ClusterSite cluster = state.clusters().get(clusterIndex);
             for (int memberIndex = 0; memberIndex < cluster.size(); memberIndex++) {
                 ClusterMember member = cluster.members().get(memberIndex);
+                boolean memberSelected = clusterIndex == selectedClusterIndex && memberIndex == selectedMemberIndex;
                 for (int h = 0; h < member.handleCount(); h++) {
+                    if (!HandleVisibility.isVisible(member, h, memberSelected)) {
+                        continue;
+                    }
                     double distance = member.getHandle(h).distanceTo(pointerWorld);
                     if (distance < bestDistance && distance < radiusLimit) {
                         bestDistance = distance;
@@ -351,8 +355,12 @@ public class AppMain implements Drawing {
             ClusterSite cluster = state.clusters().get(ci);
             for (int mi = 0; mi < cluster.size(); mi++) {
                 ClusterMember member = cluster.members().get(mi);
+                boolean memberSelected = ci == selectedClusterIndex && mi == selectedMemberIndex;
                 for (int h = 0; h < member.handleCount(); h++) {
                     if (ci == excludeCluster && mi == excludeMember && h == excludeHandle) {
+                        continue;
+                    }
+                    if (!HandleVisibility.isVisible(member, h, memberSelected)) {
                         continue;
                     }
                     Vector handlePos = member.getHandle(h);
@@ -375,8 +383,12 @@ public class AppMain implements Drawing {
 
         for (int mi = 0; mi < cluster.size(); mi++) {
             ClusterMember member = cluster.members().get(mi);
+            boolean memberSelected = clusterIndex == selectedClusterIndex && mi == selectedMemberIndex;
             for (int h = 0; h < member.handleCount(); h++) {
                 if (mi == memberIndex && h == handleIndex) {
+                    continue;
+                }
+                if (!HandleVisibility.isVisible(member, h, memberSelected)) {
                     continue;
                 }
                 if (member.getHandle(h).equals(position)) {
