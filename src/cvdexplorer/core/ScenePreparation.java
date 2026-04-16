@@ -4,6 +4,7 @@ import cvdexplorer.metric.ClusterMetric;
 import cvdexplorer.metric.FarthestMemberMetric;
 import cvdexplorer.metric.MetricKind;
 import cvdexplorer.metric.NearestMemberMetric;
+import cvdexplorer.metric.MeanOfDistancesMetric;
 import cvdexplorer.metric.SumOfDistancesMetric;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.SceneState;
@@ -14,6 +15,7 @@ public final class ScenePreparation {
     private static final ClusterMetric MINIMUM_DISTANCE = new NearestMemberMetric();
     private static final ClusterMetric MAXIMUM_DISTANCE = new FarthestMemberMetric();
     private static final ClusterMetric SUM_OF_DISTANCES = new SumOfDistancesMetric();
+    private static final ClusterMetric MEAN_DISTANCE = new MeanOfDistancesMetric();
 
     private ScenePreparation() {
     }
@@ -27,6 +29,7 @@ public final class ScenePreparation {
             case MINIMUM_DISTANCE -> MINIMUM_DISTANCE;
             case MAXIMUM_DISTANCE -> MAXIMUM_DISTANCE;
             case SUM_OF_DISTANCES -> SUM_OF_DISTANCES;
+            case MEAN_DISTANCE -> MEAN_DISTANCE;
         };
     }
 

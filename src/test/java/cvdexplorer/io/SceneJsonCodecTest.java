@@ -132,4 +132,54 @@ class SceneJsonCodecTest {
 
         assertTrue(ex.getMessage().contains("SUM_OF_DISTANCES"));
     }
+
+    @Test
+    void rejectsMeanDistanceWithCircleMembers() {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MEAN_DISTANCE",
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [
+                        {"kind": "CIRCLE", "cx": 1.0, "cy": 2.0, "radius": 4.0}
+                      ]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+
+        SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
+
+        assertTrue(ex.getMessage().contains("MEAN_DISTANCE"));
+    }
+
+    @Test
+    void legacyAverageDistanceMetricKindInJsonLoadsAsMeanDistance() throws Exception {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "AVERAGE_DISTANCE",
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [
+                        {"kind": "POINT", "x": 0.0, "y": 0.0}
+                      ]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+
+        SceneJsonCodec.applyJson(state, json);
+
+        assertEquals(MetricKind.MEAN_DISTANCE, state.metricKind);
+    }
 }

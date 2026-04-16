@@ -131,11 +131,7 @@ public final class SceneState {
     }
 
     public void cycleMetric() {
-        metricKind = switch (metricKind) {
-            case MINIMUM_DISTANCE -> MetricKind.MAXIMUM_DISTANCE;
-            case MAXIMUM_DISTANCE -> MetricKind.SUM_OF_DISTANCES;
-            case SUM_OF_DISTANCES -> MetricKind.MINIMUM_DISTANCE;
-        };
+        metricKind = metricKind.nextInCycle();
     }
 
     /**

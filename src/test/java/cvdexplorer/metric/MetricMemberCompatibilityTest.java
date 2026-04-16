@@ -5,6 +5,8 @@ import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.SiteMemberKind;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import xyz.marsavic.geometry.Vector;
 
 import java.util.List;
@@ -13,40 +15,34 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MetricMemberCompatibilityTest {
-    @Test
-    void sumOfDistancesRejectsCircleClusters() {
-        List<ClusterSite> clusters = List.of(
-                new ClusterSite(
-                        "Alpha",
-                        Color.RED,
-                        List.of(new CircleMember(Vector.xy(0, 0), Vector.xy(10, 0)))
-                )
-        );
+    private static final List<ClusterSite> CIRCLE_ONLY_CLUSTERS = List.of(
+            new ClusterSite(
+                    "Alpha",
+                    Color.RED,
+                    List.of(new CircleMember(Vector.xy(0, 0), Vector.xy(10, 0)))
+            )
+    );
 
-        assertTrue(MetricMemberCompatibility.invalidMetricMessage(MetricKind.SUM_OF_DISTANCES, clusters).isPresent());
+    @ParameterizedTest
+    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE"})
+    void pointOnlyMetricsRejectCircleClusters(MetricKind metricKind) {
+        assertTrue(MetricMemberCompatibility.invalidMetricMessage(metricKind, CIRCLE_ONLY_CLUSTERS).isPresent());
     }
 
     @Test
     void minimumDistanceAllowsCircleClusters() {
-        List<ClusterSite> clusters = List.of(
-                new ClusterSite(
-                        "Alpha",
-                        Color.RED,
-                        List.of(new CircleMember(Vector.xy(0, 0), Vector.xy(10, 0)))
-                )
-        );
-
-        assertFalse(MetricMemberCompatibility.invalidMetricMessage(MetricKind.MINIMUM_DISTANCE, clusters).isPresent());
+        assertFalse(MetricMemberCompatibility.invalidMetricMessage(MetricKind.MINIMUM_DISTANCE, CIRCLE_ONLY_CLUSTERS).isPresent());
     }
 
-    @Test
-    void sumOfDistancesRejectsNewCircleMembers() {
+    @ParameterizedTest
+    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE"})
+    void pointOnlyMetricsRejectNewCircleMembers(MetricKind metricKind) {
         assertTrue(MetricMemberCompatibility.invalidNewMemberMessage(
-                MetricKind.SUM_OF_DISTANCES,
+                metricKind,
                 SiteMemberKind.CIRCLE
         ).isPresent());
         assertFalse(MetricMemberCompatibility.invalidNewMemberMessage(
-                MetricKind.SUM_OF_DISTANCES,
+                metricKind,
                 SiteMemberKind.POINT
         ).isPresent());
     }

@@ -17,7 +17,7 @@ public final class HelpOverlay {
                 "",
                 "Controls:",
                 "    h               - Toggle help",
-                "    m               - Cycle MINIMUM_DISTANCE / MAXIMUM_DISTANCE / SUM_OF_DISTANCES",
+                "    m               - Cycle MINIMUM_DISTANCE / MAXIMUM_DISTANCE / SUM_OF_DISTANCES / MEAN_DISTANCE",
                 "    s               - Toggle distance shading (gadget)",
                 "    p               - Toggle cluster members",
                 "    d               - Toggle raster diagram",

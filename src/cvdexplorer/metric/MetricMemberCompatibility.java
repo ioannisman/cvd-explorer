@@ -9,21 +9,26 @@ import java.util.List;
 import java.util.Optional;
 
 public final class MetricMemberCompatibility {
-    private static final String SUM_OF_DISTANCES_ONLY_POINTS =
-            "SUM_OF_DISTANCES is only supported for clusters made entirely of points.";
-
     private MetricMemberCompatibility() {
     }
 
+    private static boolean requiresPointOnlyMembers(MetricKind metricKind) {
+        return metricKind == MetricKind.SUM_OF_DISTANCES || metricKind == MetricKind.MEAN_DISTANCE;
+    }
+
+    private static String pointOnlyMetricMessage(MetricKind metricKind) {
+        return metricKind.name() + " is only supported for clusters made entirely of points.";
+    }
+
     public static Optional<String> invalidMetricMessage(MetricKind metricKind, List<ClusterSite> clusters) {
-        if (metricKind != MetricKind.SUM_OF_DISTANCES) {
+        if (!requiresPointOnlyMembers(metricKind)) {
             return Optional.empty();
         }
 
         for (ClusterSite cluster : clusters) {
             for (ClusterMember member : cluster.members()) {
                 if (!(member instanceof PointMember)) {
-                    return Optional.of(SUM_OF_DISTANCES_ONLY_POINTS);
+                    return Optional.of(pointOnlyMetricMessage(metricKind));
                 }
             }
         }
@@ -32,8 +37,8 @@ public final class MetricMemberCompatibility {
     }
 
     public static Optional<String> invalidNewMemberMessage(MetricKind metricKind, SiteMemberKind memberKind) {
-        if (metricKind == MetricKind.SUM_OF_DISTANCES && memberKind != SiteMemberKind.POINT) {
-            return Optional.of(SUM_OF_DISTANCES_ONLY_POINTS);
+        if (requiresPointOnlyMembers(metricKind) && memberKind != SiteMemberKind.POINT) {
+            return Optional.of(pointOnlyMetricMessage(metricKind));
         }
         return Optional.empty();
     }

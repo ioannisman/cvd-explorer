@@ -95,6 +95,23 @@ public final class SceneJsonCodec {
         return root;
     }
 
+    /**
+     * Parses {@code metricKind} from JSON. {@code AVERAGE_DISTANCE} is accepted as a legacy alias for {@link MetricKind#MEAN_DISTANCE}.
+     */
+    static MetricKind parseMetricKind(String name) throws SceneJsonException {
+        if (name == null || name.isEmpty()) {
+            throw new SceneJsonException("metricKind is required");
+        }
+        if ("AVERAGE_DISTANCE".equals(name)) {
+            return MetricKind.MEAN_DISTANCE;
+        }
+        try {
+            return MetricKind.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw new SceneJsonException("Unknown metricKind: " + name);
+        }
+    }
+
     static void applyDto(SceneState state, SceneFileV1 dto) throws SceneJsonException {
         if (dto.version == null || !dto.version.equals(CURRENT_VERSION)) {
             throw new SceneJsonException("Unsupported or missing version (expected " + CURRENT_VERSION + ")");
@@ -106,13 +123,8 @@ public final class SceneJsonCodec {
             throw new SceneJsonException("Too many clusters (max " + SceneState.MAX_CLUSTERS + ")");
         }
 
-        MetricKind metricKind;
+        MetricKind metricKind = parseMetricKind(dto.metricKind);
         SiteMemberKind siteMemberKind;
-        try {
-            metricKind = MetricKind.valueOf(dto.metricKind);
-        } catch (Exception e) {
-            throw new SceneJsonException("Unknown metricKind: " + dto.metricKind);
-        }
         try {
             siteMemberKind = SiteMemberKind.valueOf(dto.siteMemberKind);
         } catch (Exception e) {

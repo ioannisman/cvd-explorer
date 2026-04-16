@@ -51,6 +51,19 @@ class ClusterMetricTest {
     }
 
     @Test
+    void meanOfDistancesIsMeanOfMemberDistances() {
+        ClusterMetric metric = new MeanOfDistancesMetric();
+        List<ClusterMember> members = List.of(
+                new PointMember(Vector.xy(0, 0)),
+                new PointMember(Vector.xy(10, 0))
+        );
+
+        double score = metric.score(Vector.xy(6, 8), members);
+
+        assertEquals((10.0 + Math.sqrt(80)) / 2.0, score, 1.0e-9);
+    }
+
+    @Test
     void minimumDistanceUsesCircleCircumferenceDistance() {
         ClusterMetric metric = new NearestMemberMetric();
         List<ClusterMember> members = List.of(
