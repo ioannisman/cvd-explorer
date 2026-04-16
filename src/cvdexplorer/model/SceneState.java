@@ -1,5 +1,6 @@
 package cvdexplorer.model;
 
+import cvdexplorer.metric.MetricMemberCompatibility;
 import cvdexplorer.metric.MetricKind;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.gadgets.annotations.GadgetBoolean;
@@ -10,6 +11,7 @@ import xyz.marsavic.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class SceneState {
     public static final int MAX_CLUSTERS = 32;
@@ -45,11 +47,11 @@ public final class SceneState {
 
     @GadgetBoolean
     @Properties(name = "Show skeleton (k)")
-    public boolean showSkeleton = false;
+    public boolean showSkeleton = true;
 
     @GadgetBoolean
     @Properties(name = "Show help (h)")
-    public boolean showHelp = true;
+    public boolean showHelp = false;
 
     @GadgetBoolean
     @Properties(name = "Snap to grid (g)")
@@ -61,7 +63,7 @@ public final class SceneState {
 
     @GadgetBoolean
     @Properties(name = "Distance shading (s)")
-    public boolean showShading = true;
+    public boolean showShading = false;
 
     private final List<ClusterSite> clusters = new ArrayList<>();
     private final Color backgroundColor = Color.gray(0.92);
@@ -85,7 +87,7 @@ public final class SceneState {
                 List.of(
                         new PointMember(Vector.xy(180, -170)),
                         new PointMember(Vector.xy(260, -40)),
-                        new PointMember(Vector.xy(110, 20)),
+                        new PointMember(Vector.xy(-100, -140)),
                         new PointMember(Vector.xy(220, 120))
                 )
         ));
@@ -102,8 +104,8 @@ public final class SceneState {
                 Color.hsb(110, 0.7, 0.9),
                 List.of(
                         new PointMember(Vector.xy(60, 180)),
-                        new PointMember(Vector.xy(170, 220)),
-                        new PointMember(Vector.xy(280, 210)),
+                        new PointMember(Vector.xy(170, -220)),
+                        new PointMember(Vector.xy(280, -250)),
                         new PointMember(Vector.xy(210, 300)),
                         new PointMember(Vector.xy(110, 310))
                 )
@@ -183,20 +185,27 @@ public final class SceneState {
         activeClusterOneBased = Math.max(1, Math.min(n, activeClusterOneBased));
     }
 
-    public void ensureClusterCountMatchesGadget() {
+    public Optional<String> ensureClusterCountMatchesGadget() {
         numberOfClusters = Math.max(1, Math.min(MAX_CLUSTERS, numberOfClusters));
         while (clusters.size() < numberOfClusters) {
+            Optional<String> invalidNewMember = MetricMemberCompatibility.invalidNewMemberMessage(metricKind, siteMemberKind);
+            if (invalidNewMember.isPresent()) {
+                numberOfClusters = clusters.size();
+                activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
+                return invalidNewMember;
+            }
             clusters.add(defaultCluster(clusters.size()));
         }
         while (clusters.size() > numberOfClusters) {
             clusters.remove(clusters.size() - 1);
         }
         activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
+        return Optional.empty();
     }
 
-    public void ensureActiveClusterMemberCount() {
+    public Optional<String> ensureActiveClusterMemberCount() {
         if (clusters.isEmpty()) {
-            return;
+            return Optional.empty();
         }
 
         activeClusterOneBased = Math.max(1, Math.min(clusters.size(), activeClusterOneBased));
@@ -214,12 +223,18 @@ public final class SceneState {
         ClusterSite cluster = clusters.get(clusterIndex);
 
         while (cluster.size() < targetPointCountForActiveCluster) {
+            Optional<String> invalidNewMember = MetricMemberCompatibility.invalidNewMemberMessage(metricKind, siteMemberKind);
+            if (invalidNewMember.isPresent()) {
+                targetPointCountForActiveCluster = cluster.size();
+                return invalidNewMember;
+            }
             Vector hint = jitteredNewMemberHint(cluster, clusterIndex, cluster.size());
             cluster.addMember(SiteMemberFactory.createDefault(siteMemberKind, clusterIndex, cluster.size(), hint));
         }
         while (cluster.size() > targetPointCountForActiveCluster) {
             cluster.removeMember(cluster.size() - 1);
         }
+        return Optional.empty();
     }
 
     private static Vector centroidOfMembers(List<ClusterMember> members) {

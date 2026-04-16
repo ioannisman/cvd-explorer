@@ -8,6 +8,9 @@ import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SiteMemberFactory;
+import cvdexplorer.model.SiteMemberKind;
+import cvdexplorer.metric.MetricKind;
+import cvdexplorer.metric.MetricMemberCompatibility;
 import cvdexplorer.render.ClusterColorizer;
 import cvdexplorer.render.HelpOverlay;
 import cvdexplorer.render.MemberOverlayRenderer;
@@ -15,6 +18,7 @@ import cvdexplorer.render.RasterDiagramRenderer;
 import cvdexplorer.render.SkeletonOverlayRenderer;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -62,6 +66,15 @@ public class AppMain implements Drawing {
     private int selectedHandleIndex = -1;
 
     private int prevGadgetActiveClusterOneBased = 0;
+    private MetricKind lastValidMetricKind = state.metricKind;
+    private SiteMemberKind lastValidSiteMemberKind = state.siteMemberKind;
+    private MetricKind lastRejectedMetricKind = null;
+    private SiteMemberKind lastRejectedSiteMemberKind = null;
+    private Integer lastRejectedClusterCount = null;
+    private Integer lastRejectedMemberCount = null;
+    private int lastRejectedMemberCountClusterOneBased = -1;
+    private Alert activeErrorAlert = null;
+    private String activeErrorDialogKey = null;
 
     private List<Selection> coMovingHandles = List.of();
     private Vector snapTargetPosition = null;
@@ -71,8 +84,10 @@ public class AppMain implements Drawing {
 
     @Override
     public void draw(View view) {
-        state.ensureClusterCountMatchesGadget();
-        state.ensureActiveClusterMemberCount();
+        normalizeMetricSelection();
+        normalizeSiteMemberKindSelection();
+        normalizeClusterCountGadget();
+        normalizeActiveClusterMemberCountGadget();
 
         int g = state.activeClusterOneBased;
         if (g != prevGadgetActiveClusterOneBased) {
@@ -249,7 +264,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
         if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
-        if (event.isKeyPress(KeyCode.M)) state.cycleMetric();
+        if (event.isKeyPress(KeyCode.M)) cycleMetricWithValidation();
 
         if (event.isKeyPress(KeyCode.E)) {
             int n = state.clusterCount();
@@ -261,6 +276,13 @@ public class AppMain implements Drawing {
         }
 
         if (event.isKeyPress(KeyCode.A)) {
+            String invalidAddMessage = MetricMemberCompatibility.invalidNewMemberMessage(state.metricKind, state.siteMemberKind)
+                    .orElse(null);
+            if (invalidAddMessage != null) {
+                state.siteMemberKind = lastValidSiteMemberKind;
+                showCompatibilityError(invalidAddMessage);
+                return;
+            }
             int clusterIdx = state.activeClusterOneBased - 1;
             ClusterSite cluster = state.clusters().get(clusterIdx);
             cluster.addMember(SiteMemberFactory.createDefault(state.siteMemberKind, clusterIdx, cluster.size(), pointerWorld));
@@ -286,6 +308,9 @@ public class AppMain implements Drawing {
 
         if (event.isKeyPress(KeyCode.N)) {
             state.copyFrom(SceneState.demo());
+            lastValidMetricKind = state.metricKind;
+            lastValidSiteMemberKind = state.siteMemberKind;
+            clearRejectedGadgetAttempts();
             activeClusterIndex = state.activeClusterOneBased - 1;
             prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
             clearSelection();
@@ -472,6 +497,163 @@ public class AppMain implements Drawing {
         }
     }
 
+    private void cycleMetricWithValidation() {
+        MetricKind nextMetricKind = nextMetricKind(state.metricKind);
+        String invalidMetricMessage = MetricMemberCompatibility.invalidMetricMessage(nextMetricKind, state.clusters())
+                .orElse(null);
+        if (invalidMetricMessage != null) {
+            showCompatibilityError(invalidMetricMessage);
+            return;
+        }
+        state.metricKind = nextMetricKind;
+        lastValidMetricKind = nextMetricKind;
+    }
+
+    private void normalizeMetricSelection() {
+        MetricKind selectedMetricKind = state.metricKind;
+        if (selectedMetricKind == lastValidMetricKind) {
+            lastRejectedMetricKind = null;
+            return;
+        }
+        if (selectedMetricKind == lastRejectedMetricKind) {
+            state.metricKind = lastValidMetricKind;
+            return;
+        }
+
+        String invalidMetricMessage = MetricMemberCompatibility.invalidMetricMessage(selectedMetricKind, state.clusters())
+                .orElse(null);
+        if (invalidMetricMessage != null) {
+            lastRejectedMetricKind = selectedMetricKind;
+            state.metricKind = lastValidMetricKind;
+            showCompatibilityError(invalidMetricMessage);
+            return;
+        }
+        lastRejectedMetricKind = null;
+        lastValidMetricKind = selectedMetricKind;
+    }
+
+    private void normalizeSiteMemberKindSelection() {
+        SiteMemberKind selectedSiteMemberKind = state.siteMemberKind;
+        if (selectedSiteMemberKind == lastValidSiteMemberKind) {
+            lastRejectedSiteMemberKind = null;
+            return;
+        }
+        if (selectedSiteMemberKind == lastRejectedSiteMemberKind) {
+            state.siteMemberKind = lastValidSiteMemberKind;
+            return;
+        }
+
+        String invalidNewMemberMessage = MetricMemberCompatibility.invalidNewMemberMessage(state.metricKind, selectedSiteMemberKind)
+                .orElse(null);
+        if (invalidNewMemberMessage != null) {
+            lastRejectedSiteMemberKind = selectedSiteMemberKind;
+            state.siteMemberKind = lastValidSiteMemberKind;
+            showCompatibilityError(invalidNewMemberMessage);
+            return;
+        }
+        lastRejectedSiteMemberKind = null;
+        lastValidSiteMemberKind = selectedSiteMemberKind;
+    }
+
+    private static MetricKind nextMetricKind(MetricKind metricKind) {
+        return switch (metricKind) {
+            case MINIMUM_DISTANCE -> MetricKind.MAXIMUM_DISTANCE;
+            case MAXIMUM_DISTANCE -> MetricKind.SUM_OF_DISTANCES;
+            case SUM_OF_DISTANCES -> MetricKind.MINIMUM_DISTANCE;
+        };
+    }
+
+    private void showCompatibilityError(String message) {
+        showErrorDialog("Unsupported metric/member combination", message);
+    }
+
+    private void normalizeClusterCountGadget() {
+        int requestedClusterCount = state.numberOfClusters;
+        String compatibilityError = state.ensureClusterCountMatchesGadget().orElse(null);
+        if (compatibilityError == null) {
+            lastRejectedClusterCount = null;
+            return;
+        }
+        if (!Integer.valueOf(requestedClusterCount).equals(lastRejectedClusterCount)) {
+            lastRejectedClusterCount = requestedClusterCount;
+            showCompatibilityError(compatibilityError);
+        }
+    }
+
+    private void normalizeActiveClusterMemberCountGadget() {
+        int requestedClusterOneBased = state.activeClusterOneBased;
+        int requestedMemberCount = state.targetPointCountForActiveCluster;
+        String compatibilityError = state.ensureActiveClusterMemberCount().orElse(null);
+        if (compatibilityError == null) {
+            lastRejectedMemberCount = null;
+            lastRejectedMemberCountClusterOneBased = -1;
+            return;
+        }
+        boolean repeatedRejectedRequest =
+                requestedClusterOneBased == lastRejectedMemberCountClusterOneBased
+                        && Integer.valueOf(requestedMemberCount).equals(lastRejectedMemberCount);
+        if (!repeatedRejectedRequest) {
+            lastRejectedMemberCountClusterOneBased = requestedClusterOneBased;
+            lastRejectedMemberCount = requestedMemberCount;
+            showCompatibilityError(compatibilityError);
+        }
+    }
+
+    private void clearRejectedGadgetAttempts() {
+        lastRejectedMetricKind = null;
+        lastRejectedSiteMemberKind = null;
+        lastRejectedClusterCount = null;
+        lastRejectedMemberCount = null;
+        lastRejectedMemberCountClusterOneBased = -1;
+    }
+
+    private void showErrorDialog(String header, String message) {
+        Platform.runLater(() -> {
+            String dialogKey = header + "\n" + message;
+            if (activeErrorAlert != null && activeErrorAlert.isShowing()) {
+                if (dialogKey.equals(activeErrorDialogKey)) {
+                    focusActiveErrorAlert();
+                    return;
+                }
+                activeErrorAlert.setHeaderText(header);
+                activeErrorAlert.setContentText(message);
+                activeErrorDialogKey = dialogKey;
+                focusActiveErrorAlert();
+                return;
+            }
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Cluster Voronoi Explorer");
+            alert.setHeaderText(header);
+            alert.setContentText(message);
+            Window owner = firstShowingWindow();
+            if (owner != null) {
+                alert.initOwner(owner);
+            }
+            alert.setOnHidden(event -> {
+                if (activeErrorAlert == alert) {
+                    activeErrorAlert = null;
+                    activeErrorDialogKey = null;
+                }
+            });
+            activeErrorAlert = alert;
+            activeErrorDialogKey = dialogKey;
+            alert.show();
+        });
+    }
+
+    private void focusActiveErrorAlert() {
+        if (activeErrorAlert == null) {
+            return;
+        }
+        Window window = activeErrorAlert.getDialogPane().getScene() == null
+                ? null
+                : activeErrorAlert.getDialogPane().getScene().getWindow();
+        if (window != null) {
+            window.requestFocus();
+        }
+    }
+
     private void saveSceneToFile() {
         // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind).
         FileChooser chooser = new FileChooser();
@@ -488,6 +670,7 @@ public class AppMain implements Drawing {
         try {
             SceneFileIo.save(file.toPath(), state);
         } catch (IOException e) {
+            showErrorDialog("Save failed", e.getMessage());
             System.err.println("Save failed: " + e.getMessage());
         }
     }
@@ -503,13 +686,18 @@ public class AppMain implements Drawing {
         }
         try {
             SceneFileIo.load(state, file.toPath());
+            lastValidMetricKind = state.metricKind;
+            lastValidSiteMemberKind = state.siteMemberKind;
+            clearRejectedGadgetAttempts();
             // Match gadget-driven active cluster and clear stale selection indices.
             activeClusterIndex = state.activeClusterOneBased - 1;
             prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
             clearSelection();
         } catch (SceneJsonException e) {
+            showErrorDialog("Load failed", e.getMessage());
             System.err.println("Load failed: " + e.getMessage());
         } catch (IOException e) {
+            showErrorDialog("Load failed", e.getMessage());
             System.err.println("Load failed: " + e.getMessage());
         }
     }

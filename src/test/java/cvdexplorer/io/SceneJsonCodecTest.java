@@ -23,7 +23,7 @@ class SceneJsonCodecTest {
     @Test
     void encodeDecodeRoundTripPreservesClustersMetricAndMembers() throws Exception {
         SceneState source = new SceneState();
-        source.metricKind = MetricKind.SUM_OF_DISTANCES;
+        source.metricKind = MetricKind.MINIMUM_DISTANCE;
         source.siteMemberKind = SiteMemberKind.LINE_SEGMENT;
         source.clusters().clear();
         source.clusters().add(new ClusterSite(
@@ -52,7 +52,7 @@ class SceneJsonCodecTest {
 
         SceneJsonCodec.applyJson(restored, json);
 
-        assertEquals(MetricKind.SUM_OF_DISTANCES, restored.metricKind);
+        assertEquals(MetricKind.MINIMUM_DISTANCE, restored.metricKind);
         assertEquals(SiteMemberKind.LINE_SEGMENT, restored.siteMemberKind);
         assertEquals(2, restored.clusters().size());
 
@@ -106,5 +106,30 @@ class SceneJsonCodecTest {
         SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
 
         assertTrue(ex.getMessage().contains("radius"));
+    }
+
+    @Test
+    void rejectsSumOfDistancesWithCircleMembers() {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "SUM_OF_DISTANCES",
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [
+                        {"kind": "CIRCLE", "cx": 1.0, "cy": 2.0, "radius": 4.0}
+                      ]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+
+        SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
+
+        assertTrue(ex.getMessage().contains("SUM_OF_DISTANCES"));
     }
 }

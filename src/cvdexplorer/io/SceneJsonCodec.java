@@ -1,5 +1,6 @@
 package cvdexplorer.io;
 
+import cvdexplorer.metric.MetricMemberCompatibility;
 import cvdexplorer.metric.MetricKind;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
@@ -137,6 +138,11 @@ public final class SceneJsonCodec {
             }
             List<ClusterMember> members = parseMembers(cj.members, cj.name);
             loaded.add(new ClusterSite(cj.name, color, members));
+        }
+
+        String invalidMetricMessage = MetricMemberCompatibility.invalidMetricMessage(metricKind, loaded).orElse(null);
+        if (invalidMetricMessage != null) {
+            throw new SceneJsonException(invalidMetricMessage);
         }
 
         // View toggles unchanged; gadget counts follow the new cluster list.
