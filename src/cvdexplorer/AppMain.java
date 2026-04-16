@@ -264,7 +264,6 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
         if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
-        if (event.isKeyPress(KeyCode.M)) cycleMetricWithValidation();
 
         if (event.isKeyPress(KeyCode.E)) {
             int n = state.clusterCount();
@@ -497,18 +496,6 @@ public class AppMain implements Drawing {
         }
     }
 
-    private void cycleMetricWithValidation() {
-        MetricKind nextMetricKind = nextMetricKind(state.metricKind);
-        String invalidMetricMessage = MetricMemberCompatibility.invalidMetricMessage(nextMetricKind, state.clusters())
-                .orElse(null);
-        if (invalidMetricMessage != null) {
-            showCompatibilityError(invalidMetricMessage);
-            return;
-        }
-        state.metricKind = nextMetricKind;
-        lastValidMetricKind = nextMetricKind;
-    }
-
     private void normalizeMetricSelection() {
         MetricKind selectedMetricKind = state.metricKind;
         if (selectedMetricKind == lastValidMetricKind) {
@@ -553,10 +540,6 @@ public class AppMain implements Drawing {
         }
         lastRejectedSiteMemberKind = null;
         lastValidSiteMemberKind = selectedSiteMemberKind;
-    }
-
-    private static MetricKind nextMetricKind(MetricKind metricKind) {
-        return metricKind.nextInCycle();
     }
 
     private void showCompatibilityError(String message) {

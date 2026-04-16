@@ -34,7 +34,7 @@ public final class SceneState {
     public SiteMemberKind siteMemberKind = SiteMemberKind.POINT;
 
     @GadgetEnum(enumClass = MetricKind.class)
-    @Properties(name = "Metric (m)")
+    @Properties(name = "Metric")
     public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
     @GadgetBoolean
@@ -128,10 +128,6 @@ public final class SceneState {
 
     public int clusterCount() {
         return clusters.size();
-    }
-
-    public void cycleMetric() {
-        metricKind = metricKind.nextInCycle();
     }
 
     /**
