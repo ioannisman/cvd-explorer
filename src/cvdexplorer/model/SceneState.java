@@ -22,15 +22,15 @@ public final class SceneState {
     public int numberOfClusters = 1;
 
     @GadgetInteger(min = 1, max = MAX_CLUSTERS)
-    @Properties(name = "Active cluster")
+    @Properties(name = "Active cluster (n/p)")
     public int activeClusterOneBased = 1;
 
     @GadgetInteger(min = 1, max = MAX_MEMBERS_PER_CLUSTER)
-    @Properties(name = "Members in active cluster")
+    @Properties(name = "Members in active cluster (a/d)")
     public int targetPointCountForActiveCluster = 1;
 
     @GadgetEnum(enumClass = SiteMemberKind.class)
-    @Properties(name = "New member type")
+    @Properties(name = "New member type (a)")
     public SiteMemberKind siteMemberKind = SiteMemberKind.POINT;
 
     @GadgetEnum(enumClass = MetricKind.class)
@@ -38,11 +38,11 @@ public final class SceneState {
     public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
     @GadgetBoolean
-    @Properties(name = "Show diagram (d)")
+    @Properties(name = "Show colored regions (c)")
     public boolean showDiagram = true;
 
     @GadgetBoolean
-    @Properties(name = "Show members (p)")
+    @Properties(name = "Show members (m)")
     public boolean showMembers = true;
 
     @GadgetBoolean

@@ -258,17 +258,25 @@ public class AppMain implements Drawing {
 
     private void applyKeys(InputEvent event, Vector pointerWorld) {
         if (event.isKeyPress(KeyCode.H)) state.showHelp ^= true;
-        if (event.isKeyPress(KeyCode.P)) state.showMembers ^= true;
-        if (event.isKeyPress(KeyCode.D)) state.showDiagram ^= true;
+        if (event.isKeyPress(KeyCode.M)) state.showMembers ^= true;
+        if (event.isKeyPress(KeyCode.C)) state.showDiagram ^= true;
         if (event.isKeyPress(KeyCode.K)) state.showSkeleton ^= true;
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
         if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;
         if (event.isKeyPress(KeyCode.S)) state.showShading ^= true;
 
-        if (event.isKeyPress(KeyCode.E)) {
-            int n = state.clusterCount();
-            if (n > 0) {
-                state.activeClusterOneBased = state.activeClusterOneBased >= n ? 1 : state.activeClusterOneBased + 1;
+        if (event.isKeyPress(KeyCode.N)) {
+            int clusterCount = state.clusterCount();
+            if (clusterCount > 0) {
+                state.activeClusterOneBased = state.activeClusterOneBased >= clusterCount ? 1 : state.activeClusterOneBased + 1;
+                activeClusterIndex = state.activeClusterOneBased - 1;
+                prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            }
+        }
+        if (event.isKeyPress(KeyCode.P)) {
+            int clusterCount = state.clusterCount();
+            if (clusterCount > 0) {
+                state.activeClusterOneBased = state.activeClusterOneBased <= 1 ? clusterCount : state.activeClusterOneBased - 1;
                 activeClusterIndex = state.activeClusterOneBased - 1;
                 prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
             }
@@ -293,7 +301,7 @@ public class AppMain implements Drawing {
             selectedHandleIndex = 0;
         }
 
-        if (event.isKeyPress(KeyCode.X) && hasSelection()) {
+        if (event.isKeyPress(KeyCode.D) && hasSelection()) {
             ClusterSite cluster = state.clusters().get(selectedClusterIndex);
             if (cluster.size() > 1) {
                 cluster.removeMember(selectedMemberIndex);
@@ -305,7 +313,7 @@ public class AppMain implements Drawing {
             }
         }
 
-        if (event.isKeyPress(KeyCode.N)) {
+        if (event.isKeyPress(KeyCode.R)) {
             state.copyFrom(SceneState.demo());
             lastValidMetricKind = state.metricKind;
             lastValidSiteMemberKind = state.siteMemberKind;
