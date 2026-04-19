@@ -19,6 +19,11 @@ public final class SiteMemberFactory {
                 Vector radius = Vector.polar(22, angle);
                 yield new CircleMember(hint, hint.add(radius));
             }
+            case LINE -> {
+                double angle = 2 * Math.PI * (memberIndex * 0.618033988749895 + clusterIndex * 0.31);
+                Vector half = Vector.polar(22, angle);
+                yield new LineMember(hint.sub(half), hint.add(half));
+            }
         };
     }
 }

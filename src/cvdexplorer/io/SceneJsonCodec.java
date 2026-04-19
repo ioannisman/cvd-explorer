@@ -5,6 +5,7 @@ import cvdexplorer.metric.MetricKind;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.LineMember;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SegmentMember;
@@ -71,6 +72,14 @@ public final class SceneJsonCodec {
                     mj.cx = cm.center().x();
                     mj.cy = cm.center().y();
                     mj.radius = cm.radius();
+                    members.add(mj);
+                } else if (member instanceof LineMember lm) {
+                    MemberJson mj = new MemberJson();
+                    mj.kind = "LINE";
+                    mj.px = lm.a().x();
+                    mj.py = lm.a().y();
+                    mj.qx = lm.b().x();
+                    mj.qy = lm.b().y();
                     members.add(mj);
                 }
             }
@@ -191,6 +200,12 @@ public final class SceneJsonCodec {
                     Vector radiusHandle = center.add(Vector.xy(mj.radius, 0.0));
                     out.add(new CircleMember(center, radiusHandle));
                 }
+                case "LINE" -> {
+                    if (mj.px == null || mj.py == null || mj.qx == null || mj.qy == null) {
+                        throw new SceneJsonException("LINE member requires px, py, qx, qy in cluster " + clusterName);
+                    }
+                    out.add(new LineMember(Vector.xy(mj.px, mj.py), Vector.xy(mj.qx, mj.qy)));
+                }
                 default -> throw new SceneJsonException("Unknown member kind: " + mj.kind + " in cluster " + clusterName);
             }
         }
@@ -232,5 +247,9 @@ public final class SceneJsonCodec {
         Double cx;
         Double cy;
         Double radius;
+        Double px;
+        Double py;
+        Double qx;
+        Double qy;
     }
 }

@@ -3,6 +3,7 @@ package cvdexplorer.io;
 import cvdexplorer.metric.MetricKind;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.LineMember;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SegmentMember;
@@ -24,7 +25,7 @@ class SceneJsonCodecTest {
     void encodeDecodeRoundTripPreservesClustersMetricAndMembers() throws Exception {
         SceneState source = new SceneState();
         source.metricKind = MetricKind.MINIMUM_DISTANCE;
-        source.siteMemberKind = SiteMemberKind.LINE_SEGMENT;
+        source.siteMemberKind = SiteMemberKind.LINE;
         source.clusters().clear();
         source.clusters().add(new ClusterSite(
                 "Alpha",
@@ -32,7 +33,8 @@ class SceneJsonCodecTest {
                 List.of(
                         new PointMember(Vector.xy(10, -20)),
                         new SegmentMember(Vector.xy(0, 0), Vector.xy(100, 5)),
-                        new CircleMember(Vector.xy(20, 30), Vector.xy(26, 30))
+                        new CircleMember(Vector.xy(20, 30), Vector.xy(26, 30)),
+                        new LineMember(Vector.xy(-10, 5), Vector.xy(15, 35))
                 )
         ));
         source.clusters().add(new ClusterSite(
@@ -53,12 +55,12 @@ class SceneJsonCodecTest {
         SceneJsonCodec.applyJson(restored, json);
 
         assertEquals(MetricKind.MINIMUM_DISTANCE, restored.metricKind);
-        assertEquals(SiteMemberKind.LINE_SEGMENT, restored.siteMemberKind);
+        assertEquals(SiteMemberKind.LINE, restored.siteMemberKind);
         assertEquals(2, restored.clusters().size());
 
         ClusterSite a = restored.clusters().get(0);
         assertEquals("Alpha", a.name());
-        assertEquals(3, a.members().size());
+        assertEquals(4, a.members().size());
         PointMember p = (PointMember) a.members().get(0);
         assertEquals(10.0, p.position().x(), 1e-9);
         assertEquals(-20.0, p.position().y(), 1e-9);
@@ -69,6 +71,11 @@ class SceneJsonCodecTest {
         assertEquals(20.0, c.center().x(), 1e-9);
         assertEquals(30.0, c.center().y(), 1e-9);
         assertEquals(6.0, c.radius(), 1e-9);
+        LineMember l = (LineMember) a.members().get(3);
+        assertEquals(-10.0, l.a().x(), 1e-9);
+        assertEquals(5.0, l.a().y(), 1e-9);
+        assertEquals(15.0, l.b().x(), 1e-9);
+        assertEquals(35.0, l.b().y(), 1e-9);
 
         ClusterSite b = restored.clusters().get(1);
         assertEquals("Beta", b.name());

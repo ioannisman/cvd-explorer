@@ -3,9 +3,11 @@ package cvdexplorer.render;
 import cvdexplorer.HandleVisibility;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
+import cvdexplorer.model.LineMember;
 import cvdexplorer.model.SegmentMember;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.drawing.View;
+import xyz.marsavic.geometry.Line;
 import xyz.marsavic.geometry.Vector;
 
 public final class MemberOverlayRenderer {
@@ -37,6 +39,12 @@ public final class MemberOverlayRenderer {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
             view.strokeCircleCentered(cm.center(), cm.radius());
+        } else if (member instanceof LineMember lm) {
+            view.setLineWidth(lw);
+            view.setStroke(memberSelected ? SELECTION_STROKE : edge);
+            if (lm.b().sub(lm.a()).lengthSquared() > 0.0) {
+                view.strokeLine(Line.pq(lm.a(), lm.b()));
+            }
         }
 
         view.setLineWidth(lw);
