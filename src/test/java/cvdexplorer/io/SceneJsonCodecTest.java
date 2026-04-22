@@ -56,6 +56,7 @@ class SceneJsonCodecTest {
 
         assertEquals(MetricKind.MINIMUM_DISTANCE, restored.metricKind);
         assertEquals(SiteMemberKind.LINE, restored.siteMemberKind);
+        assertEquals(source.nearestNeighborK, restored.nearestNeighborK);
         assertEquals(2, restored.clusters().size());
 
         ClusterSite a = restored.clusters().get(0);
@@ -188,5 +189,57 @@ class SceneJsonCodecTest {
         SceneJsonCodec.applyJson(state, json);
 
         assertEquals(MetricKind.MEAN_DISTANCE, state.metricKind);
+    }
+
+    @Test
+    void encodeDecodeRoundTripPreservesNearestNeighborK() throws Exception {
+        SceneState source = new SceneState();
+        source.metricKind = MetricKind.KTH_NEAREST_DISTANCE;
+        source.siteMemberKind = SiteMemberKind.POINT;
+        source.nearestNeighborK = 2;
+        source.clusters().clear();
+        source.clusters().add(new ClusterSite(
+                "A",
+                Color.RED,
+                List.of(new PointMember(Vector.xy(0, 0)), new PointMember(Vector.xy(10, 0)), new PointMember(Vector.xy(5, 5)))
+        ));
+        source.clusters().add(new ClusterSite(
+                "B",
+                Color.BLUE,
+                List.of(new PointMember(Vector.xy(100, 0)), new PointMember(Vector.xy(110, 0)))
+        ));
+        source.numberOfClusters = source.clusters().size();
+
+        String json = SceneJsonCodec.encode(source);
+
+        SceneState restored = SceneState.demo();
+        SceneJsonCodec.applyJson(restored, json);
+
+        assertEquals(MetricKind.KTH_NEAREST_DISTANCE, restored.metricKind);
+        assertEquals(2, restored.nearestNeighborK);
+    }
+
+    @Test
+    void rejectsInvalidNearestNeighborK() {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MINIMUM_DISTANCE",
+                  "siteMemberKind": "POINT",
+                  "nearestNeighborK": 0,
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [{"kind": "POINT", "x": 0.0, "y": 0.0}]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+
+        SceneJsonException ex = assertThrows(SceneJsonException.class, () -> SceneJsonCodec.applyJson(state, json));
+
+        assertTrue(ex.getMessage().contains("nearestNeighborK"));
     }
 }

@@ -100,6 +100,7 @@ public final class SceneJsonCodec {
         root.version = CURRENT_VERSION;
         root.metricKind = state.metricKind.name();
         root.siteMemberKind = state.siteMemberKind.name();
+        root.nearestNeighborK = state.nearestNeighborK;
         root.clusters = clusters;
         return root;
     }
@@ -166,8 +167,18 @@ public final class SceneJsonCodec {
             throw new SceneJsonException(invalidMetricMessage);
         }
 
+        int loadedNearestNeighborK = 1;
+        if (dto.nearestNeighborK != null) {
+            if (dto.nearestNeighborK < 1 || dto.nearestNeighborK > SceneState.MAX_MEMBERS_PER_CLUSTER) {
+                throw new SceneJsonException(
+                        "nearestNeighborK must be between 1 and " + SceneState.MAX_MEMBERS_PER_CLUSTER
+                );
+            }
+            loadedNearestNeighborK = dto.nearestNeighborK;
+        }
+
         // View toggles unchanged; gadget counts follow the new cluster list.
-        state.applyLoadedScene(metricKind, siteMemberKind, loaded);
+        state.applyLoadedScene(metricKind, siteMemberKind, loaded, loadedNearestNeighborK);
     }
 
     private static List<ClusterMember> parseMembers(List<MemberJson> members, String clusterName) throws SceneJsonException {
@@ -220,6 +231,7 @@ public final class SceneJsonCodec {
         String version;
         String metricKind;
         String siteMemberKind;
+        Integer nearestNeighborK;
         List<ClusterJson> clusters;
     }
 

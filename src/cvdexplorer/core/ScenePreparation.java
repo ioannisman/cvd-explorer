@@ -2,8 +2,8 @@ package cvdexplorer.core;
 
 import cvdexplorer.metric.ClusterMetric;
 import cvdexplorer.metric.FarthestMemberMetric;
-import cvdexplorer.metric.MetricKind;
 import cvdexplorer.metric.NearestMemberMetric;
+import cvdexplorer.metric.KthNearestPointDistanceMetric;
 import cvdexplorer.metric.MeanOfDistancesMetric;
 import cvdexplorer.metric.SumOfDistancesMetric;
 import cvdexplorer.model.ClusterSite;
@@ -21,15 +21,20 @@ public final class ScenePreparation {
     }
 
     public static PreparedScene prepare(SceneState state) {
-        return new PreparedScene(List.copyOf(state.clusters()), metricFor(state.metricKind));
+        return new PreparedScene(List.copyOf(state.clusters()), metricFor(state));
     }
 
-    private static ClusterMetric metricFor(MetricKind metricKind) {
-        return switch (metricKind) {
+    private static ClusterMetric metricFor(SceneState state) {
+        return switch (state.metricKind) {
             case MINIMUM_DISTANCE -> MINIMUM_DISTANCE;
             case MAXIMUM_DISTANCE -> MAXIMUM_DISTANCE;
             case SUM_OF_DISTANCES -> SUM_OF_DISTANCES;
             case MEAN_DISTANCE -> MEAN_DISTANCE;
+            case KTH_NEAREST_DISTANCE -> {
+                int minSize = state.minMemberCountAcrossClusters();
+                int k = minSize < 1 ? 1 : Math.max(1, Math.min(state.nearestNeighborK, minSize));
+                yield new KthNearestPointDistanceMetric(k);
+            }
         };
     }
 

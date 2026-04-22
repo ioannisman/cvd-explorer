@@ -24,7 +24,7 @@ class MetricMemberCompatibilityTest {
     );
 
     @ParameterizedTest
-    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE"})
+    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE"})
     void pointOnlyMetricsRejectCircleClusters(MetricKind metricKind) {
         assertTrue(MetricMemberCompatibility.invalidMetricMessage(metricKind, CIRCLE_ONLY_CLUSTERS).isPresent());
     }
@@ -35,7 +35,7 @@ class MetricMemberCompatibilityTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE"})
+    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE"})
     void pointOnlyMetricsRejectNewCircleMembers(MetricKind metricKind) {
         assertTrue(MetricMemberCompatibility.invalidNewMemberMessage(
                 metricKind,

@@ -88,6 +88,7 @@ public class AppMain implements Drawing {
         normalizeSiteMemberKindSelection();
         normalizeClusterCountGadget();
         normalizeActiveClusterMemberCountGadget();
+        state.clampNearestNeighborK();
 
         int g = state.activeClusterOneBased;
         if (g != prevGadgetActiveClusterOneBased) {
@@ -642,7 +643,7 @@ public class AppMain implements Drawing {
     }
 
     private void saveSceneToFile() {
-        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind).
+        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind, nearestNeighborK).
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save scene");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON scene", "*.json"));

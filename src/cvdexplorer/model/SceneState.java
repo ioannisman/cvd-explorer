@@ -37,6 +37,10 @@ public final class SceneState {
     @Properties(name = "Metric")
     public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
+    @GadgetInteger(min = 1, max = MAX_MEMBERS_PER_CLUSTER)
+    @Properties(name = "Metric parameter k")
+    public int nearestNeighborK = 1;
+
     @GadgetBoolean
     @Properties(name = "Show colored regions (c)")
     public boolean showDiagram = true;
@@ -130,16 +134,37 @@ public final class SceneState {
         return clusters.size();
     }
 
+    /** Minimum {@link ClusterSite#size()} across clusters; 0 if there are no clusters. */
+    public int minMemberCountAcrossClusters() {
+        return clusters.stream().mapToInt(ClusterSite::size).min().orElse(0);
+    }
+
+    /** Keeps {@link #nearestNeighborK} in {@code [1, min cluster size]} (and gadget max). */
+    public void clampNearestNeighborK() {
+        int minSize = minMemberCountAcrossClusters();
+        if (minSize < 1) {
+            nearestNeighborK = 1;
+            return;
+        }
+        nearestNeighborK = Math.max(1, Math.min(nearestNeighborK, Math.min(minSize, MAX_MEMBERS_PER_CLUSTER)));
+    }
+
     /**
      * Replaces all clusters and metric authoring fields from a loaded file.
      * View toggles and camera are unchanged. Gadget fields are normalized to the new cluster list.
      */
-    public void applyLoadedScene(MetricKind newMetricKind, SiteMemberKind newSiteMemberKind, List<ClusterSite> newClusters) {
+    public void applyLoadedScene(
+            MetricKind newMetricKind,
+            SiteMemberKind newSiteMemberKind,
+            List<ClusterSite> newClusters,
+            int loadedNearestNeighborK
+    ) {
         if (newClusters.isEmpty() || newClusters.size() > MAX_CLUSTERS) {
             throw new IllegalArgumentException("Cluster list must be non-empty and at most " + MAX_CLUSTERS);
         }
         metricKind = newMetricKind;
         siteMemberKind = newSiteMemberKind;
+        nearestNeighborK = loadedNearestNeighborK;
         clusters.clear();
         for (ClusterSite site : newClusters) {
             clusters.add(site);
@@ -149,10 +174,12 @@ public final class SceneState {
         targetPointCountForActiveCluster = clusters.get(activeClusterOneBased - 1).size();
         // Keeps ensureActiveClusterMemberCount from fighting the loaded member lists.
         lastActiveClusterOneBasedForMemberSync = activeClusterOneBased;
+        clampNearestNeighborK();
     }
 
     public void copyFrom(SceneState other) {
         metricKind = other.metricKind;
+        nearestNeighborK = other.nearestNeighborK;
         showDiagram = other.showDiagram;
         showMembers = other.showMembers;
         showSkeleton = other.showSkeleton;

@@ -64,6 +64,46 @@ class ClusterMetricTest {
     }
 
     @Test
+    void kthNearestWithK1MatchesNearestMemberDistance() {
+        ClusterMetric metric = new KthNearestPointDistanceMetric(1);
+        List<ClusterMember> members = List.of(
+                new PointMember(Vector.xy(0, 0)),
+                new PointMember(Vector.xy(10, 0))
+        );
+
+        double score = metric.score(Vector.xy(6, 8), members);
+
+        assertEquals(Math.sqrt(80), score, 1.0e-9);
+    }
+
+    @Test
+    void kthNearestWithK2UsesFartherOfTwoPoints() {
+        ClusterMetric metric = new KthNearestPointDistanceMetric(2);
+        List<ClusterMember> members = List.of(
+                new PointMember(Vector.xy(0, 0)),
+                new PointMember(Vector.xy(10, 0))
+        );
+
+        double score = metric.score(Vector.xy(6, 8), members);
+
+        assertEquals(10.0, score, 1.0e-9);
+    }
+
+    @Test
+    void kthNearestWithK3UsesThirdSmallestDistance() {
+        ClusterMetric metric = new KthNearestPointDistanceMetric(3);
+        List<ClusterMember> members = List.of(
+                new PointMember(Vector.xy(0, 0)),
+                new PointMember(Vector.xy(0, 3)),
+                new PointMember(Vector.xy(0, 6))
+        );
+
+        double score = metric.score(Vector.xy(0, 1), members);
+
+        assertEquals(5.0, score, 1.0e-9);
+    }
+
+    @Test
     void minimumDistanceUsesCircleCircumferenceDistance() {
         ClusterMetric metric = new NearestMemberMetric();
         List<ClusterMember> members = List.of(

@@ -13,7 +13,9 @@ public final class MetricMemberCompatibility {
     }
 
     private static boolean requiresPointOnlyMembers(MetricKind metricKind) {
-        return metricKind == MetricKind.SUM_OF_DISTANCES || metricKind == MetricKind.MEAN_DISTANCE;
+        return metricKind == MetricKind.SUM_OF_DISTANCES
+                || metricKind == MetricKind.MEAN_DISTANCE
+                || metricKind == MetricKind.KTH_NEAREST_DISTANCE;
     }
 
     private static String pointOnlyMetricMessage(MetricKind metricKind) {
