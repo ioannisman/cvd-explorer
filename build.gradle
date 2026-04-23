@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'application'
     id 'com.gradleup.shadow' version '9.4.0'
 }
@@ -8,6 +9,7 @@ group = 'cvd'
 version = '0.1.0-SNAPSHOT'
 
 def javafxModules = ['javafx.controls']
+def coverageEnabled = project.hasProperty('coverage')
 
 java {
     toolchain {
@@ -61,12 +63,44 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['--add-modules', javafxModules.join(',')]
 }
 
+jacoco {
+    toolVersion = '0.8.14'
+}
+
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     jvmArgs += ['--add-modules', javafxModules.join(',')]
+    jacoco {
+        enabled = coverageEnabled
+    }
     testLogging {
         events 'passed', 'failed', 'skipped'
         exceptionFormat 'full'
+    }
+}
+
+tasks.named('jacocoTestReport', JacocoReport) {
+    dependsOn tasks.named('test')
+    onlyIf { coverageEnabled }
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    dependsOn tasks.named('test')
+    onlyIf { coverageEnabled }
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                // Low because most of the app is UI / desktop code not exercised by unit tests; raise as tests grow
+                minimum = 0.32g
+            }
+        }
     }
 }
 

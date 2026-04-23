@@ -17,6 +17,12 @@ chmod +x gradlew   # if needed
 ./gradlew build
 ```
 
+Run tests with coverage report:
+
+```bash
+./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage
+```
+
 Run the app:
 
 ```bash
