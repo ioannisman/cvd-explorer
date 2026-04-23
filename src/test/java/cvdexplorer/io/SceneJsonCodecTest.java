@@ -4,6 +4,7 @@ import cvdexplorer.metric.MetricKind;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.LineMember;
+import cvdexplorer.model.NeighborOrder;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SegmentMember;
@@ -25,6 +26,7 @@ class SceneJsonCodecTest {
     void encodeDecodeRoundTripPreservesClustersMetricAndMembers() throws Exception {
         SceneState source = new SceneState();
         source.metricKind = MetricKind.MINIMUM_DISTANCE;
+        source.neighborOrder = NeighborOrder.FARTHEST;
         source.siteMemberKind = SiteMemberKind.LINE;
         source.clusters().clear();
         source.clusters().add(new ClusterSite(
@@ -55,6 +57,7 @@ class SceneJsonCodecTest {
         SceneJsonCodec.applyJson(restored, json);
 
         assertEquals(MetricKind.MINIMUM_DISTANCE, restored.metricKind);
+        assertEquals(NeighborOrder.FARTHEST, restored.neighborOrder);
         assertEquals(SiteMemberKind.LINE, restored.siteMemberKind);
         assertEquals(source.nearestNeighborK, restored.nearestNeighborK);
         assertEquals(2, restored.clusters().size());
@@ -195,6 +198,7 @@ class SceneJsonCodecTest {
     void encodeDecodeRoundTripPreservesNearestNeighborK() throws Exception {
         SceneState source = new SceneState();
         source.metricKind = MetricKind.KTH_NEAREST_DISTANCE;
+        source.neighborOrder = NeighborOrder.FARTHEST;
         source.siteMemberKind = SiteMemberKind.POINT;
         source.nearestNeighborK = 2;
         source.clusters().clear();
@@ -216,7 +220,32 @@ class SceneJsonCodecTest {
         SceneJsonCodec.applyJson(restored, json);
 
         assertEquals(MetricKind.KTH_NEAREST_DISTANCE, restored.metricKind);
+        assertEquals(NeighborOrder.FARTHEST, restored.neighborOrder);
         assertEquals(2, restored.nearestNeighborK);
+    }
+
+    @Test
+    void missingNeighborOrderInJsonDefaultsToNearest() throws Exception {
+        String json = """
+                {
+                  "version": "1",
+                  "metricKind": "MINIMUM_DISTANCE",
+                  "siteMemberKind": "POINT",
+                  "clusters": [
+                    {
+                      "name": "Alpha",
+                      "color": {"r": 0.1, "g": 0.2, "b": 0.3, "opacity": 1.0},
+                      "members": [{"kind": "POINT", "x": 0.0, "y": 0.0}]
+                    }
+                  ]
+                }
+                """;
+        SceneState state = SceneState.demo();
+        state.neighborOrder = NeighborOrder.FARTHEST;
+
+        SceneJsonCodec.applyJson(state, json);
+
+        assertEquals(NeighborOrder.NEAREST, state.neighborOrder);
     }
 
     @Test

@@ -12,7 +12,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClusterOwnershipSelectorTest {
-    private final ClusterOwnershipSelector selector = new ClusterOwnershipSelector();
+    private final ClusterOwnershipSelector nearestSelector = new ClusterOwnershipSelector(true);
+    private final ClusterOwnershipSelector farthestSelector = new ClusterOwnershipSelector(false);
 
     @Test
     void selectsClusterWithLowestScore() {
@@ -22,7 +23,7 @@ class ClusterOwnershipSelectorTest {
                 clusterAt(10, 0)
         );
 
-        ClusterOwnershipSelector.Result ownership = selector.selectOwner(Vector.xy(2, 0), clusters, metric);
+        ClusterOwnershipSelector.Result ownership = nearestSelector.selectOwner(Vector.xy(2, 0), clusters, metric);
 
         assertEquals(0, ownership.clusterIndex());
         assertEquals(2.0, ownership.score(), 1.0e-9);
@@ -36,10 +37,24 @@ class ClusterOwnershipSelectorTest {
                 clusterAt(5, 0)
         );
 
-        ClusterOwnershipSelector.Result ownership = selector.selectOwner(Vector.xy(0, 0), clusters, metric);
+        ClusterOwnershipSelector.Result ownership = nearestSelector.selectOwner(Vector.xy(0, 0), clusters, metric);
 
         assertEquals(0, ownership.clusterIndex());
         assertEquals(5.0, ownership.score(), 1.0e-9);
+    }
+
+    @Test
+    void selectsClusterWithHighestScoreWhenConfiguredForFarthest() {
+        ClusterMetric metric = (point, members) -> members.get(0).distanceTo(point);
+        List<ClusterSite> clusters = List.of(
+                clusterAt(0, 0),
+                clusterAt(10, 0)
+        );
+
+        ClusterOwnershipSelector.Result ownership = farthestSelector.selectOwner(Vector.xy(2, 0), clusters, metric);
+
+        assertEquals(1, ownership.clusterIndex());
+        assertEquals(8.0, ownership.score(), 1.0e-9);
     }
 
     private static ClusterSite clusterAt(double x, double y) {

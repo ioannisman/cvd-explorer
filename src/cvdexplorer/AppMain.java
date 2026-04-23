@@ -636,7 +636,7 @@ public class AppMain implements Drawing {
     }
 
     private void saveSceneToFile() {
-        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, siteMemberKind, nearestNeighborK).
+        // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, neighborOrder, siteMemberKind, nearestNeighborK).
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save scene");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON scene", "*.json"));

@@ -6,6 +6,7 @@ import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
 import cvdexplorer.model.LineMember;
+import cvdexplorer.model.NeighborOrder;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SegmentMember;
@@ -99,6 +100,7 @@ public final class SceneJsonCodec {
         SceneFileV1 root = new SceneFileV1();
         root.version = CURRENT_VERSION;
         root.metricKind = state.metricKind.name();
+        root.neighborOrder = state.neighborOrder.name();
         root.siteMemberKind = state.siteMemberKind.name();
         root.nearestNeighborK = state.nearestNeighborK;
         root.clusters = clusters;
@@ -122,6 +124,17 @@ public final class SceneJsonCodec {
         }
     }
 
+    static NeighborOrder parseNeighborOrder(String name) throws SceneJsonException {
+        if (name == null || name.isEmpty()) {
+            return NeighborOrder.NEAREST;
+        }
+        try {
+            return NeighborOrder.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw new SceneJsonException("Unknown neighborOrder: " + name);
+        }
+    }
+
     static void applyDto(SceneState state, SceneFileV1 dto) throws SceneJsonException {
         if (dto.version == null || !dto.version.equals(CURRENT_VERSION)) {
             throw new SceneJsonException("Unsupported or missing version (expected " + CURRENT_VERSION + ")");
@@ -134,6 +147,7 @@ public final class SceneJsonCodec {
         }
 
         MetricKind metricKind = parseMetricKind(dto.metricKind);
+        NeighborOrder neighborOrder = parseNeighborOrder(dto.neighborOrder);
         SiteMemberKind siteMemberKind;
         try {
             siteMemberKind = SiteMemberKind.valueOf(dto.siteMemberKind);
@@ -178,7 +192,7 @@ public final class SceneJsonCodec {
         }
 
         // View toggles unchanged; gadget counts follow the new cluster list.
-        state.applyLoadedScene(metricKind, siteMemberKind, loaded, loadedNearestNeighborK);
+        state.applyLoadedScene(metricKind, neighborOrder, siteMemberKind, loaded, loadedNearestNeighborK);
     }
 
     private static List<ClusterMember> parseMembers(List<MemberJson> members, String clusterName) throws SceneJsonException {
@@ -230,6 +244,7 @@ public final class SceneJsonCodec {
     static final class SceneFileV1 {
         String version;
         String metricKind;
+        String neighborOrder;
         String siteMemberKind;
         Integer nearestNeighborK;
         List<ClusterJson> clusters;

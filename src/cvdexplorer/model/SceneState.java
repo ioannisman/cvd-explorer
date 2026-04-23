@@ -37,6 +37,10 @@ public final class SceneState {
     @Properties(name = "Metric")
     public MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
 
+    @GadgetEnum(enumClass = NeighborOrder.class)
+    @Properties(name = "Neighbor order")
+    public NeighborOrder neighborOrder = NeighborOrder.NEAREST;
+
     @GadgetInteger(min = 1, max = MAX_MEMBERS_PER_CLUSTER)
     @Properties(name = "Metric parameter k")
     public int nearestNeighborK = 1;
@@ -155,6 +159,7 @@ public final class SceneState {
      */
     public void applyLoadedScene(
             MetricKind newMetricKind,
+            NeighborOrder newNeighborOrder,
             SiteMemberKind newSiteMemberKind,
             List<ClusterSite> newClusters,
             int loadedNearestNeighborK
@@ -163,6 +168,7 @@ public final class SceneState {
             throw new IllegalArgumentException("Cluster list must be non-empty and at most " + MAX_CLUSTERS);
         }
         metricKind = newMetricKind;
+        neighborOrder = newNeighborOrder;
         siteMemberKind = newSiteMemberKind;
         nearestNeighborK = loadedNearestNeighborK;
         clusters.clear();
@@ -179,6 +185,7 @@ public final class SceneState {
 
     public void copyFrom(SceneState other) {
         metricKind = other.metricKind;
+        neighborOrder = other.neighborOrder;
         nearestNeighborK = other.nearestNeighborK;
         showDiagram = other.showDiagram;
         showMembers = other.showMembers;
