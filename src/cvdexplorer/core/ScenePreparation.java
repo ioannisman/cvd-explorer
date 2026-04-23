@@ -16,12 +16,13 @@ public final class ScenePreparation {
     private static final ClusterMetric MAXIMUM_DISTANCE = new FarthestMemberMetric();
     private static final ClusterMetric SUM_OF_DISTANCES = new SumOfDistancesMetric();
     private static final ClusterMetric MEAN_DISTANCE = new MeanOfDistancesMetric();
+    private static final ClusterOwnershipSelector NEAREST_OWNERSHIP = new ClusterOwnershipSelector();
 
     private ScenePreparation() {
     }
 
     public static PreparedScene prepare(SceneState state) {
-        return new PreparedScene(List.copyOf(state.clusters()), metricFor(state));
+        return new PreparedScene(List.copyOf(state.clusters()), metricFor(state), NEAREST_OWNERSHIP);
     }
 
     private static ClusterMetric metricFor(SceneState state) {
@@ -38,6 +39,10 @@ public final class ScenePreparation {
         };
     }
 
-    public record PreparedScene(List<ClusterSite> clusters, ClusterMetric metric) {
+    public record PreparedScene(
+            List<ClusterSite> clusters,
+            ClusterMetric metric,
+            ClusterOwnershipSelector ownershipSelector
+    ) {
     }
 }

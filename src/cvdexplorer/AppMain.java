@@ -155,19 +155,12 @@ public class AppMain implements Drawing {
     }
 
     private RasterDiagramRenderer.Classification classify(Vector point, PreparedScene preparedScene) {
-        int bestIndex = -1;
-        double bestScore = Double.POSITIVE_INFINITY;
-
-        for (int clusterIndex = 0; clusterIndex < preparedScene.clusters().size(); clusterIndex++) {
-            ClusterSite cluster = preparedScene.clusters().get(clusterIndex);
-            double score = preparedScene.metric().score(point, cluster);
-            if ((score < bestScore) || ((score == bestScore) && (clusterIndex < bestIndex))) {
-                bestIndex = clusterIndex;
-                bestScore = score;
-            }
-        }
-
-        return new RasterDiagramRenderer.Classification(bestIndex, bestScore);
+        var ownership = preparedScene.ownershipSelector().selectOwner(
+                point,
+                preparedScene.clusters(),
+                preparedScene.metric()
+        );
+        return new RasterDiagramRenderer.Classification(ownership.clusterIndex(), ownership.score());
     }
 
     private void drawMembers(View view, PreparedScene preparedScene) {
