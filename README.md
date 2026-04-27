@@ -23,6 +23,8 @@ Run tests with coverage report:
 ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage
 ```
 
+GitHub Pages: enable **Actions** as the Pages source, then see [`.github/workflows/pages.yml`](.github/workflows/pages.yml) (site at `https://ioannisman.github.io/cvd-explorer/`).
+
 Run the app:
 
 ```bash

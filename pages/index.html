@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>cvd-explorer — site</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    a { color: #0366d6; }
+    #chartWrap { max-width: 48rem; margin: 1.5rem 0; }
+    .muted { color: #555; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>cvd-explorer</h1>
+  <p class="muted">Published from <code>main</code> via GitHub Actions. Coverage history grows on each workflow run (not retroactive for commits before this was enabled).</p>
+  <ul>
+    <li><a href="coverage/index.html">JaCoCo coverage report</a> (current <code>main</code>)</li>
+    <li><a href="other/index.html">Other</a> (placeholder)</li>
+  </ul>
+  <h2>Coverage over time</h2>
+  <p class="muted">Line and instruction ratios from JaCoCo (aggregated for the whole project).</p>
+  <div id="chartWrap">
+    <canvas id="chart" height="120"></canvas>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <script>
+    (async function () {
+      const res = await fetch('coverage-history.json', { cache: 'no-store' });
+      if (!res.ok) {
+        document.getElementById('chartWrap').textContent = 'No coverage-history.json yet.';
+        return;
+      }
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById('chartWrap').textContent = 'No history entries yet.';
+        return;
+      }
+      const labels = data.map((e) => e.shortSha || (e.sha || '').slice(0, 7));
+      const linePct = data.map((e) => (e.lineCoverage != null ? e.lineCoverage * 100 : null));
+      const instrPct = data.map((e) => (e.instructionCoverage != null ? e.instructionCoverage * 100 : null));
+      const ctx = document.getElementById('chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Line %',
+              data: linePct,
+              borderColor: '#0969da',
+              tension: 0.15,
+              spanGaps: true,
+            },
+            {
+              label: 'Instruction %',
+              data: instrPct,
+              borderColor: '#1a7f37',
+              tension: 0.15,
+              spanGaps: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { min: 0, max: 100, title: { display: true, text: 'Covered %' } },
+            x: { title: { display: true, text: 'Commit (main)' } },
+          },
+        },
+      });
+    })();
+  </script>
+</body>
+</html>

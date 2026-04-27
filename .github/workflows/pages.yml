@@ -1,0 +1,75 @@
+name: Pages site
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: pages-site
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: ${{ !contains(github.event.head_commit.message, '[skip pages]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Liberica JDK 25 (with JavaFX)
+        uses: actions/setup-java@v5
+        with:
+          distribution: liberica
+          java-version: "25"
+          java-package: jdk+fx
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Tests and JaCoCo
+        run: chmod +x gradlew && ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage --no-daemon
+
+      - name: Assemble site (coverage + other + history)
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          TS="${{ github.event.head_commit.timestamp }}"
+          if [ -z "$TS" ]; then TS=$(date -u +%Y-%m-%dT%H:%M:%SZ); fi
+          python3 scripts/assemble_pages_site.py \
+            --jacoco-xml build/reports/jacoco/test/jacocoTestReport.xml \
+            --jacoco-html-dir build/reports/jacoco/test/html \
+            --pages-src pages \
+            --out-site build/pages-site \
+            --sha "$GITHUB_SHA" \
+            --date "$TS"
+
+      - name: Commit coverage history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pages/coverage-history.json
+          git diff --staged --quiet || (git commit -m "chore(pages): update coverage history [skip pages]" && git push)
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/pages-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
