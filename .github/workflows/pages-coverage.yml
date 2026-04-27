@@ -1,0 +1,53 @@
+# Publish JaCoCo HTML coverage to GitHub Pages.
+# Repo Settings → Pages → Build and deployment → Source: GitHub Actions.
+# URL: https://<owner>.github.io/cvd-explorer/
+
+name: Pages — coverage report
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-coverage
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Liberica JDK 25 (with JavaFX)
+        uses: actions/setup-java@v5
+        with:
+          distribution: liberica
+          java-version: "25"
+          java-package: jdk+fx
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Tests and JaCoCo HTML report
+        run: chmod +x gradlew && ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage --no-daemon
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/reports/jacoco/test/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
