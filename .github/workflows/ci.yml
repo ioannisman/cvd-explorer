@@ -31,8 +31,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      - name: Install Xvfb (JavaFX tests need a display on Linux)
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
       - name: Build and test (with coverage)
-        run: chmod +x gradlew && ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage --no-daemon
+        run: chmod +x gradlew && xvfb-run -a ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage --no-daemon
 
       - name: Upload JaCoCo report
         if: always()
