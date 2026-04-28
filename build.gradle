@@ -97,8 +97,8 @@ tasks.named('jacocoTestCoverageVerification') {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                // Low because most of the app is UI / desktop code not exercised by unit tests; raise as tests grow
-                minimum = 0.32g
+                // Most of AppMain / overlays remain untested; raise as tests grow
+                minimum = 0.40g
             }
         }
     }
