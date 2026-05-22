@@ -40,7 +40,7 @@ class RasterDiagramRendererTest {
         RasterDiagramRenderer.RenderResult result = renderer.render(
                 Transformation.IDENTITY.inverse(),
                 emptyExtent,
-                p -> new RasterDiagramRenderer.Classification(0, 0.0),
+                p -> new RasterDiagramRenderer.Classification(0, 0.0, 0),
                 c -> 0xff000000
         );
 
@@ -55,7 +55,7 @@ class RasterDiagramRendererTest {
         RasterDiagramRenderer.RenderResult result = renderer.render(
                 Transformation.IDENTITY.inverse(),
                 box,
-                p -> new RasterDiagramRenderer.Classification((int) Math.floor(p.x()) % 2, 0.0),
+                p -> new RasterDiagramRenderer.Classification((int) Math.floor(p.x()) % 2, 0.0, 0),
                 null
         );
 
@@ -85,7 +85,7 @@ class RasterDiagramRendererTest {
                 RasterDiagramRenderer.RenderResult result = renderer.render(
                         Transformation.IDENTITY.inverse(),
                         box,
-                        p -> new RasterDiagramRenderer.Classification(p.x() < 1.0 ? 0 : 1, 0.0),
+                        p -> new RasterDiagramRenderer.Classification(p.x() < 1.0 ? 0 : 1, 0.0, 0),
                         clusterColorizer::color
                 );
                 assertNotNull(result);
@@ -100,8 +100,8 @@ class RasterDiagramRendererTest {
                 image.getPixelReader().getPixels(0, 0, w, 1, PixelFormat.getIntArgbInstance(), buf, w);
                 int left = row[0];
                 int right = row[1];
-                assertEquals(left, clusterColorizer.color(new RasterDiagramRenderer.Classification(0, 0.0)));
-                assertEquals(right, clusterColorizer.color(new RasterDiagramRenderer.Classification(1, 0.0)));
+                assertEquals(left, clusterColorizer.color(new RasterDiagramRenderer.Classification(0, 0.0, 0)));
+                assertEquals(right, clusterColorizer.color(new RasterDiagramRenderer.Classification(1, 0.0, 0)));
                 done.complete(null);
             } catch (Throwable t) {
                 done.completeExceptionally(t);
@@ -118,7 +118,7 @@ class RasterDiagramRendererTest {
                 background,
                 false
         );
-        int argb = colorizer.color(new RasterDiagramRenderer.Classification(-1, 42.0));
+        int argb = colorizer.color(new RasterDiagramRenderer.Classification(-1, 42.0, -1));
         int expectedA = (int) Math.round(background.getOpacity() * 255.0);
         int expectedR = (int) Math.round(background.getRed() * 255.0);
         int expectedG = (int) Math.round(background.getGreen() * 255.0);

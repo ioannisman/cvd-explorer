@@ -12,12 +12,25 @@ import java.nio.IntBuffer;
 import java.util.stream.IntStream;
 
 public class RasterDiagramRenderer {
-    public record Classification(int clusterIndex, double score) {
+    /**
+     * Result of classifying a pixel against all clusters in the scene.
+     * @param clusterIndex The index of the winning cluster.
+     * @param score The distance or score of the winning cluster.
+     * @param memberIndex The index of the specific member within the winning cluster that realized the score (or -1 if aggregate).
+     */
+    public record Classification(int clusterIndex, double score, int memberIndex) {
     }
 
-    public record OwnershipGrid(int width, int height, int[] clusterIndices) {
+    /**
+     * Stores the rasterized classification results for the entire image grid.
+     */
+    public record OwnershipGrid(int width, int height, int[] clusterIndices, int[] memberIndices) {
         public int clusterIndexAt(int x, int y) {
             return clusterIndices[y * width + x];
+        }
+
+        public int memberIndexAt(int x, int y) {
+            return memberIndices[y * width + x];
         }
     }
 
@@ -36,6 +49,7 @@ public class RasterDiagramRenderer {
 
     private int[] pixels;
     private int[] clusterIndices;
+    private int[] memberIndices;
     private int sizeYp = 0;
     private int sizeXp = 0;
 
@@ -61,6 +75,7 @@ public class RasterDiagramRenderer {
                 Classification classification = classifier.classify(point);
                 int index = y * sizeX + x;
                 clusterIndices[index] = classification.clusterIndex();
+                memberIndices[index] = classification.memberIndex();
                 if (colorizer != null) {
                     pixels[index] = colorizer.color(classification);
                 }
@@ -76,7 +91,7 @@ public class RasterDiagramRenderer {
             image = new WritableImage(pixelBuffer);
         }
 
-        return new RenderResult(image, new OwnershipGrid(sizeX, sizeY, clusterIndices));
+        return new RenderResult(image, new OwnershipGrid(sizeX, sizeY, clusterIndices, memberIndices));
     }
 
     private void ensureBuffers(int sizeX, int sizeY) {
@@ -85,6 +100,7 @@ public class RasterDiagramRenderer {
             sizeXp = sizeX;
             pixels = new int[sizeY * sizeX];
             clusterIndices = new int[sizeY * sizeX];
+            memberIndices = new int[sizeY * sizeX];
         }
     }
 }

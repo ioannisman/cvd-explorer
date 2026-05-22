@@ -7,15 +7,20 @@ import java.util.List;
 
 public final class FarthestMemberMetric implements ClusterMetric {
     @Override
-    public double score(Vector point, List<ClusterMember> members) {
+    public Result evaluate(Vector point, List<ClusterMember> members) {
         if (members.isEmpty()) {
-            return Double.POSITIVE_INFINITY;
+            return new Result(Double.POSITIVE_INFINITY, -1);
         }
 
         double best = Double.NEGATIVE_INFINITY;
-        for (ClusterMember member : members) {
-            best = Math.max(best, member.distanceTo(point));
+        int bestIndex = -1;
+        for (int i = 0; i < members.size(); i++) {
+            double d = members.get(i).distanceTo(point);
+            if (d > best) {
+                best = d;
+                bestIndex = i;
+            }
         }
-        return best;
+        return new Result(best, bestIndex);
     }
 }

@@ -18,6 +18,7 @@ public final class HelpOverlay {
                 "    m               - Toggle cluster members",
                 "    c               - Toggle colored regions",
                 "    k               - Toggle skeleton overlay",
+                "    v               - Toggle region subdivision (nearest/farthest member within cluster)",
                 "    g               - Toggle snap to grid",
                 "    f               - Toggle snap to handles",
                 "    n / p           - Next / previous active cluster",

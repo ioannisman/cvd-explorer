@@ -7,11 +7,16 @@ import java.util.List;
 
 public final class NearestMemberMetric implements ClusterMetric {
     @Override
-    public double score(Vector point, List<ClusterMember> members) {
+    public Result evaluate(Vector point, List<ClusterMember> members) {
         double best = Double.POSITIVE_INFINITY;
-        for (ClusterMember member : members) {
-            best = Math.min(best, member.distanceTo(point));
+        int bestIndex = -1;
+        for (int i = 0; i < members.size(); i++) {
+            double d = members.get(i).distanceTo(point);
+            if (d < best) {
+                best = d;
+                bestIndex = i;
+            }
         }
-        return best;
+        return new Result(best, bestIndex);
     }
 }

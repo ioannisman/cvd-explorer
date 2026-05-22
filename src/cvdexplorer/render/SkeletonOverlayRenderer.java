@@ -115,4 +115,116 @@ public final class SkeletonOverlayRenderer {
 
         return a.add(b.sub(a).mul(t));
     }
+
+    /**
+     * Scorer used for refining the boundaries of region subdivisions (between members of the same cluster).
+     */
+    @FunctionalInterface
+    public interface PixelMemberScorer {
+        double score(Vector pixelPoint, int clusterIndex, int memberIndex);
+    }
+
+    /**
+     * Draws the finer subdivision lines indicating boundaries between regions owned by different members of the same cluster.
+     */
+    public void drawSubdivisions(
+            View view,
+            RasterDiagramRenderer.OwnershipGrid ownershipGrid,
+            PixelMemberScorer scorer
+    ) {
+        List<Segment> segments = extractSubdivisionSegments(ownershipGrid, scorer);
+        if (segments.isEmpty()) {
+            return;
+        }
+
+        view.setStroke(Color.gray(0.0, 0.4));
+        view.setLineWidth(1.0);
+        for (Segment segment : segments) {
+            view.strokeLineSegment(segment.a(), segment.b());
+        }
+    }
+
+    static List<Segment> extractSubdivisionSegments(
+            RasterDiagramRenderer.OwnershipGrid ownershipGrid,
+            PixelMemberScorer scorer
+    ) {
+        int width = ownershipGrid.width();
+        int height = ownershipGrid.height();
+        List<Segment> segments = new ArrayList<>();
+
+        if (width < 2 || height < 2) {
+            return segments;
+        }
+
+        for (int y = 0; y < height - 1; y++) {
+            for (int x = 0; x < width - 1; x++) {
+                int tlCluster = ownershipGrid.clusterIndexAt(x, y);
+                int trCluster = ownershipGrid.clusterIndexAt(x + 1, y);
+                int blCluster = ownershipGrid.clusterIndexAt(x, y + 1);
+                int brCluster = ownershipGrid.clusterIndexAt(x + 1, y + 1);
+
+                int tlMember = ownershipGrid.memberIndexAt(x, y);
+                int trMember = ownershipGrid.memberIndexAt(x + 1, y);
+                int blMember = ownershipGrid.memberIndexAt(x, y + 1);
+                int brMember = ownershipGrid.memberIndexAt(x + 1, y + 1);
+
+                List<Vector> crossings = new ArrayList<>(4);
+                
+                if (tlCluster == trCluster && tlMember != trMember && tlMember >= 0 && trMember >= 0) {
+                    Vector a = Vector.xy(x + 0.5, y + 0.5);
+                    Vector b = Vector.xy(x + 1.5, y + 0.5);
+                    crossings.add(interpolateSubdivisionCrossing(a, b, tlCluster, tlMember, trMember, scorer));
+                }
+                if (trCluster == brCluster && trMember != brMember && trMember >= 0 && brMember >= 0) {
+                    Vector a = Vector.xy(x + 1.5, y + 0.5);
+                    Vector b = Vector.xy(x + 1.5, y + 1.5);
+                    crossings.add(interpolateSubdivisionCrossing(a, b, trCluster, trMember, brMember, scorer));
+                }
+                if (blCluster == brCluster && blMember != brMember && blMember >= 0 && brMember >= 0) {
+                    Vector a = Vector.xy(x + 0.5, y + 1.5);
+                    Vector b = Vector.xy(x + 1.5, y + 1.5);
+                    crossings.add(interpolateSubdivisionCrossing(a, b, blCluster, blMember, brMember, scorer));
+                }
+                if (tlCluster == blCluster && tlMember != blMember && tlMember >= 0 && blMember >= 0) {
+                    Vector a = Vector.xy(x + 0.5, y + 0.5);
+                    Vector b = Vector.xy(x + 0.5, y + 1.5);
+                    crossings.add(interpolateSubdivisionCrossing(a, b, tlCluster, tlMember, blMember, scorer));
+                }
+
+                if (crossings.size() == 2) {
+                    segments.add(new Segment(crossings.get(0), crossings.get(1)));
+                } else if (crossings.size() >= 3) {
+                    Vector center = Vector.xy(x + 1.0, y + 1.0);
+                    for (Vector crossing : crossings) {
+                        segments.add(new Segment(crossing, center));
+                    }
+                }
+            }
+        }
+
+        return segments;
+    }
+
+    private static Vector interpolateSubdivisionCrossing(
+            Vector a,
+            Vector b,
+            int clusterIndex,
+            int memberA,
+            int memberB,
+            PixelMemberScorer scorer
+    ) {
+        double diffA = scorer.score(a, clusterIndex, memberA) - scorer.score(a, clusterIndex, memberB);
+        double diffB = scorer.score(b, clusterIndex, memberA) - scorer.score(b, clusterIndex, memberB);
+        double denominator = diffA - diffB;
+
+        double t;
+        if (Math.abs(denominator) < 1e-9) {
+            t = 0.5;
+        } else {
+            t = diffA / denominator;
+            t = Math.max(0.0, Math.min(1.0, t));
+        }
+
+        return a.add(b.sub(a).mul(t));
+    }
 }

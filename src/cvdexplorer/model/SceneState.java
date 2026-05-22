@@ -49,6 +49,11 @@ public final class SceneState {
     @Properties(name = "Show colored regions (c)")
     public boolean showDiagram = true;
 
+    /** Whether to draw the boundaries between regions controlled by different members within the same cluster. */
+    @GadgetBoolean
+    @Properties(name = "Show region subdivision (v)")
+    public boolean showRegionSubdivision = false;
+
     @GadgetBoolean
     @Properties(name = "Show members (m)")
     public boolean showMembers = true;
@@ -188,6 +193,7 @@ public final class SceneState {
         neighborOrder = other.neighborOrder;
         nearestNeighborK = other.nearestNeighborK;
         showDiagram = other.showDiagram;
+        showRegionSubdivision = other.showRegionSubdivision;
         showMembers = other.showMembers;
         showSkeleton = other.showSkeleton;
         showHelp = other.showHelp;

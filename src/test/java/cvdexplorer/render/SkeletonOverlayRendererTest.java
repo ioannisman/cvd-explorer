@@ -18,6 +18,10 @@ class SkeletonOverlayRendererTest {
                 new int[] {
                         0, 0, 0,
                         0, 0, 0
+                },
+                new int[] {
+                        0, 0, 0,
+                        0, 0, 0
                 }
         );
 
@@ -37,6 +41,10 @@ class SkeletonOverlayRendererTest {
                 new int[] {
                         0, 1,
                         0, 1
+                },
+                new int[] {
+                        0, 0,
+                        0, 0
                 }
         );
 
@@ -62,6 +70,10 @@ class SkeletonOverlayRendererTest {
                 new int[] {
                         0, 1,
                         2, 2
+                },
+                new int[] {
+                        0, 0,
+                        0, 0
                 }
         );
 

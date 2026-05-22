@@ -151,6 +151,17 @@ public class AppMain implements Drawing {
                     )
             );
         }
+        if (state.showRegionSubdivision) {
+            Transformation tFromPixels = transform.inverse();
+            skeletonOverlayRenderer.drawSubdivisions(
+                    view,
+                    result.ownershipGrid(),
+                    (pixelPoint, clusterIndex, memberIndex) -> {
+                        Vector point = tFromPixels.applyTo(pixelPoint);
+                        return preparedScene.clusters().get(clusterIndex).members().get(memberIndex).distanceTo(point);
+                    }
+            );
+        }
         view.setTransformation(transform);
     }
 
@@ -160,7 +171,7 @@ public class AppMain implements Drawing {
                 preparedScene.clusters(),
                 preparedScene.metric()
         );
-        return new RasterDiagramRenderer.Classification(ownership.clusterIndex(), ownership.score());
+        return new RasterDiagramRenderer.Classification(ownership.clusterIndex(), ownership.score(), ownership.memberIndex());
     }
 
     private void drawMembers(View view, PreparedScene preparedScene) {
@@ -254,6 +265,7 @@ public class AppMain implements Drawing {
         if (event.isKeyPress(KeyCode.H)) state.showHelp ^= true;
         if (event.isKeyPress(KeyCode.M)) state.showMembers ^= true;
         if (event.isKeyPress(KeyCode.C)) state.showDiagram ^= true;
+        if (event.isKeyPress(KeyCode.V)) state.showRegionSubdivision ^= true;
         if (event.isKeyPress(KeyCode.K)) state.showSkeleton ^= true;
         if (event.isKeyPress(KeyCode.G)) state.snapToGrid ^= true;
         if (event.isKeyPress(KeyCode.F)) state.snapToHandles ^= true;

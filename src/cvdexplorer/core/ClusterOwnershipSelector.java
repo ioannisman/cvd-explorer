@@ -14,19 +14,22 @@ public final class ClusterOwnershipSelector {
     }
 
     public Result selectOwner(Vector point, List<ClusterSite> clusters, ClusterMetric metric) {
-        int bestIndex = -1;
+        int bestClusterIndex = -1;
+        int bestMemberIndex = -1;
         double bestScore = preferLowerScores ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
 
         for (int clusterIndex = 0; clusterIndex < clusters.size(); clusterIndex++) {
             ClusterSite cluster = clusters.get(clusterIndex);
-            double score = metric.score(point, cluster);
-            if (isBetterScore(score, bestScore) || ((score == bestScore) && (clusterIndex < bestIndex))) {
-                bestIndex = clusterIndex;
+            ClusterMetric.Result metricResult = metric.evaluate(point, cluster);
+            double score = metricResult.score();
+            if (isBetterScore(score, bestScore) || ((score == bestScore) && (clusterIndex < bestClusterIndex))) {
+                bestClusterIndex = clusterIndex;
+                bestMemberIndex = metricResult.memberIndex();
                 bestScore = score;
             }
         }
 
-        return new Result(bestIndex, bestScore);
+        return new Result(bestClusterIndex, bestScore, bestMemberIndex);
     }
 
     private boolean isBetterScore(double candidateScore, double currentBestScore) {
@@ -35,6 +38,6 @@ public final class ClusterOwnershipSelector {
                 : candidateScore > currentBestScore;
     }
 
-    public record Result(int clusterIndex, double score) {
+    public record Result(int clusterIndex, double score, int memberIndex) {
     }
 }

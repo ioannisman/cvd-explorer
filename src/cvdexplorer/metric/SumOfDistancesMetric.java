@@ -7,14 +7,14 @@ import java.util.List;
 
 public final class SumOfDistancesMetric implements ClusterMetric {
     @Override
-    public double score(Vector point, List<ClusterMember> members) {
+    public Result evaluate(Vector point, List<ClusterMember> members) {
         if (members.isEmpty()) {
-            return Double.POSITIVE_INFINITY;
+            return new Result(Double.POSITIVE_INFINITY, -1);
         }
         double sum = 0.0;
         for (ClusterMember member : members) {
             sum += member.distanceTo(point);
         }
-        return sum;
+        return new Result(sum, -1);
     }
 }
