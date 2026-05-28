@@ -1,6 +1,10 @@
 # cvd-explorer
 
-Desktop explorer for Cluster Voronoi Diagrams.
+**cvd-explorer** is an interactive visualization software for Voronoi diagrams. It supports **clusters of sites** (each site is a group of geometric members rather than a single point), **different distance metrics**, and **different input site types** (points, segments, circles, and lines).
+
+![Cluster Voronoi Explorer](docs/figures/instances/cvd_explorer.png)
+
+For neighbor order, distance metrics, and input site types, see the **[documentation](docs/README.md)** ([metrics](docs/metrics.md), [site types](docs/site-types.md)).
 
 ## Building and running
 
@@ -46,5 +50,6 @@ java --add-modules javafx.controls -jar build/libs/cvd-explorer-all.jar
 
 ## Documentation
 
+- [docs/README.md](docs/README.md) — concepts and figures
 - [CONTRIBUTING.md](CONTRIBUTING.md) — pull requests and collaboration
 - [LICENSE.md](LICENSE.md) — MIT License
