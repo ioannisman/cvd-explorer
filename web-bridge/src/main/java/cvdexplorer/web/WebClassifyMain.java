@@ -10,6 +10,7 @@ import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterNaming;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.DemoScenes;
 import cvdexplorer.model.EllipseMember;
 import cvdexplorer.model.LineMember;
 import cvdexplorer.model.NeighborOrder;
@@ -35,8 +36,8 @@ import java.util.Optional;
  * frame render, handle move, and scene/view setters backed by a mutable live scene.
  */
 public final class WebClassifyMain {
-    private static final double DEFAULT_WORLD_MIN = -350.0;
-    private static final double DEFAULT_WORLD_MAX = 350.0;
+    private static final double DEFAULT_WORLD_MIN = -400.0;
+    private static final double DEFAULT_WORLD_MAX = 400.0;
 
     private static double worldMinX = DEFAULT_WORLD_MIN;
     private static double worldMaxX = DEFAULT_WORLD_MAX;
@@ -798,52 +799,9 @@ public final class WebClassifyMain {
         return Transformation.scaling(sx, sy).then(Transformation.translation(Vector.xy(tx, ty)));
     }
 
-    /** Same point layout as the desktop demo (Amber / Azure / Rose / Lime). */
+    /** Same layout as desktop {@code SceneState.demo()} via {@link DemoScenes}. */
     static SceneSnapshot demoSnapshot() {
-        SceneSnapshot snapshot = new SceneSnapshot();
-        snapshot.setMetricKind(MetricKind.MINIMUM_DISTANCE);
-        snapshot.setNeighborOrder(NeighborOrder.NEAREST);
-        snapshot.setClusters(List.of(
-                new ClusterSite(
-                        "Amber",
-                        Rgba.hsb(30, 0.75, 1.0),
-                        List.of(
-                                new PointMember(Vector.xy(-260, -100)),
-                                new PointMember(Vector.xy(-180, -220)),
-                                new PointMember(Vector.xy(-120, -80))
-                        )
-                ),
-                new ClusterSite(
-                        "Azure",
-                        Rgba.hsb(210, 0.75, 0.95),
-                        List.of(
-                                new PointMember(Vector.xy(180, -170)),
-                                new PointMember(Vector.xy(260, -40)),
-                                new PointMember(Vector.xy(-100, -140)),
-                                new PointMember(Vector.xy(220, 120))
-                        )
-                ),
-                new ClusterSite(
-                        "Rose",
-                        Rgba.hsb(330, 0.7, 1.0),
-                        List.of(
-                                new PointMember(Vector.xy(-160, 160)),
-                                new PointMember(Vector.xy(-40, 220))
-                        )
-                ),
-                new ClusterSite(
-                        "Lime",
-                        Rgba.hsb(110, 0.7, 0.9),
-                        List.of(
-                                new PointMember(Vector.xy(60, 180)),
-                                new PointMember(Vector.xy(170, -220)),
-                                new PointMember(Vector.xy(280, -250)),
-                                new PointMember(Vector.xy(210, 300)),
-                                new PointMember(Vector.xy(110, 310))
-                        )
-                )
-        ));
-        return snapshot;
+        return DemoScenes.defaultSnapshot();
     }
 
     @JSBody(

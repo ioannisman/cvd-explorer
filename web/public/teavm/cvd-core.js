@@ -1119,75 +1119,40 @@ cw_WebClassifyMain_pixelToWorld = ($width, $height) => {
     xmg_Transformation__init_(var$8, var$11, $sy, $sx, $tx + var$16 * var$10, $ty * var$12 + var$16 * var$14, $ty * var$13 + var$16 * var$15 + var$9.$ty);
     return var$8;
 },
-cw_WebClassifyMain_demoSnapshot = () => {
-    let $snapshot, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11, var$12, var$13;
-    cw_WebClassifyMain_$callClinit();
-    $snapshot = new cm_SceneSnapshot;
-    cm_MetricKind_$callClinit();
-    $snapshot.$metricKind = cm_MetricKind_MINIMUM_DISTANCE;
-    cm_NeighborOrder_$callClinit();
-    $snapshot.$neighborOrder = cm_NeighborOrder_NEAREST;
-    cm_SiteMemberKind_$callClinit();
-    $snapshot.$siteMemberKind = cm_SiteMemberKind_POINT;
-    $snapshot.$nearestNeighborK = 1;
-    $snapshot.$clusters = ju_ArrayList__init_();
-    $snapshot.$metricKind = cm_MetricKind_MINIMUM_DISTANCE;
-    $snapshot.$neighborOrder = cm_NeighborOrder_NEAREST;
-    var$2 = new cm_ClusterSite;
-    var$3 = cm_Rgba_hsb(30.0, 0.75, 1.0);
-    var$4 = cm_PointMember__init_(xmg_Vector_xy((-260.0), (-100.0)));
-    var$5 = cm_PointMember__init_(xmg_Vector_xy((-180.0), (-220.0)));
-    var$6 = cm_PointMember__init_(xmg_Vector_xy((-120.0), (-80.0)));
-    ju_Objects_requireNonNull(var$4);
-    ju_Objects_requireNonNull(var$5);
-    ju_Objects_requireNonNull(var$6);
-    cm_ClusterSite__init_(var$2, $rt_s(11), var$3, ju_TemplateCollections$ImmutableArrayList__init_($rt_wrapArray(jl_Object, [var$4, var$5, var$6])));
-    var$7 = cm_ClusterSite__init_0($rt_s(12), cm_Rgba_hsb(210.0, 0.75, 0.95), ju_List_of(cm_PointMember__init_(xmg_Vector_xy(180.0, (-170.0))), cm_PointMember__init_(xmg_Vector_xy(260.0, (-40.0))), cm_PointMember__init_(xmg_Vector_xy((-100.0), (-140.0))), cm_PointMember__init_(xmg_Vector_xy(220.0, 120.0))));
-    var$8 = new cm_ClusterSite;
-    var$3 = cm_Rgba_hsb(330.0, 0.7, 1.0);
-    var$5 = cm_PointMember__init_(xmg_Vector_xy((-160.0), 160.0));
-    var$6 = cm_PointMember__init_(xmg_Vector_xy((-40.0), 220.0));
-    ju_Objects_requireNonNull(var$5);
-    ju_Objects_requireNonNull(var$6);
-    var$9 = new ju_TemplateCollections$TwoElementsList;
-    var$9.$first = var$5;
-    var$9.$second = var$6;
-    cm_ClusterSite__init_(var$8, $rt_s(13), var$3, var$9);
-    var$4 = new cm_ClusterSite;
-    var$5 = cm_Rgba_hsb(110.0, 0.7, 0.9);
-    var$9 = cm_PointMember__init_(xmg_Vector_xy(60.0, 180.0));
-    var$10 = cm_PointMember__init_(xmg_Vector_xy(170.0, (-220.0)));
-    var$11 = cm_PointMember__init_(xmg_Vector_xy(280.0, (-250.0)));
-    var$12 = cm_PointMember__init_(xmg_Vector_xy(210.0, 300.0));
-    var$13 = cm_PointMember__init_(xmg_Vector_xy(110.0, 310.0));
-    ju_Objects_requireNonNull(var$9);
-    ju_Objects_requireNonNull(var$10);
-    ju_Objects_requireNonNull(var$11);
-    ju_Objects_requireNonNull(var$12);
-    ju_Objects_requireNonNull(var$13);
-    cm_ClusterSite__init_(var$4, $rt_s(14), var$5, ju_TemplateCollections$ImmutableArrayList__init_($rt_wrapArray(jl_Object, [var$9, var$10, var$11, var$12, var$13])));
-    var$8 = ju_List_of(var$2, var$7, var$8, var$4);
-    ju_ArrayList_clear($snapshot.$clusters);
-    var$4 = $snapshot.$clusters;
-    var$3 = ju_AbstractList_iterator(var$8);
-    while (ju_AbstractList$1_hasNext(var$3)) {
-        var$8 = ju_AbstractList$1_next(var$3);
-        if (!ju_ArrayList_add(var$4, var$8))
-            continue;
-    }
-    return $snapshot;
-},
 cw_WebClassifyMain__clinit_ = () => {
-    let var$1;
-    cw_WebClassifyMain_worldMinX = (-350.0);
-    cw_WebClassifyMain_worldMaxX = 350.0;
-    cw_WebClassifyMain_worldMinY = (-350.0);
-    cw_WebClassifyMain_worldMaxY = 350.0;
+    let var$1, var$2, var$3, var$4;
+    cw_WebClassifyMain_worldMinX = (-400.0);
+    cw_WebClassifyMain_worldMaxX = 400.0;
+    cw_WebClassifyMain_worldMinY = (-400.0);
+    cw_WebClassifyMain_worldMaxY = 400.0;
     var$1 = new cc_DiagramRasterizer;
     var$1.$sizeYp = 0;
     var$1.$sizeXp = 0;
     cw_WebClassifyMain_RASTERIZER = var$1;
-    cw_WebClassifyMain_sceneSnapshot = cw_WebClassifyMain_demoSnapshot();
+    cw_WebClassifyMain_$callClinit();
+    var$1 = new cm_SceneSnapshot;
+    cm_MetricKind_$callClinit();
+    var$1.$metricKind = cm_MetricKind_MINIMUM_DISTANCE;
+    cm_NeighborOrder_$callClinit();
+    var$1.$neighborOrder = cm_NeighborOrder_NEAREST;
+    cm_SiteMemberKind_$callClinit();
+    var$1.$siteMemberKind = cm_SiteMemberKind_POINT;
+    var$1.$nearestNeighborK = 1;
+    var$1.$clusters = ju_ArrayList__init_();
+    var$1.$metricKind = cm_MetricKind_MINIMUM_DISTANCE;
+    var$1.$neighborOrder = cm_NeighborOrder_NEAREST;
+    var$1.$siteMemberKind = cm_SiteMemberKind_POINT;
+    var$1.$nearestNeighborK = 1;
+    var$2 = cm_DemoScenes_defaultClusters();
+    ju_ArrayList_clear(var$1.$clusters);
+    var$3 = var$1.$clusters;
+    var$4 = ju_AbstractList_iterator(var$2);
+    while (ju_AbstractList$1_hasNext(var$4)) {
+        var$2 = ju_AbstractList$1_next(var$4);
+        if (!ju_ArrayList_add(var$3, var$2))
+            continue;
+    }
+    cw_WebClassifyMain_sceneSnapshot = var$1;
     cw_WebClassifyMain_shadingEnabled = 0;
     cw_WebClassifyMain_lastError = $rt_s(4);
     cw_WebClassifyMain_activeClusterIndex = 0;
@@ -1335,7 +1300,7 @@ cw_WebClassifyMain_overlayRadius$jsocb$_37 = () => {
     return otji_JS_wrap(cw_WebClassifyMain_overlayRadius);
 },
 cw_WebClassifyMain_addCluster$jsocb$_56 = () => {
-    let var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11, var$12, var$13, var$14;
+    let var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11, var$12, var$13, var$14, var$15, var$16, var$17, var$18;
     cw_WebClassifyMain_$callClinit();
     var$1 = cw_WebClassifyMain_sceneSnapshot;
     var$1 = cm_MetricMemberCompatibility_invalidNewMemberMessage(var$1.$metricKind, var$1.$siteMemberKind);
@@ -1346,41 +1311,72 @@ cw_WebClassifyMain_addCluster$jsocb$_56 = () => {
         var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
         var$2 = var$1.$size0;
         if (var$2 >= 32) {
-            var$1 = $rt_s(15);
+            var$1 = $rt_s(11);
             cw_WebClassifyMain_lastError = var$1;
         } else {
             var$3 = (360 * var$2 | 0) * 0.618033988749895 % 360.0;
-            var$4 = cm_Rgba_hsb(var$3, 0.65, 0.95);
-            var$5 = xmg_Vector_xy((-280) + ((var$2 % 5 | 0) * 140 | 0) | 0, (-200) + ((var$2 / 5 | 0) * 140 | 0) | 0);
-            var$6 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, var$2, 0, var$5);
-            var$5 = new cm_ClusterSite;
-            cm_ClusterNaming_$callClinit();
-            var$7 = var$3 % 360.0;
-            if (var$7 < 0.0)
-                var$7 = var$7 + 360.0;
-            var$8 = 0;
-            var$9 = Infinity;
-            var$10 = 0;
-            while (true) {
-                var$11 = cm_ClusterNaming_HUE_CENTERS.data;
-                if (var$10 >= var$11.length)
-                    break;
-                var$12 = jl_Math_abs(var$7 - var$11[var$10]) % 360.0;
-                if (var$12 > 180.0)
-                    var$12 = 360.0 - var$12;
-                if (var$12 < var$9) {
-                    var$8 = var$10;
-                    var$9 = var$12;
-                }
-                var$10 = var$10 + 1 | 0;
+            cm_Rgba_$callClinit();
+            var$3 = var$3 % 360.0;
+            var$4 = var$3 + 360.0;
+            var$5 = var$4 % 360.0;
+            var$6 = cm_Rgba_clamp01(0.65);
+            var$7 = cm_Rgba_clamp01(0.95);
+            var$8 = var$7 * var$6;
+            var$9 = var$8 * (1.0 - jl_Math_abs(var$5 / 60.0 % 2.0 - 1.0));
+            var$7 = var$7 - var$8;
+            if (var$5 < 60.0)
+                var$6 = 0.0;
+            else if (var$5 < 120.0) {
+                var$6 = 0.0;
+                var$5 = var$8;
+                var$8 = var$9;
+                var$9 = var$5;
+            } else if (var$5 < 180.0) {
+                var$10 = var$8;
+                var$6 = var$9;
+                var$8 = 0.0;
+                var$9 = var$10;
+            } else if (var$5 < 240.0) {
+                var$6 = var$8;
+                var$8 = 0.0;
+            } else if (!(var$5 < 300.0)) {
+                var$6 = var$9;
+                var$9 = 0.0;
+            } else {
+                var$6 = var$8;
+                var$8 = var$9;
+                var$9 = 0.0;
             }
-            var$13 = cm_ClusterNaming_NAMES.data[var$8];
+            var$11 = cm_Rgba__init_(var$8 + var$7, var$9 + var$7, var$6 + var$7, 1.0);
+            var$12 = xmg_Vector_xy((-280) + ((var$2 % 5 | 0) * 140 | 0) | 0, (-200) + ((var$2 / 5 | 0) * 140 | 0) | 0);
+            var$12 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, var$2, 0, var$12);
+            var$13 = new cm_ClusterSite;
+            cm_ClusterNaming_$callClinit();
+            if (!(var$3 < 0.0))
+                var$4 = var$3;
+            var$14 = 0;
+            var$9 = Infinity;
+            var$15 = 0;
+            while (true) {
+                var$16 = cm_ClusterNaming_HUE_CENTERS.data;
+                if (var$15 >= var$16.length)
+                    break;
+                var$3 = jl_Math_abs(var$4 - var$16[var$15]) % 360.0;
+                if (var$3 > 180.0)
+                    var$3 = 360.0 - var$3;
+                if (var$3 < var$9) {
+                    var$14 = var$15;
+                    var$9 = var$3;
+                }
+                var$15 = var$15 + 1 | 0;
+            }
+            var$17 = cm_ClusterNaming_NAMES.data[var$14];
             ju_Collections_$callClinit();
-            var$14 = new ju_TemplateCollections$SingleElementList;
-            jl_Object__init_(var$14);
-            var$14.$value1 = var$6;
-            cm_ClusterSite__init_(var$5, var$13, var$4, var$14);
-            ju_ArrayList_add(var$1, var$5);
+            var$18 = new ju_TemplateCollections$SingleElementList;
+            jl_Object__init_(var$18);
+            var$18.$value1 = var$12;
+            cm_ClusterSite__init_(var$13, var$17, var$11, var$18);
+            ju_ArrayList_add(var$1, var$13);
             cw_WebClassifyMain_activeClusterIndex = var$2;
             cw_WebClassifyMain_selectedClusterIndex = var$2;
             cw_WebClassifyMain_selectedMemberIndex = 0;
@@ -1396,7 +1392,7 @@ cw_WebClassifyMain_removeCluster$jsocb$_57 = () => {
     cw_WebClassifyMain_$callClinit();
     var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
     if (var$1.$size0 <= 1) {
-        var$1 = $rt_s(16);
+        var$1 = $rt_s(12);
         cw_WebClassifyMain_lastError = var$1;
     } else {
         ju_ArrayList_remove(var$1, cw_WebClassifyMain_activeClusterIndex);
@@ -1428,7 +1424,7 @@ cw_WebClassifyMain_removeMember$jsocb$_55 = () => {
     let var$1, var$2, var$3, var$4;
     cw_WebClassifyMain_$callClinit();
     if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
-        var$1 = $rt_s(17);
+        var$1 = $rt_s(13);
         cw_WebClassifyMain_lastError = var$1;
     } else {
         var$2 = cw_WebClassifyMain_selectedClusterIndex;
@@ -1439,7 +1435,7 @@ cw_WebClassifyMain_removeMember$jsocb$_55 = () => {
         if (!(var$3 >= 0 && var$3 < cm_ClusterSite_size(var$1)))
             var$3 = cm_ClusterSite_size(var$1) - 1 | 0;
         if (cm_ClusterSite_size(var$1) <= 1) {
-            var$1 = $rt_s(18);
+            var$1 = $rt_s(14);
             cw_WebClassifyMain_lastError = var$1;
         } else {
             ju_ArrayList_remove(var$1.$members, var$3);
@@ -1467,7 +1463,7 @@ cw_WebClassifyMain_setNearestNeighborK$jsocb$_46 = var$1 => {
         cw_WebClassifyMain_lastError = $rt_s(4);
         var$1 = $rt_s(4);
     } else {
-        var$1 = $rt_s(19);
+        var$1 = $rt_s(15);
         cw_WebClassifyMain_lastError = var$1;
     }
     return $rt_ustr(var$1);
@@ -1521,14 +1517,14 @@ cw_WebClassifyMain_addMemberAt$jsocb$_54 = (var$1, var$2) => {
         var$1 = ju_Optional_get(var$1);
         cw_WebClassifyMain_lastError = var$1;
     } else if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
-        var$1 = $rt_s(20);
+        var$1 = $rt_s(16);
         cw_WebClassifyMain_lastError = var$1;
     } else {
         var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
         var$5 = cw_WebClassifyMain_activeClusterIndex;
         var$1 = ju_ArrayList_get(var$1, var$5);
         if (cm_ClusterSite_size(var$1) >= 32) {
-            var$1 = $rt_s(21);
+            var$1 = $rt_s(17);
             cw_WebClassifyMain_lastError = var$1;
         } else {
             var$2 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, cw_WebClassifyMain_activeClusterIndex, cm_ClusterSite_size(var$1), xmg_Vector_xy(var$3, var$4));
@@ -1556,7 +1552,7 @@ cw_WebClassifyMain_setNeighborOrderName$jsocb$_45 = var$1 => {
             $$je = $rt_wrapException($$e);
             if ($$je instanceof jl_IllegalArgumentException) {
                 var$2 = jl_StringBuilder__init_();
-                jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(22)), var$1);
+                jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(18)), var$1);
                 var$2 = jl_StringBuilder_toString(var$2);
                 cw_WebClassifyMain_lastError = var$2;
                 break a;
@@ -1589,7 +1585,7 @@ cw_WebClassifyMain_setWorldView$jsocb$_48 = (var$1, var$2, var$3, var$4) => {
         cw_WebClassifyMain_worldMaxY = var$8;
         cw_WebClassifyMain_lastError = $rt_s(4);
     } else
-        cw_WebClassifyMain_lastError = $rt_s(23);
+        cw_WebClassifyMain_lastError = $rt_s(19);
 },
 cw_WebClassifyMain_setShadingEnabled$jsocb$_47 = var$1 => {
     cw_WebClassifyMain_$callClinit();
@@ -1741,12 +1737,12 @@ cw_WebClassifyMain_clusterCount$jsocb$_21 = () => {
 cw_WebClassifyMain_handleGs$jsocb$_13 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_handleGs);
-};
-let cw_WebClassifyMain_overlayAy$jsocb$_34 = () => {
+},
+cw_WebClassifyMain_overlayAy$jsocb$_34 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_overlayAy);
-},
-cw_WebClassifyMain_metricKindName$jsocb$_16 = () => {
+};
+let cw_WebClassifyMain_metricKindName$jsocb$_16 = () => {
     cw_WebClassifyMain_$callClinit();
     return $rt_ustr(cw_WebClassifyMain_sceneSnapshot.$metricKind.$name);
 },
@@ -1783,7 +1779,7 @@ cw_WebClassifyMain_setActiveClusterIndex$jsocb$_49 = var$1 => {
         cw_WebClassifyMain_lastError = $rt_s(4);
         var$1 = $rt_s(4);
     } else {
-        var$1 = $rt_s(24);
+        var$1 = $rt_s(20);
         cw_WebClassifyMain_lastError = var$1;
     }
     return $rt_ustr(var$1);
@@ -1817,7 +1813,7 @@ cw_WebClassifyMain_setMetricKindName$jsocb$_44 = var$1 => {
                 }
             }
             var$2 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(25)), var$1);
+            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(21)), var$1);
             var$1 = jl_StringBuilder_toString(var$2);
             cw_WebClassifyMain_lastError = var$1;
             break a;
@@ -2008,7 +2004,7 @@ cw_WebClassifyMain_computeFrame$jsocb$_0 = (var$1, var$2) => {
                     }
                 }
                 var$1 = new jl_IllegalStateException;
-                jl_RuntimeException__init_(var$1, $rt_s(26));
+                jl_RuntimeException__init_(var$1, $rt_s(22));
                 $rt_throw(var$1);
             }
             var$1 = ju_AbstractList$1_next(var$2);
@@ -2023,7 +2019,7 @@ cw_WebClassifyMain_computeFrame$jsocb$_0 = (var$1, var$2) => {
         $rt_throw(var$1);
     }
     var$2 = new jl_IllegalArgumentException;
-    jl_RuntimeException__init_(var$2, $rt_s(27));
+    jl_RuntimeException__init_(var$2, $rt_s(23));
     $rt_throw(var$2);
 },
 cw_WebClassifyMain_clusterNameAt$jsocb$_28 = var$1 => {
@@ -2087,7 +2083,7 @@ cw_WebClassifyMain_setSiteMemberKindName$jsocb$_50 = var$1 => {
                 }
             }
             var$2 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(28)), var$1);
+            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(24)), var$1);
             var$1 = jl_StringBuilder_toString(var$2);
             cw_WebClassifyMain_lastError = var$1;
             break a;
@@ -2454,7 +2450,129 @@ ju_Objects_requireNonNull = $obj => {
     jl_RuntimeException__init_($obj, $rt_s(4));
     $rt_throw($obj);
 },
-otji_JSWrapper = $rt_classWithoutFields();
+otji_JSWrapper = $rt_classWithoutFields(),
+cm_DemoScenes = $rt_classWithoutFields(),
+cm_DemoScenes_defaultClusters = () => {
+    let var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11;
+    var$1 = new cm_ClusterSite;
+    var$2 = cm_Rgba__init_(1.0, 0.625, 0.25, 1.0);
+    var$3 = cm_PointMember__init_(xmg_Vector_xy((-154.5), 98.0));
+    var$4 = cm_DemoScenes_circle((-51.5), (-279.0), 115.77672477661476);
+    ju_Objects_requireNonNull(var$3);
+    ju_Objects_requireNonNull(var$4);
+    var$5 = new ju_TemplateCollections$TwoElementsList;
+    var$5.$first = var$3;
+    var$5.$second = var$4;
+    cm_ClusterSite__init_(var$1, $rt_s(25), var$2, var$5);
+    var$6 = cm_ClusterSite__init_0($rt_s(26), cm_Rgba__init_(0.2375, 0.59375, 0.95, 1.0), ju_List_of(cm_PointMember__init_(xmg_Vector_xy((-61.5), (-40.0))), cm_PointMember__init_(xmg_Vector_xy(343.5, (-133.0))), cm_PointMember__init_(xmg_Vector_xy(372.5, 24.0)), cm_EllipseMember__init_(xmg_Vector_xy(120.0, (-40.0)), xmg_Vector_xy(285.5, 320.0), xmg_Vector_xy(180.0, 50.0))));
+    var$7 = new cm_ClusterSite;
+    var$8 = cm_Rgba__init_(1.0, 0.3, 0.65, 1.0);
+    var$9 = cm_SegmentMember__init_(xmg_Vector_xy((-376.5), 12.0), xmg_Vector_xy((-37.5), (-99.0)));
+    var$3 = cm_SegmentMember__init_(xmg_Vector_xy((-0.5), (-12.0)), xmg_Vector_xy((-120.0), 220.0));
+    var$4 = cm_SegmentMember__init_(xmg_Vector_xy((-120.0), 220.0), xmg_Vector_xy((-376.5), 12.0));
+    var$5 = cm_SegmentMember__init_(xmg_Vector_xy((-210.5), 87.0), xmg_Vector_xy((-37.5), (-99.0)));
+    var$10 = cm_SegmentMember__init_(xmg_Vector_xy((-0.5), (-12.0)), xmg_Vector_xy((-210.5), 87.0));
+    var$11 = cm_PointMember__init_(xmg_Vector_xy((-87.5), (-267.0)));
+    ju_Objects_requireNonNull(var$9);
+    ju_Objects_requireNonNull(var$3);
+    ju_Objects_requireNonNull(var$4);
+    ju_Objects_requireNonNull(var$5);
+    ju_Objects_requireNonNull(var$10);
+    ju_Objects_requireNonNull(var$11);
+    cm_ClusterSite__init_(var$7, $rt_s(27), var$8, ju_TemplateCollections$ImmutableArrayList__init_($rt_wrapArray(jl_Object, [var$9, var$3, var$4, var$5, var$10, var$11])));
+    var$2 = new cm_ClusterSite;
+    var$4 = cm_Rgba__init_(0.375, 0.9, 0.27, 1.0);
+    var$5 = cm_DemoScenes_circle(80.0, 200.0, 83.95981181493917);
+    var$10 = cm_PointMember__init_(xmg_Vector_xy(272.5, 107.0));
+    var$11 = cm_LineMember__init_(xmg_Vector_xy((-317.5), (-105.0)), xmg_Vector_xy(261.5, (-182.0)));
+    ju_Objects_requireNonNull(var$5);
+    ju_Objects_requireNonNull(var$10);
+    ju_Objects_requireNonNull(var$11);
+    cm_ClusterSite__init_(var$2, $rt_s(28), var$4, ju_TemplateCollections$ImmutableArrayList__init_($rt_wrapArray(jl_Object, [var$5, var$10, var$11])));
+    return ju_List_of(var$1, var$6, var$7, var$2);
+},
+cm_DemoScenes_circle = ($cx, $cy, $radius) => {
+    let $center;
+    $center = xmg_Vector_xy($cx, $cy);
+    return cm_CircleMember__init_($center, xmg_Vector_add($center, xmg_Vector_xy($radius, 0.0)));
+},
+jl_IndexOutOfBoundsException = $rt_classWithoutFields(jl_RuntimeException),
+jl_IndexOutOfBoundsException__init_0 = $this => {
+    jl_Exception__init_($this);
+},
+jl_IndexOutOfBoundsException__init_2 = () => {
+    let var_0 = new jl_IndexOutOfBoundsException();
+    jl_IndexOutOfBoundsException__init_0(var_0);
+    return var_0;
+},
+jl_IndexOutOfBoundsException__init_1 = ($this, $index) => {
+    let var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10;
+    var$2 = jl_StringBuilder__init_();
+    var$3 = jl_StringBuilder_append(var$2, $rt_s(29));
+    var$4 = var$3.$length;
+    var$5 = 1;
+    if ($index < 0) {
+        var$5 = 0;
+        $index =  -$index | 0;
+    }
+    a: {
+        if ($rt_ucmp($index, 10) < 0) {
+            if (var$5)
+                jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + 1 | 0);
+            else {
+                jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + 2 | 0);
+                var$6 = var$3.$buffer.data;
+                var$7 = var$4 + 1 | 0;
+                var$6[var$4] = 45;
+                var$4 = var$7;
+            }
+            var$3.$buffer.data[var$4] = jl_Character_forDigit($index, 10);
+        } else {
+            var$8 = 1;
+            var$7 = 1;
+            var$9 = $rt_udiv((-1), 10);
+            b: {
+                while (true) {
+                    var$10 = var$8 * 10 | 0;
+                    if ($rt_ucmp(var$10, $index) > 0) {
+                        var$10 = var$8;
+                        break b;
+                    }
+                    var$7 = var$7 + 1 | 0;
+                    if ($rt_ucmp(var$10, var$9) > 0)
+                        break;
+                    var$8 = var$10;
+                }
+            }
+            if (!var$5)
+                var$7 = var$7 + 1 | 0;
+            jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + var$7 | 0);
+            if (var$5)
+                var$7 = var$4;
+            else {
+                var$6 = var$3.$buffer.data;
+                var$7 = var$4 + 1 | 0;
+                var$6[var$4] = 45;
+            }
+            while (true) {
+                if (!var$10)
+                    break a;
+                var$6 = var$3.$buffer.data;
+                var$9 = var$7 + 1 | 0;
+                var$6[var$7] = jl_Character_forDigit($rt_udiv($index, var$10), 10);
+                $index = $rt_umod($index, var$10);
+                var$10 = $rt_udiv(var$10, 10);
+                var$7 = var$9;
+            }
+        }
+    }
+    jl_RuntimeException__init_($this, jl_StringBuilder_toString(var$2));
+},
+jl_IndexOutOfBoundsException__init_ = var_0 => {
+    let var_1 = new jl_IndexOutOfBoundsException();
+    jl_IndexOutOfBoundsException__init_1(var_1, var_0);
+    return var_1;
+};
 function cm_SceneSnapshot() {
     let a = this; jl_Object.call(a);
     a.$metricKind = null;
@@ -2499,7 +2617,7 @@ jl_Enum_valueOf = ($enumType, $name) => {
     $constants = $constants;
     if ($constants === null) {
         $enumType = new jl_IllegalArgumentException;
-        jl_RuntimeException__init_($enumType, $rt_s(29));
+        jl_RuntimeException__init_($enumType, $rt_s(30));
         $rt_throw($enumType);
     }
     $constants = $constants.data;
@@ -2511,7 +2629,7 @@ jl_Enum_valueOf = ($enumType, $name) => {
             $enumType = jl_String_valueOf($enumType);
             $name = jl_String_valueOf($name);
             $constant = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append($constant, $rt_s(30)), $enumType), $rt_s(31)), $name), $rt_s(32));
+            jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append($constant, $rt_s(31)), $enumType), $rt_s(32)), $name), $rt_s(33));
             jl_RuntimeException__init_(var$6, jl_StringBuilder_toString($constant));
             $rt_throw(var$6);
         }
@@ -2544,7 +2662,7 @@ jl_Enum_compareTo = ($this, var$1) => {
     var$5 = jl_String_valueOf(jl_Enum_getDeclaringClass($this));
     var$1 = jl_String_valueOf(jl_Enum_getDeclaringClass(var$1));
     var$6 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$6, $rt_s(33)), var$5), $rt_s(34)), var$1);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$6, $rt_s(34)), var$5), $rt_s(35)), var$1);
     jl_RuntimeException__init_(var$4, jl_StringBuilder_toString(var$6));
     $rt_throw(var$4);
 },
@@ -2574,11 +2692,11 @@ cm_MetricKind__init_ = (var_0, var_1) => {
 },
 cm_MetricKind__clinit_ = () => {
     let var$1, var$2, var$3;
-    cm_MetricKind_MINIMUM_DISTANCE = cm_MetricKind__init_($rt_s(35), 0);
-    cm_MetricKind_MAXIMUM_DISTANCE = cm_MetricKind__init_($rt_s(36), 1);
-    cm_MetricKind_SUM_OF_DISTANCES = cm_MetricKind__init_($rt_s(37), 2);
-    cm_MetricKind_MEAN_DISTANCE = cm_MetricKind__init_($rt_s(38), 3);
-    var$1 = cm_MetricKind__init_($rt_s(39), 4);
+    cm_MetricKind_MINIMUM_DISTANCE = cm_MetricKind__init_($rt_s(36), 0);
+    cm_MetricKind_MAXIMUM_DISTANCE = cm_MetricKind__init_($rt_s(37), 1);
+    cm_MetricKind_SUM_OF_DISTANCES = cm_MetricKind__init_($rt_s(38), 2);
+    cm_MetricKind_MEAN_DISTANCE = cm_MetricKind__init_($rt_s(39), 3);
+    var$1 = cm_MetricKind__init_($rt_s(40), 4);
     cm_MetricKind_KTH_NEAREST_DISTANCE = var$1;
     var$2 = $rt_createArray(cm_MetricKind, 5);
     var$3 = var$2.data;
@@ -2612,14 +2730,111 @@ cm_NeighborOrder__init_ = (var_0, var_1) => {
 },
 cm_NeighborOrder__clinit_ = () => {
     let var$1, var$2, var$3;
-    cm_NeighborOrder_NEAREST = cm_NeighborOrder__init_($rt_s(40), 0);
-    var$1 = cm_NeighborOrder__init_($rt_s(41), 1);
+    cm_NeighborOrder_NEAREST = cm_NeighborOrder__init_($rt_s(41), 0);
+    var$1 = cm_NeighborOrder__init_($rt_s(42), 1);
     cm_NeighborOrder_FARTHEST = var$1;
     var$2 = $rt_createArray(cm_NeighborOrder, 2);
     var$3 = var$2.data;
     var$3[0] = cm_NeighborOrder_NEAREST;
     var$3[1] = var$1;
     cm_NeighborOrder_$VALUES = var$2;
+},
+cm_SiteMemberKind = $rt_classWithoutFields(jl_Enum),
+cm_SiteMemberKind_POINT = null,
+cm_SiteMemberKind_LINE_SEGMENT = null,
+cm_SiteMemberKind_CIRCLE = null,
+cm_SiteMemberKind_ELLIPSE = null,
+cm_SiteMemberKind_LINE = null,
+cm_SiteMemberKind_$VALUES = null,
+cm_SiteMemberKind_$callClinit = () => {
+    cm_SiteMemberKind_$callClinit = $rt_eraseClinit(cm_SiteMemberKind);
+    cm_SiteMemberKind__clinit_();
+},
+cm_SiteMemberKind_valueOf = $name => {
+    cm_SiteMemberKind_$callClinit();
+    return jl_Enum_valueOf($rt_cls(cm_SiteMemberKind), $name);
+},
+cm_SiteMemberKind__init_0 = ($this, var$1, var$2) => {
+    cm_SiteMemberKind_$callClinit();
+    jl_Enum__init_($this, var$1, var$2);
+},
+cm_SiteMemberKind__init_ = (var_0, var_1) => {
+    let var_2 = new cm_SiteMemberKind();
+    cm_SiteMemberKind__init_0(var_2, var_0, var_1);
+    return var_2;
+},
+cm_SiteMemberKind__clinit_ = () => {
+    let var$1, var$2, var$3;
+    cm_SiteMemberKind_POINT = cm_SiteMemberKind__init_($rt_s(6), 0);
+    cm_SiteMemberKind_LINE_SEGMENT = cm_SiteMemberKind__init_($rt_s(43), 1);
+    cm_SiteMemberKind_CIRCLE = cm_SiteMemberKind__init_($rt_s(8), 2);
+    cm_SiteMemberKind_ELLIPSE = cm_SiteMemberKind__init_($rt_s(10), 3);
+    var$1 = cm_SiteMemberKind__init_($rt_s(9), 4);
+    cm_SiteMemberKind_LINE = var$1;
+    var$2 = $rt_createArray(cm_SiteMemberKind, 5);
+    var$3 = var$2.data;
+    var$3[0] = cm_SiteMemberKind_POINT;
+    var$3[1] = cm_SiteMemberKind_LINE_SEGMENT;
+    var$3[2] = cm_SiteMemberKind_CIRCLE;
+    var$3[3] = cm_SiteMemberKind_ELLIPSE;
+    var$3[4] = var$1;
+    cm_SiteMemberKind_$VALUES = var$2;
+},
+jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException),
+otj_JSObject = $rt_classWithoutFields(0),
+otjc_JSString = $rt_classWithoutFields(),
+cm_MetricMemberCompatibility = $rt_classWithoutFields(),
+cm_MetricMemberCompatibility_requiresPointOnlyMembers = $metricKind => {
+    cm_MetricKind_$callClinit();
+    return $metricKind !== cm_MetricKind_SUM_OF_DISTANCES && $metricKind !== cm_MetricKind_MEAN_DISTANCE && $metricKind !== cm_MetricKind_KTH_NEAREST_DISTANCE ? 0 : 1;
+},
+cm_MetricMemberCompatibility_pointOnlyMetricMessage = $metricKind => {
+    let var$2;
+    var$2 = $metricKind.$name;
+    $metricKind = jl_StringBuilder__init_();
+    jl_StringBuilder_append(jl_StringBuilder_append($metricKind, var$2), $rt_s(44));
+    return jl_StringBuilder_toString($metricKind);
+},
+cm_MetricMemberCompatibility_invalidNewMemberMessage = ($metricKind, $memberKind) => {
+    if (cm_MetricMemberCompatibility_requiresPointOnlyMembers($metricKind)) {
+        cm_SiteMemberKind_$callClinit();
+        if ($memberKind !== cm_SiteMemberKind_POINT)
+            return ju_Optional_of(cm_MetricMemberCompatibility_pointOnlyMetricMessage($metricKind));
+    }
+    return ju_Optional_empty();
+};
+function ju_Optional() {
+    jl_Object.call(this);
+    this.$value0 = null;
+}
+let ju_Optional_emptyInstance = null,
+ju_Optional__init_0 = ($this, $value) => {
+    $this.$value0 = $value;
+},
+ju_Optional__init_ = var_0 => {
+    let var_1 = new ju_Optional();
+    ju_Optional__init_0(var_1, var_0);
+    return var_1;
+},
+ju_Optional_empty = () => {
+    if (ju_Optional_emptyInstance === null)
+        ju_Optional_emptyInstance = ju_Optional__init_(null);
+    return ju_Optional_emptyInstance;
+},
+ju_Optional_of = $value => {
+    return ju_Optional__init_(ju_Objects_requireNonNull($value));
+},
+ju_Optional_get = $this => {
+    let var$1;
+    var$1 = $this.$value0;
+    if (var$1 !== null)
+        return var$1;
+    var$1 = new ju_NoSuchElementException;
+    jl_Exception__init_(var$1);
+    $rt_throw(var$1);
+},
+ju_Optional_isPresent = $this => {
+    return $this.$value0 === null ? 0 : 1;
 };
 function cm_ClusterSite() {
     let a = this; jl_Object.call(a);
@@ -2655,132 +2870,72 @@ cm_ClusterSite_size = $this => {
 },
 cm_ClusterSite_setMember = ($this, $index, $member) => {
     ju_ArrayList_set($this.$members, $index, $member);
-};
-function cm_Rgba() {
-    let a = this; jl_Object.call(a);
-    a.$r = 0.0;
-    a.$g = 0.0;
-    a.$b1 = 0.0;
-    a.$a2 = 0.0;
-}
-let cm_Rgba_RED = null,
-cm_Rgba_GREEN = null,
-cm_Rgba_BLUE = null,
-cm_Rgba_BLACK = null,
-cm_Rgba_WHITE = null,
-cm_Rgba_GRAY = null,
-cm_Rgba_ORANGE = null,
-cm_Rgba_CYAN = null,
-cm_Rgba_$callClinit = () => {
-    cm_Rgba_$callClinit = $rt_eraseClinit(cm_Rgba);
-    cm_Rgba__clinit_();
 },
-cm_Rgba__init_0 = ($this, $r, $g, $b, $a) => {
-    cm_Rgba_$callClinit();
-    $this.$r = cm_Rgba_clamp01($r);
-    $this.$g = cm_Rgba_clamp01($g);
-    $this.$b1 = cm_Rgba_clamp01($b);
-    $this.$a2 = cm_Rgba_clamp01($a);
+cm_ClusterMember = $rt_classWithoutFields(0),
+c_HandleVisibility = $rt_classWithoutFields(),
+c_HandleVisibility_primaryHandleIndex = $member => {
+    if ($member instanceof cm_CircleMember)
+        return 1;
+    if (!($member instanceof cm_EllipseMember))
+        return 0;
+    return 2;
 },
-cm_Rgba__init_ = (var_0, var_1, var_2, var_3) => {
-    let var_4 = new cm_Rgba();
-    cm_Rgba__init_0(var_4, var_0, var_1, var_2, var_3);
-    return var_4;
+c_HandleVisibility_isVisible = ($member, $handleIndex, $memberSelected) => {
+    if (!($member instanceof cm_CircleMember) && !($member instanceof cm_EllipseMember) && !($member instanceof cm_LineMember))
+        return 1;
+    return $handleIndex != c_HandleVisibility_primaryHandleIndex($member) && !$memberSelected ? 0 : 1;
 },
-cm_Rgba_rgb = ($r, $g, $b) => {
-    cm_Rgba_$callClinit();
-    return cm_Rgba__init_($r, $g, $b, 1.0);
+jl_Math = $rt_classWithoutFields(),
+jl_Math_sin = var$1 => {
+    return Math.sin(var$1);
 },
-cm_Rgba_gray = $value => {
-    cm_Rgba_$callClinit();
-    $value = cm_Rgba_clamp01($value);
-    return cm_Rgba__init_($value, $value, $value, 1.0);
+jl_Math_cos = var$1 => {
+    return Math.cos(var$1);
 },
-cm_Rgba_hsb = ($hue, $saturation, $brightness) => {
-    let var$4, var$5, var$6;
-    cm_Rgba_$callClinit();
-    $hue = ($hue % 360.0 + 360.0) % 360.0;
-    $saturation = cm_Rgba_clamp01($saturation);
-    $brightness = cm_Rgba_clamp01($brightness);
-    var$4 = $brightness * $saturation;
-    var$5 = var$4 * (1.0 - jl_Math_abs($hue / 60.0 % 2.0 - 1.0));
-    var$6 = $brightness - var$4;
-    if ($hue < 60.0)
-        $saturation = 0.0;
-    else if ($hue < 120.0) {
-        $saturation = 0.0;
-        $hue = var$4;
-        var$4 = var$5;
-        var$5 = $hue;
-    } else if ($hue < 180.0) {
-        $brightness = var$4;
-        $saturation = var$5;
-        var$4 = 0.0;
-        var$5 = $brightness;
-    } else if ($hue < 240.0) {
-        $saturation = var$4;
-        var$4 = 0.0;
-    } else if (!($hue < 300.0)) {
-        $saturation = var$5;
-        var$5 = 0.0;
-    } else {
-        $saturation = var$4;
-        var$4 = var$5;
-        var$5 = 0.0;
-    }
-    return cm_Rgba__init_(var$4 + var$6, var$5 + var$6, $saturation + var$6, 1.0);
+jl_Math_exp = var$1 => {
+    return Math.exp(var$1);
 },
-cm_Rgba_toArgb = $this => {
-    return Long_lo((jl_Math_round($this.$a2 * 255.0))) << 24 | Long_lo((jl_Math_round($this.$r * 255.0))) << 16 | Long_lo((jl_Math_round($this.$g * 255.0))) << 8 | Long_lo((jl_Math_round($this.$b1 * 255.0)));
+jl_Math_sqrt = var$1 => {
+    return Math.sqrt(var$1);
 },
-cm_Rgba_clamp01 = $v => {
-    cm_Rgba_$callClinit();
-    if ($v < 0.0)
-        return 0.0;
-    if (!($v > 1.0))
-        return $v;
-    return 1.0;
+jl_Math_atan2 = (var$1, var$2) => {
+    return Math.atan2(var$1, var$2);
 },
-cm_Rgba__clinit_ = () => {
-    cm_Rgba_RED = cm_Rgba_rgb(1.0, 0.0, 0.0);
-    cm_Rgba_GREEN = cm_Rgba_rgb(0.0, 1.0, 0.0);
-    cm_Rgba_BLUE = cm_Rgba_rgb(0.0, 0.0, 1.0);
-    cm_Rgba_BLACK = cm_Rgba_rgb(0.0, 0.0, 0.0);
-    cm_Rgba_WHITE = cm_Rgba_rgb(1.0, 1.0, 1.0);
-    cm_Rgba_GRAY = cm_Rgba_gray(0.5);
-    cm_Rgba_ORANGE = cm_Rgba_rgb(1.0, 0.647, 0.0);
-    cm_Rgba_CYAN = cm_Rgba_rgb(0.0, 1.0, 1.0);
+jl_Math_round = var$1 => {
+    return Long_fromNumber(var$1 + jl_Math_sign(var$1) * 0.5);
 },
-jl_Record = $rt_classWithoutFields(),
-cm_ClusterMember = $rt_classWithoutFields(0);
-function cm_PointMember() {
-    jl_Record.call(this);
-    this.$position = null;
-}
-let cm_PointMember__init_0 = ($this, $position) => {
-    $this.$position = $position;
+jl_Math_min = ($a, $b) => {
+    if ($a < $b)
+        $b = $a;
+    return $b;
 },
-cm_PointMember__init_ = var_0 => {
-    let var_1 = new cm_PointMember();
-    cm_PointMember__init_0(var_1, var_0);
-    return var_1;
+jl_Math_max = ($a, $b) => {
+    if ($a > $b)
+        $b = $a;
+    return $b;
 },
-cm_PointMember_distanceTo = ($this, $point) => {
-    return xmg_Vector_distanceTo($this.$position, $point);
+jl_Math_minImpl = (var$1, var$2) => {
+    return Math.min(var$1, var$2);
 },
-cm_PointMember_handleCount = $this => {
-    return 1;
+jl_Math_min0 = (var$1, var$2) => {
+    return jl_Math_minImpl(var$1, var$2);
 },
-cm_PointMember_getHandle = ($this, $index) => {
-    if (!$index)
-        return $this.$position;
-    $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+jl_Math_maxImpl = (var$1, var$2) => {
+    return Math.max(var$1, var$2);
 },
-cm_PointMember_withHandle = ($this, $index, $v) => {
-    if (!$index)
-        return cm_PointMember__init_($v);
-    $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+jl_Math_max0 = (var$1, var$2) => {
+    return jl_Math_maxImpl(var$1, var$2);
 },
+jl_Math_absImpl = var$1 => {
+    return Math.abs(var$1);
+},
+jl_Math_abs = var$1 => {
+    return jl_Math_absImpl(var$1);
+},
+jl_Math_sign = var$1 => {
+    return Math.sign(var$1);
+},
+otjc_JSBoolean = $rt_classWithoutFields(),
 xmg_AbstractVector = $rt_classWithoutFields(0),
 xmg_RealVector = $rt_classWithoutFields(0),
 xmu_Hashable = $rt_classWithoutFields(0);
@@ -2853,312 +3008,37 @@ xmg_Vector__clinit_ = () => {
     xmg_Vector_UNIT_DIAGONAL = xmg_Vector_xy(1.0, 1.0);
     xmg_Vector_INFINITY_XY = xmg_Vector_xy(Infinity, Infinity);
 },
-jl_IndexOutOfBoundsException = $rt_classWithoutFields(jl_RuntimeException),
-jl_IndexOutOfBoundsException__init_0 = $this => {
-    jl_Exception__init_($this);
-},
-jl_IndexOutOfBoundsException__init_2 = () => {
-    let var_0 = new jl_IndexOutOfBoundsException();
-    jl_IndexOutOfBoundsException__init_0(var_0);
-    return var_0;
-},
-jl_IndexOutOfBoundsException__init_1 = ($this, $index) => {
-    let var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10;
-    var$2 = jl_StringBuilder__init_();
-    var$3 = jl_StringBuilder_append(var$2, $rt_s(42));
-    var$4 = var$3.$length;
-    var$5 = 1;
-    if ($index < 0) {
-        var$5 = 0;
-        $index =  -$index | 0;
-    }
-    a: {
-        if ($rt_ucmp($index, 10) < 0) {
-            if (var$5)
-                jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + 1 | 0);
-            else {
-                jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + 2 | 0);
-                var$6 = var$3.$buffer.data;
-                var$7 = var$4 + 1 | 0;
-                var$6[var$4] = 45;
-                var$4 = var$7;
-            }
-            var$3.$buffer.data[var$4] = jl_Character_forDigit($index, 10);
-        } else {
-            var$8 = 1;
-            var$7 = 1;
-            var$9 = $rt_udiv((-1), 10);
-            b: {
-                while (true) {
-                    var$10 = var$8 * 10 | 0;
-                    if ($rt_ucmp(var$10, $index) > 0) {
-                        var$10 = var$8;
-                        break b;
-                    }
-                    var$7 = var$7 + 1 | 0;
-                    if ($rt_ucmp(var$10, var$9) > 0)
-                        break;
-                    var$8 = var$10;
-                }
-            }
-            if (!var$5)
-                var$7 = var$7 + 1 | 0;
-            jl_AbstractStringBuilder_insertSpace(var$3, var$4, var$4 + var$7 | 0);
-            if (var$5)
-                var$7 = var$4;
-            else {
-                var$6 = var$3.$buffer.data;
-                var$7 = var$4 + 1 | 0;
-                var$6[var$4] = 45;
-            }
-            while (true) {
-                if (!var$10)
-                    break a;
-                var$6 = var$3.$buffer.data;
-                var$9 = var$7 + 1 | 0;
-                var$6[var$7] = jl_Character_forDigit($rt_udiv($index, var$10), 10);
-                $index = $rt_umod($index, var$10);
-                var$10 = $rt_udiv(var$10, 10);
-                var$7 = var$9;
-            }
-        }
-    }
-    jl_RuntimeException__init_($this, jl_StringBuilder_toString(var$2));
-},
-jl_IndexOutOfBoundsException__init_ = var_0 => {
-    let var_1 = new jl_IndexOutOfBoundsException();
-    jl_IndexOutOfBoundsException__init_1(var_1, var_0);
-    return var_1;
-},
-cm_SiteMemberKind = $rt_classWithoutFields(jl_Enum),
-cm_SiteMemberKind_POINT = null,
-cm_SiteMemberKind_LINE_SEGMENT = null,
-cm_SiteMemberKind_CIRCLE = null,
-cm_SiteMemberKind_ELLIPSE = null,
-cm_SiteMemberKind_LINE = null,
-cm_SiteMemberKind_$VALUES = null,
-cm_SiteMemberKind_$callClinit = () => {
-    cm_SiteMemberKind_$callClinit = $rt_eraseClinit(cm_SiteMemberKind);
-    cm_SiteMemberKind__clinit_();
-},
-cm_SiteMemberKind_valueOf = $name => {
-    cm_SiteMemberKind_$callClinit();
-    return jl_Enum_valueOf($rt_cls(cm_SiteMemberKind), $name);
-},
-cm_SiteMemberKind__init_0 = ($this, var$1, var$2) => {
-    cm_SiteMemberKind_$callClinit();
-    jl_Enum__init_($this, var$1, var$2);
-},
-cm_SiteMemberKind__init_ = (var_0, var_1) => {
-    let var_2 = new cm_SiteMemberKind();
-    cm_SiteMemberKind__init_0(var_2, var_0, var_1);
-    return var_2;
-},
-cm_SiteMemberKind__clinit_ = () => {
-    let var$1, var$2, var$3;
-    cm_SiteMemberKind_POINT = cm_SiteMemberKind__init_($rt_s(6), 0);
-    cm_SiteMemberKind_LINE_SEGMENT = cm_SiteMemberKind__init_($rt_s(43), 1);
-    cm_SiteMemberKind_CIRCLE = cm_SiteMemberKind__init_($rt_s(8), 2);
-    cm_SiteMemberKind_ELLIPSE = cm_SiteMemberKind__init_($rt_s(10), 3);
-    var$1 = cm_SiteMemberKind__init_($rt_s(9), 4);
-    cm_SiteMemberKind_LINE = var$1;
-    var$2 = $rt_createArray(cm_SiteMemberKind, 5);
-    var$3 = var$2.data;
-    var$3[0] = cm_SiteMemberKind_POINT;
-    var$3[1] = cm_SiteMemberKind_LINE_SEGMENT;
-    var$3[2] = cm_SiteMemberKind_CIRCLE;
-    var$3[3] = cm_SiteMemberKind_ELLIPSE;
-    var$3[4] = var$1;
-    cm_SiteMemberKind_$VALUES = var$2;
-},
-ju_TemplateCollections$AbstractImmutableList = $rt_classWithoutFields(ju_AbstractList);
-function ju_TemplateCollections$ImmutableArrayList() {
-    ju_TemplateCollections$AbstractImmutableList.call(this);
-    this.$list = null;
-}
-let ju_TemplateCollections$ImmutableArrayList__init_0 = ($this, $list) => {
-    $this.$list = $list;
-},
-ju_TemplateCollections$ImmutableArrayList__init_ = var_0 => {
-    let var_1 = new ju_TemplateCollections$ImmutableArrayList();
-    ju_TemplateCollections$ImmutableArrayList__init_0(var_1, var_0);
-    return var_1;
-},
-ju_TemplateCollections$ImmutableArrayList_get = ($this, $index) => {
-    return $this.$list.data[$index];
-},
-ju_TemplateCollections$ImmutableArrayList_size = $this => {
-    return $this.$list.data.length;
-};
-function ju_TemplateCollections$TwoElementsList() {
-    let a = this; ju_TemplateCollections$AbstractImmutableList.call(a);
-    a.$first = null;
-    a.$second = null;
-}
-let ju_TemplateCollections$TwoElementsList_size = $this => {
-    return 2;
-},
-ju_TemplateCollections$TwoElementsList_get = ($this, $index) => {
-    let var$2;
-    if (!$index)
-        return $this.$first;
-    if ($index == 1)
-        return $this.$second;
-    var$2 = new jl_IndexOutOfBoundsException;
-    jl_Exception__init_(var$2);
-    $rt_throw(var$2);
-},
-jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException),
-otj_JSObject = $rt_classWithoutFields(0),
-otjc_JSString = $rt_classWithoutFields(),
-cm_MetricMemberCompatibility = $rt_classWithoutFields(),
-cm_MetricMemberCompatibility_requiresPointOnlyMembers = $metricKind => {
-    cm_MetricKind_$callClinit();
-    return $metricKind !== cm_MetricKind_SUM_OF_DISTANCES && $metricKind !== cm_MetricKind_MEAN_DISTANCE && $metricKind !== cm_MetricKind_KTH_NEAREST_DISTANCE ? 0 : 1;
-},
-cm_MetricMemberCompatibility_pointOnlyMetricMessage = $metricKind => {
-    let var$2;
-    var$2 = $metricKind.$name;
-    $metricKind = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append($metricKind, var$2), $rt_s(44));
-    return jl_StringBuilder_toString($metricKind);
-},
-cm_MetricMemberCompatibility_invalidNewMemberMessage = ($metricKind, $memberKind) => {
-    if (cm_MetricMemberCompatibility_requiresPointOnlyMembers($metricKind)) {
-        cm_SiteMemberKind_$callClinit();
-        if ($memberKind !== cm_SiteMemberKind_POINT)
-            return ju_Optional_of(cm_MetricMemberCompatibility_pointOnlyMetricMessage($metricKind));
-    }
-    return ju_Optional_empty();
-};
-function ju_Optional() {
-    jl_Object.call(this);
-    this.$value0 = null;
-}
-let ju_Optional_emptyInstance = null,
-ju_Optional__init_0 = ($this, $value) => {
-    $this.$value0 = $value;
-},
-ju_Optional__init_ = var_0 => {
-    let var_1 = new ju_Optional();
-    ju_Optional__init_0(var_1, var_0);
-    return var_1;
-},
-ju_Optional_empty = () => {
-    if (ju_Optional_emptyInstance === null)
-        ju_Optional_emptyInstance = ju_Optional__init_(null);
-    return ju_Optional_emptyInstance;
-},
-ju_Optional_of = $value => {
-    return ju_Optional__init_(ju_Objects_requireNonNull($value));
-},
-ju_Optional_get = $this => {
-    let var$1;
-    var$1 = $this.$value0;
-    if (var$1 !== null)
-        return var$1;
-    var$1 = new ju_NoSuchElementException;
-    jl_Exception__init_(var$1);
-    $rt_throw(var$1);
-},
-ju_Optional_isPresent = $this => {
-    return $this.$value0 === null ? 0 : 1;
-},
-c_HandleVisibility = $rt_classWithoutFields(),
-c_HandleVisibility_primaryHandleIndex = $member => {
-    if ($member instanceof cm_CircleMember)
-        return 1;
-    if (!($member instanceof cm_EllipseMember))
-        return 0;
-    return 2;
-},
-c_HandleVisibility_isVisible = ($member, $handleIndex, $memberSelected) => {
-    if (!($member instanceof cm_CircleMember) && !($member instanceof cm_EllipseMember) && !($member instanceof cm_LineMember))
-        return 1;
-    return $handleIndex != c_HandleVisibility_primaryHandleIndex($member) && !$memberSelected ? 0 : 1;
-},
-jl_Math = $rt_classWithoutFields(),
-jl_Math_sin = var$1 => {
-    return Math.sin(var$1);
-},
-jl_Math_cos = var$1 => {
-    return Math.cos(var$1);
-},
-jl_Math_exp = var$1 => {
-    return Math.exp(var$1);
-},
-jl_Math_sqrt = var$1 => {
-    return Math.sqrt(var$1);
-},
-jl_Math_atan2 = (var$1, var$2) => {
-    return Math.atan2(var$1, var$2);
-},
-jl_Math_round = var$1 => {
-    return Long_fromNumber(var$1 + jl_Math_sign(var$1) * 0.5);
-},
-jl_Math_min = ($a, $b) => {
-    if ($a < $b)
-        $b = $a;
-    return $b;
-},
-jl_Math_max = ($a, $b) => {
-    if ($a > $b)
-        $b = $a;
-    return $b;
-},
-jl_Math_minImpl = (var$1, var$2) => {
-    return Math.min(var$1, var$2);
-},
-jl_Math_min0 = (var$1, var$2) => {
-    return jl_Math_minImpl(var$1, var$2);
-},
-jl_Math_maxImpl = (var$1, var$2) => {
-    return Math.max(var$1, var$2);
-},
-jl_Math_max0 = (var$1, var$2) => {
-    return jl_Math_maxImpl(var$1, var$2);
-},
-jl_Math_absImpl = var$1 => {
-    return Math.abs(var$1);
-},
-jl_Math_abs = var$1 => {
-    return jl_Math_absImpl(var$1);
-},
-jl_Math_sign = var$1 => {
-    return Math.sign(var$1);
-},
-otjc_JSBoolean = $rt_classWithoutFields(),
 cm_SiteMemberFactory = $rt_classWithoutFields(),
-cm_SiteMemberFactory_createDefault = (var$1, $clusterIndex, $memberIndex, $hint) => {
+cm_SiteMemberFactory_createDefault = ($kind, $clusterIndex, $memberIndex, $hint) => {
     let $half, $radius, $angle;
     a: {
         cm_SiteMemberFactory$1_$callClinit();
-        switch (cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind.data[var$1.$ordinal]) {
+        switch (cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind.data[$kind.$ordinal]) {
             case 1:
                 break;
             case 2:
                 $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                var$1 = cm_SegmentMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
+                $kind = cm_SegmentMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
                 break a;
             case 3:
                 $radius = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                var$1 = cm_CircleMember__init_($hint, xmg_Vector_add($hint, $radius));
+                $kind = cm_CircleMember__init_($hint, xmg_Vector_add($hint, $radius));
                 break a;
             case 4:
                 $angle = 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31);
                 $half = xmg_Vector_polar(18.0, $angle);
-                var$1 = cm_EllipseMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half), xmg_Vector_add($hint, xmg_Vector_polar(40.0, $angle + 1.5707963267948966)));
+                $kind = cm_EllipseMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half), xmg_Vector_add($hint, xmg_Vector_polar(40.0, $angle + 1.5707963267948966)));
                 break a;
             case 5:
                 $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                var$1 = cm_LineMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
+                $kind = cm_LineMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
                 break a;
             default:
                 $rt_throw(jl_MatchException__init_(null, null));
         }
-        var$1 = cm_PointMember__init_($hint);
+        $kind = cm_PointMember__init_($hint);
     }
-    return var$1;
+    return $kind;
 },
 cc_ScenePreparation = $rt_classWithoutFields(),
 cc_ScenePreparation_MINIMUM_DISTANCE = null,
@@ -3188,12 +3068,74 @@ function cr_ClusterColorizer() {
     a.$background = null;
     a.$shadingEnabled = 0;
 }
+let jl_Record = $rt_classWithoutFields();
 function cc_ScenePreparation$PreparedScene() {
     let a = this; jl_Record.call(a);
     a.$clusters0 = null;
     a.$metric = null;
     a.$ownershipSelector = null;
 }
+function cm_Rgba() {
+    let a = this; jl_Object.call(a);
+    a.$r = 0.0;
+    a.$g = 0.0;
+    a.$b1 = 0.0;
+    a.$a2 = 0.0;
+}
+let cm_Rgba_RED = null,
+cm_Rgba_GREEN = null,
+cm_Rgba_BLUE = null,
+cm_Rgba_BLACK = null,
+cm_Rgba_WHITE = null,
+cm_Rgba_GRAY = null,
+cm_Rgba_ORANGE = null,
+cm_Rgba_CYAN = null,
+cm_Rgba_$callClinit = () => {
+    cm_Rgba_$callClinit = $rt_eraseClinit(cm_Rgba);
+    cm_Rgba__clinit_();
+},
+cm_Rgba__init_0 = ($this, $r, $g, $b, $a) => {
+    cm_Rgba_$callClinit();
+    $this.$r = cm_Rgba_clamp01($r);
+    $this.$g = cm_Rgba_clamp01($g);
+    $this.$b1 = cm_Rgba_clamp01($b);
+    $this.$a2 = cm_Rgba_clamp01($a);
+},
+cm_Rgba__init_ = (var_0, var_1, var_2, var_3) => {
+    let var_4 = new cm_Rgba();
+    cm_Rgba__init_0(var_4, var_0, var_1, var_2, var_3);
+    return var_4;
+},
+cm_Rgba_rgb = ($r, $g, $b) => {
+    cm_Rgba_$callClinit();
+    return cm_Rgba__init_($r, $g, $b, 1.0);
+},
+cm_Rgba_gray = $value => {
+    cm_Rgba_$callClinit();
+    $value = cm_Rgba_clamp01($value);
+    return cm_Rgba__init_($value, $value, $value, 1.0);
+},
+cm_Rgba_toArgb = $this => {
+    return Long_lo((jl_Math_round($this.$a2 * 255.0))) << 24 | Long_lo((jl_Math_round($this.$r * 255.0))) << 16 | Long_lo((jl_Math_round($this.$g * 255.0))) << 8 | Long_lo((jl_Math_round($this.$b1 * 255.0)));
+},
+cm_Rgba_clamp01 = $v => {
+    cm_Rgba_$callClinit();
+    if ($v < 0.0)
+        return 0.0;
+    if (!($v > 1.0))
+        return $v;
+    return 1.0;
+},
+cm_Rgba__clinit_ = () => {
+    cm_Rgba_RED = cm_Rgba_rgb(1.0, 0.0, 0.0);
+    cm_Rgba_GREEN = cm_Rgba_rgb(0.0, 1.0, 0.0);
+    cm_Rgba_BLUE = cm_Rgba_rgb(0.0, 0.0, 1.0);
+    cm_Rgba_BLACK = cm_Rgba_rgb(0.0, 0.0, 0.0);
+    cm_Rgba_WHITE = cm_Rgba_rgb(1.0, 1.0, 1.0);
+    cm_Rgba_GRAY = cm_Rgba_gray(0.5);
+    cm_Rgba_ORANGE = cm_Rgba_rgb(1.0, 0.647, 0.0);
+    cm_Rgba_CYAN = cm_Rgba_rgb(0.0, 1.0, 1.0);
+};
 function xmg_Box() {
     let a = this; jl_Object.call(a);
     a.$x1 = null;
@@ -3249,77 +3191,33 @@ function cc_DiagramRasterizer$OwnershipGrid() {
     a.$clusterIndices0 = null;
     a.$memberIndices0 = null;
 }
-function xmu_Hash() {
-    jl_Object.call(this);
-    this.$h = Long_ZERO;
+function cm_PointMember() {
+    jl_Record.call(this);
+    this.$position = null;
 }
-let ju_NoSuchElementException = $rt_classWithoutFields(jl_RuntimeException),
-cm_ClusterNaming = $rt_classWithoutFields(),
-cm_ClusterNaming_NAMES = null,
-cm_ClusterNaming_HUE_CENTERS = null,
-cm_ClusterNaming_$callClinit = () => {
-    cm_ClusterNaming_$callClinit = $rt_eraseClinit(cm_ClusterNaming);
-    cm_ClusterNaming__clinit_();
+let cm_PointMember__init_0 = ($this, $position) => {
+    $this.$position = $position;
 },
-cm_ClusterNaming__clinit_ = () => {
-    cm_ClusterNaming_NAMES = $rt_wrapArray(jl_String, [$rt_s(45), $rt_s(46), $rt_s(11), $rt_s(47), $rt_s(14), $rt_s(48), $rt_s(49), $rt_s(50), $rt_s(12), $rt_s(51), $rt_s(52), $rt_s(53), $rt_s(54), $rt_s(13)]);
-    cm_ClusterNaming_HUE_CENTERS = $rt_createDoubleArrayFromData([0.0, 20.0, 35.0, 55.0, 100.0, 130.0, 160.0, 185.0, 210.0, 235.0, 255.0, 275.0, 300.0, 330.0]);
-};
-function cm_CircleMember() {
-    let a = this; jl_Record.call(a);
-    a.$center = null;
-    a.$radiusHandle = null;
-}
-let cm_CircleMember__init_0 = ($this, $center, $radiusHandle) => {
-    $this.$center = $center;
-    $this.$radiusHandle = $radiusHandle;
+cm_PointMember__init_ = var_0 => {
+    let var_1 = new cm_PointMember();
+    cm_PointMember__init_0(var_1, var_0);
+    return var_1;
 },
-cm_CircleMember__init_ = (var_0, var_1) => {
-    let var_2 = new cm_CircleMember();
-    cm_CircleMember__init_0(var_2, var_0, var_1);
-    return var_2;
+cm_PointMember_distanceTo = ($this, $point) => {
+    return xmg_Vector_distanceTo($this.$position, $point);
 },
-cm_CircleMember_radius = $this => {
-    return xmg_Vector_distanceTo($this.$center, $this.$radiusHandle);
+cm_PointMember_handleCount = $this => {
+    return 1;
 },
-cm_CircleMember_distanceTo = ($this, $point) => {
-    return jl_Math_abs(xmg_Vector_distanceTo($this.$center, $point) - cm_CircleMember_radius($this));
+cm_PointMember_getHandle = ($this, $index) => {
+    if (!$index)
+        return $this.$position;
+    $rt_throw(jl_IndexOutOfBoundsException__init_($index));
 },
-cm_CircleMember_handleCount = $this => {
-    return 2;
-},
-cm_CircleMember_getHandle = ($this, $index) => {
-    let var$2;
-    a: {
-        switch ($index) {
-            case 0:
-                break;
-            case 1:
-                var$2 = $this.$radiusHandle;
-                break a;
-            default:
-                $rt_throw(jl_IndexOutOfBoundsException__init_($index));
-        }
-        var$2 = $this.$center;
-    }
-    return var$2;
-},
-cm_CircleMember_withHandle = ($this, $index, $v) => {
-    let $offset, var$4;
-    a: {
-        switch ($index) {
-            case 0:
-                $offset = xmg_Vector_sub($this.$radiusHandle, $this.$center);
-                var$4 = cm_CircleMember__init_($v, xmg_Vector_add($v, $offset));
-                break a;
-            case 1:
-                var$4 = cm_CircleMember__init_($this.$center, $v);
-                break a;
-            default:
-        }
-        $rt_throw(jl_IndexOutOfBoundsException__init_($index));
-    }
-    return var$4;
+cm_PointMember_withHandle = ($this, $index, $v) => {
+    if (!$index)
+        return cm_PointMember__init_($v);
+    $rt_throw(jl_IndexOutOfBoundsException__init_($index));
 };
 function cm_EllipseMember() {
     let a = this; jl_Object.call(a);
@@ -3565,24 +3463,6 @@ cm_EllipseMember_withHandle = ($this, $index, $v) => {
         $rt_throw(jl_IndexOutOfBoundsException__init_($index));
     }
     return var$3;
-},
-cm_SiteMemberFactory$1 = $rt_classWithoutFields(),
-cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = null,
-cm_SiteMemberFactory$1_$callClinit = () => {
-    cm_SiteMemberFactory$1_$callClinit = $rt_eraseClinit(cm_SiteMemberFactory$1);
-    cm_SiteMemberFactory$1__clinit_();
-},
-cm_SiteMemberFactory$1__clinit_ = () => {
-    let var$1, var$2;
-    cm_SiteMemberKind_$callClinit();
-    var$1 = $rt_createIntArray((cm_SiteMemberKind_$VALUES.$clone0()).data.length);
-    var$2 = var$1.data;
-    cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = var$1;
-    var$2[cm_SiteMemberKind_POINT.$ordinal] = 1;
-    var$2[cm_SiteMemberKind_LINE_SEGMENT.$ordinal] = 2;
-    var$2[cm_SiteMemberKind_CIRCLE.$ordinal] = 3;
-    var$2[cm_SiteMemberKind_ELLIPSE.$ordinal] = 4;
-    var$2[cm_SiteMemberKind_LINE.$ordinal] = 5;
 };
 function cm_SegmentMember() {
     let a = this; jl_Record.call(a);
@@ -3701,6 +3581,92 @@ cm_LineMember_withHandle = ($this, $index, $v) => {
         $rt_throw(jl_IndexOutOfBoundsException__init_($index));
     }
     return var$3;
+},
+ju_NoSuchElementException = $rt_classWithoutFields(jl_RuntimeException),
+cm_ClusterNaming = $rt_classWithoutFields(),
+cm_ClusterNaming_NAMES = null,
+cm_ClusterNaming_HUE_CENTERS = null,
+cm_ClusterNaming_$callClinit = () => {
+    cm_ClusterNaming_$callClinit = $rt_eraseClinit(cm_ClusterNaming);
+    cm_ClusterNaming__clinit_();
+},
+cm_ClusterNaming__clinit_ = () => {
+    cm_ClusterNaming_NAMES = $rt_wrapArray(jl_String, [$rt_s(45), $rt_s(46), $rt_s(25), $rt_s(47), $rt_s(28), $rt_s(48), $rt_s(49), $rt_s(50), $rt_s(26), $rt_s(51), $rt_s(52), $rt_s(53), $rt_s(54), $rt_s(27)]);
+    cm_ClusterNaming_HUE_CENTERS = $rt_createDoubleArrayFromData([0.0, 20.0, 35.0, 55.0, 100.0, 130.0, 160.0, 185.0, 210.0, 235.0, 255.0, 275.0, 300.0, 330.0]);
+};
+function cm_CircleMember() {
+    let a = this; jl_Record.call(a);
+    a.$center = null;
+    a.$radiusHandle = null;
+}
+let cm_CircleMember__init_0 = ($this, $center, $radiusHandle) => {
+    $this.$center = $center;
+    $this.$radiusHandle = $radiusHandle;
+},
+cm_CircleMember__init_ = (var_0, var_1) => {
+    let var_2 = new cm_CircleMember();
+    cm_CircleMember__init_0(var_2, var_0, var_1);
+    return var_2;
+},
+cm_CircleMember_radius = $this => {
+    return xmg_Vector_distanceTo($this.$center, $this.$radiusHandle);
+},
+cm_CircleMember_distanceTo = ($this, $point) => {
+    return jl_Math_abs(xmg_Vector_distanceTo($this.$center, $point) - cm_CircleMember_radius($this));
+},
+cm_CircleMember_handleCount = $this => {
+    return 2;
+},
+cm_CircleMember_getHandle = ($this, $index) => {
+    let var$2;
+    a: {
+        switch ($index) {
+            case 0:
+                break;
+            case 1:
+                var$2 = $this.$radiusHandle;
+                break a;
+            default:
+                $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+        }
+        var$2 = $this.$center;
+    }
+    return var$2;
+},
+cm_CircleMember_withHandle = ($this, $index, $v) => {
+    let $offset, var$4;
+    a: {
+        switch ($index) {
+            case 0:
+                $offset = xmg_Vector_sub($this.$radiusHandle, $this.$center);
+                var$4 = cm_CircleMember__init_($v, xmg_Vector_add($v, $offset));
+                break a;
+            case 1:
+                var$4 = cm_CircleMember__init_($this.$center, $v);
+                break a;
+            default:
+        }
+        $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+    }
+    return var$4;
+},
+cm_SiteMemberFactory$1 = $rt_classWithoutFields(),
+cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = null,
+cm_SiteMemberFactory$1_$callClinit = () => {
+    cm_SiteMemberFactory$1_$callClinit = $rt_eraseClinit(cm_SiteMemberFactory$1);
+    cm_SiteMemberFactory$1__clinit_();
+},
+cm_SiteMemberFactory$1__clinit_ = () => {
+    let var$1, var$2;
+    cm_SiteMemberKind_$callClinit();
+    var$1 = $rt_createIntArray((cm_SiteMemberKind_$VALUES.$clone0()).data.length);
+    var$2 = var$1.data;
+    cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = var$1;
+    var$2[cm_SiteMemberKind_POINT.$ordinal] = 1;
+    var$2[cm_SiteMemberKind_LINE_SEGMENT.$ordinal] = 2;
+    var$2[cm_SiteMemberKind_CIRCLE.$ordinal] = 3;
+    var$2[cm_SiteMemberKind_ELLIPSE.$ordinal] = 4;
+    var$2[cm_SiteMemberKind_LINE.$ordinal] = 5;
 },
 jl_MatchException = $rt_classWithoutFields(jl_RuntimeException),
 jl_MatchException__init_0 = ($this, $message, $cause) => {
@@ -3831,7 +3797,43 @@ jl_Double_compareTo = ($this, var$1) => {
 jl_Double__clinit_ = () => {
     jl_Double_TYPE = $rt_cls($rt_doublecls);
 },
-jl_NullPointerException = $rt_classWithoutFields(jl_RuntimeException),
+ju_TemplateCollections$AbstractImmutableList = $rt_classWithoutFields(ju_AbstractList);
+function ju_TemplateCollections$TwoElementsList() {
+    let a = this; ju_TemplateCollections$AbstractImmutableList.call(a);
+    a.$first = null;
+    a.$second = null;
+}
+let ju_TemplateCollections$TwoElementsList_size = $this => {
+    return 2;
+},
+ju_TemplateCollections$TwoElementsList_get = ($this, $index) => {
+    let var$2;
+    if (!$index)
+        return $this.$first;
+    if ($index == 1)
+        return $this.$second;
+    var$2 = new jl_IndexOutOfBoundsException;
+    jl_Exception__init_(var$2);
+    $rt_throw(var$2);
+};
+function ju_TemplateCollections$ImmutableArrayList() {
+    ju_TemplateCollections$AbstractImmutableList.call(this);
+    this.$list = null;
+}
+let ju_TemplateCollections$ImmutableArrayList__init_0 = ($this, $list) => {
+    $this.$list = $list;
+},
+ju_TemplateCollections$ImmutableArrayList__init_ = var_0 => {
+    let var_1 = new ju_TemplateCollections$ImmutableArrayList();
+    ju_TemplateCollections$ImmutableArrayList__init_0(var_1, var_0);
+    return var_1;
+},
+ju_TemplateCollections$ImmutableArrayList_get = ($this, $index) => {
+    return $this.$list.data[$index];
+},
+ju_TemplateCollections$ImmutableArrayList_size = $this => {
+    return $this.$list.data.length;
+},
 ju_Collections = $rt_classWithoutFields(),
 ju_Collections_EMPTY_SET = null,
 ju_Collections_EMPTY_MAP = null,
@@ -3850,8 +3852,12 @@ ju_Collections__clinit_ = () => {
     ju_Collections_EMPTY_ITERATOR = new ju_Collections$4;
     ju_Collections_EMPTY_LIST_ITERATOR = new ju_Collections$5;
     ju_Collections_reverseOrder = new ju_Collections$_clinit_$lambda$_59_0;
-},
-xmu_Numeric = $rt_classWithoutFields(),
+};
+function xmu_Hash() {
+    jl_Object.call(this);
+    this.$h = Long_ZERO;
+}
+let xmu_Numeric = $rt_classWithoutFields(),
 xmu_Numeric_PHI = 0.0,
 xmu_Numeric_ALMOST_ONE = 0.0,
 xmu_Numeric_$callClinit = () => {
@@ -4118,7 +4124,8 @@ let cm_KthNearestPointDistanceMetric_evaluate = ($this, $point, $members) => {
         }
     }
     return cm_ClusterMetric$Result__init_(Infinity, (-1));
-};
+},
+jl_NullPointerException = $rt_classWithoutFields(jl_RuntimeException);
 function cc_DiagramRasterizer$Classification() {
     let a = this; jl_Record.call(a);
     a.$clusterIndex = 0;
@@ -4395,36 +4402,33 @@ ju_RandomAccess, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 1, 0, 0, ["$get", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size)],
 ju_Objects, 0, jl_Object, [], 17, 0, 0, 0,
 otji_JSWrapper, 0, jl_Object, [], 17, 0, 0, 0,
+cm_DemoScenes, 0, jl_Object, [], 17, 0, 0, 0,
+jl_IndexOutOfBoundsException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cm_SceneSnapshot, 0, jl_Object, [], 17, 0, 0, 0,
 jl_Enum, "Enum", 1, jl_Object, [jl_Comparable, ji_Serializable], 1025, 0, 0, ["$compareTo", $rt_wrapFunction1(jl_Enum_compareTo)],
 cm_MetricKind, "MetricKind", 3, jl_Enum, [], 65553, 0, () => cm_MetricKind_$callClinit(), 0,
 cm_NeighborOrder, "NeighborOrder", 4, jl_Enum, [], 65553, 0, () => cm_NeighborOrder_$callClinit(), 0,
-cm_ClusterSite, 0, jl_Object, [], 17, 0, 0, 0,
-cm_Rgba, 0, jl_Object, [], 17, 0, () => cm_Rgba_$callClinit(), 0,
-jl_Record, 0, jl_Object, [], 1025, 0, 0, 0,
-cm_ClusterMember, 0, jl_Object, [], 1537, 0, 0, 0,
-cm_PointMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_PointMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_PointMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_PointMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_PointMember_withHandle)],
-xmg_AbstractVector, 0, jl_Object, [], 1537, 0, 0, 0]);
-$rt_metadata([xmg_RealVector, 0, jl_Object, [xmg_AbstractVector], 1537, 0, 0, 0,
-xmu_Hashable, 0, jl_Object, [], 1537, 0, 0, 0,
-xmg_Vector, 0, jl_Object, [xmg_RealVector, jl_Iterable, xmu_Hashable], 17, 0, () => xmg_Vector_$callClinit(), 0,
-jl_IndexOutOfBoundsException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cm_SiteMemberKind, "SiteMemberKind", 4, jl_Enum, [], 65553, 0, () => cm_SiteMemberKind_$callClinit(), 0,
-ju_TemplateCollections$AbstractImmutableList, 0, ju_AbstractList, [ju_RandomAccess], 1024, 0, 0, 0,
-ju_TemplateCollections$ImmutableArrayList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 1, 0, 0, ["$get", $rt_wrapFunction1(ju_TemplateCollections$ImmutableArrayList_get), "$size", $rt_wrapFunction0(ju_TemplateCollections$ImmutableArrayList_size)],
-ju_TemplateCollections$TwoElementsList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 0, 0, 0, ["$size", $rt_wrapFunction0(ju_TemplateCollections$TwoElementsList_size), "$get", $rt_wrapFunction1(ju_TemplateCollections$TwoElementsList_get)],
 jl_IllegalArgumentException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 otj_JSObject, 0, jl_Object, [], 1537, 0, 0, 0,
-otjc_JSString, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
-cm_MetricMemberCompatibility, 0, jl_Object, [], 17, 0, 0, 0,
+otjc_JSString, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0]);
+$rt_metadata([cm_MetricMemberCompatibility, 0, jl_Object, [], 17, 0, 0, 0,
 ju_Optional, 0, jl_Object, [], 17, 0, 0, 0,
+cm_ClusterSite, 0, jl_Object, [], 17, 0, 0, 0,
+cm_ClusterMember, 0, jl_Object, [], 1537, 0, 0, 0,
 c_HandleVisibility, 0, jl_Object, [], 17, 0, 0, 0,
 jl_Math, 0, jl_Object, [], 17, 0, 0, 0,
 otjc_JSBoolean, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
+xmg_AbstractVector, 0, jl_Object, [], 1537, 0, 0, 0,
+xmg_RealVector, 0, jl_Object, [xmg_AbstractVector], 1537, 0, 0, 0,
+xmu_Hashable, 0, jl_Object, [], 1537, 0, 0, 0,
+xmg_Vector, 0, jl_Object, [xmg_RealVector, jl_Iterable, xmu_Hashable], 17, 0, () => xmg_Vector_$callClinit(), 0,
 cm_SiteMemberFactory, 0, jl_Object, [], 17, 0, 0, 0,
 cc_ScenePreparation, 0, jl_Object, [], 17, 0, () => cc_ScenePreparation_$callClinit(), 0,
 cr_ClusterColorizer, 0, jl_Object, [], 17, 0, 0, 0,
+jl_Record, 0, jl_Object, [], 1025, 0, 0, 0,
 cc_ScenePreparation$PreparedScene, 0, jl_Record, [], 17, 0, 0, 0,
+cm_Rgba, 0, jl_Object, [], 17, 0, () => cm_Rgba_$callClinit(), 0,
 xmg_Box, 0, jl_Object, [jl_Iterable], 17, 0, () => xmg_Box_$callClinit(), 0,
 cc_DiagramRasterizer$Classifier, 0, jl_Object, [], 1537, 0, 0, 0,
 cw_WebClassifyMain$computeFrame$lambda$_2_0, 0, jl_Object, [cc_DiagramRasterizer$Classifier], 1, 0, 0, 0,
@@ -4433,21 +4437,24 @@ cw_WebClassifyMain$computeFrame$lambda$_2_1, 0, jl_Object, [cc_DiagramRasterizer
 jl_IllegalStateException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cc_DiagramRasterizer$RasterResult, 0, jl_Record, [], 17, 0, 0, 0,
 cc_DiagramRasterizer$OwnershipGrid, 0, jl_Record, [], 17, 0, 0, 0,
-xmu_Hash, 0, jl_Object, [xmu_Hashable], 17, 0, 0, 0,
+cm_PointMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_PointMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_PointMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_PointMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_PointMember_withHandle)],
+cm_EllipseMember, 0, jl_Object, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_EllipseMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_EllipseMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_EllipseMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_EllipseMember_withHandle)],
+cm_SegmentMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_SegmentMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_SegmentMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_SegmentMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_SegmentMember_withHandle)],
+cm_LineMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_LineMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_LineMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_LineMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_LineMember_withHandle)],
 ju_NoSuchElementException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cm_ClusterNaming, 0, jl_Object, [], 17, 0, () => cm_ClusterNaming_$callClinit(), 0,
 cm_CircleMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_CircleMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_CircleMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_CircleMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_CircleMember_withHandle)],
-cm_EllipseMember, 0, jl_Object, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_EllipseMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_EllipseMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_EllipseMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_EllipseMember_withHandle)],
 cm_SiteMemberFactory$1, 0, jl_Object, [], 32768, 0, () => cm_SiteMemberFactory$1_$callClinit(), 0,
-cm_SegmentMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_SegmentMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_SegmentMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_SegmentMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_SegmentMember_withHandle)],
-cm_LineMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_LineMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_LineMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_LineMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_LineMember_withHandle)],
 jl_MatchException, 0, jl_RuntimeException, [], 17, 0, 0, 0,
 xmg_Interval, 0, jl_Object, [jl_Iterable], 17, 0, () => xmg_Interval_$callClinit(), 0,
 xmg_Transformation, 0, jl_Object, [], 17, 0, () => xmg_Transformation_$callClinit(), 0,
 cc_DiagramRasterizer$GridSpec, 0, jl_Record, [], 16, 0, 0, 0,
 jl_Double, 0, jl_Number, [jl_Comparable], 1, 0, () => jl_Double_$callClinit(), ["$compareTo", $rt_wrapFunction1(jl_Double_compareTo)],
-jl_NullPointerException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
+ju_TemplateCollections$AbstractImmutableList, 0, ju_AbstractList, [ju_RandomAccess], 1024, 0, 0, 0,
+ju_TemplateCollections$TwoElementsList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 0, 0, 0, ["$size", $rt_wrapFunction0(ju_TemplateCollections$TwoElementsList_size), "$get", $rt_wrapFunction1(ju_TemplateCollections$TwoElementsList_get)],
+ju_TemplateCollections$ImmutableArrayList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 1, 0, 0, ["$get", $rt_wrapFunction1(ju_TemplateCollections$ImmutableArrayList_get), "$size", $rt_wrapFunction0(ju_TemplateCollections$ImmutableArrayList_size)],
 ju_Collections, 0, jl_Object, [], 17, 0, () => ju_Collections_$callClinit(), 0,
+xmu_Hash, 0, jl_Object, [xmu_Hashable], 17, 0, 0, 0,
 xmu_Numeric, 0, jl_Object, [], 1, 0, () => xmu_Numeric_$callClinit(), 0,
 cm_ClusterMetric, 0, jl_Object, [], 1537, 0, 0, 0,
 cm_NearestMemberMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_NearestMemberMetric_evaluate)],
@@ -4459,6 +4466,7 @@ $rt_metadata([cc_ScenePreparation$1, 0, jl_Object, [], 32768, 0, () => cc_SceneP
 juf_ToIntFunction, 0, jl_Object, [], 1537, 0, 0, 0,
 cc_ScenePreparation$metricFor$lambda$_2_0, 0, jl_Object, [juf_ToIntFunction], 1, 0, 0, 0,
 cm_KthNearestPointDistanceMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_KthNearestPointDistanceMetric_evaluate)],
+jl_NullPointerException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cc_DiagramRasterizer$Classification, 0, jl_Record, [], 17, 0, 0, 0,
 ju_TemplateCollections$SingleElementList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 0, 0, 0, ["$size", $rt_wrapFunction0(ju_TemplateCollections$SingleElementList_size), "$get", $rt_wrapFunction1(ju_TemplateCollections$SingleElementList_get)],
 ju_OptionalInt, 0, jl_Object, [], 1, 0, 0, 0,
@@ -4503,18 +4511,18 @@ jusi_ReducingIntConsumer, 0, jl_Object, [juf_IntPredicate], 0, 0, 0, 0,
 cm_EllipseDistance, 0, jl_Object, [], 16, 0, 0, 0,
 jl_StringIndexOutOfBoundsException, 0, jl_IndexOutOfBoundsException, [], 1, 0, 0, 0,
 juf_Predicate, 0, jl_Object, [], 1537, 0, 0, 0,
-jusi_MappingToIntStreamImpl$next$lambda$_1_0, 0, jl_Object, [juf_Predicate], 1, 0, 0, 0,
-juf_Consumer, 0, jl_Object, [], 1537, 0, 0, 0]);
-$rt_metadata([jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0]);
+jusi_MappingToIntStreamImpl$next$lambda$_1_0, 0, jl_Object, [juf_Predicate], 1, 0, 0, 0]);
+$rt_metadata([juf_Consumer, 0, jl_Object, [], 1537, 0, 0, 0,
+jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0]);
 $rt_enumConstantsMetadata([
     cm_MetricKind, () => [cm_MetricKind_MINIMUM_DISTANCE, cm_MetricKind_MAXIMUM_DISTANCE, cm_MetricKind_SUM_OF_DISTANCES, cm_MetricKind_MEAN_DISTANCE, cm_MetricKind_KTH_NEAREST_DISTANCE], cm_NeighborOrder, () => [cm_NeighborOrder_NEAREST, cm_NeighborOrder_FARTHEST], cm_SiteMemberKind, () => [cm_SiteMemberKind_POINT, cm_SiteMemberKind_LINE_SEGMENT, cm_SiteMemberKind_CIRCLE, cm_SiteMemberKind_ELLIPSE, cm_SiteMemberKind_LINE]]);
 let $rt_booleanArrayCls = $rt_arraycls($rt_booleancls),
 $rt_charArrayCls = $rt_arraycls($rt_charcls),
 $rt_intArrayCls = $rt_arraycls($rt_intcls),
 $rt_doubleArrayCls = $rt_arraycls($rt_doublecls);
-$rt_stringPool(["0", "null", "interface ", "class ", "", "[L", "POINT", "SEGMENT", "CIRCLE", "LINE", "ELLIPSE", "Amber", "Azure", "Rose", "Lime", "Already at the maximum number of clusters", "Cannot remove the last cluster", "No clusters", "Cannot remove the last member of a cluster", "Metric parameter k must be between 1 and 32", "No clusters to add a member to", "Active cluster already has the maximum number of members", "Unknown neighbor order: ", "World view requires max > min on both axes", "Active cluster index out of range",
-"Unknown metric: ", "rasterizer returned null", "width and height must be positive", "Unknown site member kind: ", "Class does not represent enum", "Enum ", " does not have the ", " constant", "Can\'t compare ", " to ", "MINIMUM_DISTANCE", "MAXIMUM_DISTANCE", "SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE", "NEAREST", "FARTHEST", "Index out of range: ", "LINE_SEGMENT", " is only supported for clusters made entirely of points.", "Red", "Orange", "Yellow", "Green", "Teal", "Cyan", "Blue", "Indigo",
-"Violet", "Magenta"]);
+$rt_stringPool(["0", "null", "interface ", "class ", "", "[L", "POINT", "SEGMENT", "CIRCLE", "LINE", "ELLIPSE", "Already at the maximum number of clusters", "Cannot remove the last cluster", "No clusters", "Cannot remove the last member of a cluster", "Metric parameter k must be between 1 and 32", "No clusters to add a member to", "Active cluster already has the maximum number of members", "Unknown neighbor order: ", "World view requires max > min on both axes", "Active cluster index out of range", "Unknown metric: ",
+"rasterizer returned null", "width and height must be positive", "Unknown site member kind: ", "Amber", "Azure", "Rose", "Lime", "Index out of range: ", "Class does not represent enum", "Enum ", " does not have the ", " constant", "Can\'t compare ", " to ", "MINIMUM_DISTANCE", "MAXIMUM_DISTANCE", "SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE", "NEAREST", "FARTHEST", "LINE_SEGMENT", " is only supported for clusters made entirely of points.", "Red", "Orange", "Yellow", "Green", "Teal", "Cyan", "Blue",
+"Indigo", "Violet", "Magenta"]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };
@@ -4528,5 +4536,3 @@ jl_Object.prototype.__teavm_class__ = function() {
 let $rt_export_main = $rt_mainStarter(cw_WebClassifyMain_main);
 $rt_export_main.javaException = $rt_javaException;
 export { $rt_export_main as main };
-
-//# sourceMappingURL=cvd-core.js.map

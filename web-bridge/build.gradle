@@ -13,7 +13,7 @@ teavm {
     js {
         mainClass = 'cvdexplorer.web.WebClassifyMain'
         obfuscated = false
-        sourceMap = true
+        sourceMap = false
         moduleType = 'ES2015'
         entryPointName = 'main'
         relativePathInOutputDir = 'js'
@@ -27,7 +27,7 @@ tasks.named('generateJavaScript') {
         copy {
             from layout.buildDirectory.dir('generated/teavm/js')
             into "${rootProject.projectDir}/web/public/teavm"
-            include 'cvd-core.js', 'cvd-core.js.map'
+            include 'cvd-core.js'
         }
     }
 }

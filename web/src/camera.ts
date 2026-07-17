@@ -1,4 +1,4 @@
-export const DEFAULT_HALF_EXTENT = 350;
+export const DEFAULT_HALF_EXTENT = 400;
 export const MIN_HALF_EXTENT = 40;
 export const MAX_HALF_EXTENT = 4000;
 

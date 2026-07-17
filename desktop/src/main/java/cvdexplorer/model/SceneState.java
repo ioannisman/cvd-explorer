@@ -87,49 +87,17 @@ public final class SceneState {
     private int lastActiveClusterOneBasedForMemberSync = -1;
 
     public static SceneState demo() {
+        SceneSnapshot snap = DemoScenes.defaultSnapshot();
         SceneState state = new SceneState();
-        state.clusters.add(new ClusterSite(
-                "Amber",
-                Rgba.hsb(30, 0.75, 1.0),
-                List.of(
-                        new PointMember(Vector.xy(-260, -100)),
-                        new PointMember(Vector.xy(-180, -220)),
-                        new PointMember(Vector.xy(-120, -80))
-                )
-        ));
-        state.clusters.add(new ClusterSite(
-                "Azure",
-                Rgba.hsb(210, 0.75, 0.95),
-                List.of(
-                        new PointMember(Vector.xy(180, -170)),
-                        new PointMember(Vector.xy(260, -40)),
-                        new PointMember(Vector.xy(-100, -140)),
-                        new PointMember(Vector.xy(220, 120))
-                )
-        ));
-        state.clusters.add(new ClusterSite(
-                "Rose",
-                Rgba.hsb(330, 0.7, 1.0),
-                List.of(
-                        new PointMember(Vector.xy(-160, 160)),
-                        new PointMember(Vector.xy(-40, 220))
-                )
-        ));
-        state.clusters.add(new ClusterSite(
-                "Lime",
-                Rgba.hsb(110, 0.7, 0.9),
-                List.of(
-                        new PointMember(Vector.xy(60, 180)),
-                        new PointMember(Vector.xy(170, -220)),
-                        new PointMember(Vector.xy(280, -250)),
-                        new PointMember(Vector.xy(210, 300)),
-                        new PointMember(Vector.xy(110, 310))
-                )
-        ));
-        state.numberOfClusters = state.clusters.size();
+        state.applyLoadedScene(
+                snap.metricKind(),
+                snap.neighborOrder(),
+                snap.siteMemberKind(),
+                snap.clusters(),
+                snap.nearestNeighborK()
+        );
         state.activeClusterOneBased = 1;
         state.targetPointCountForActiveCluster = state.clusters.get(0).size();
-        state.siteMemberKind = SiteMemberKind.POINT;
         state.lastActiveClusterOneBasedForMemberSync = -1;
         return state;
     }

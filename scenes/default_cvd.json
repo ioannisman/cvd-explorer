@@ -1,0 +1,146 @@
+{
+  "version": "1",
+  "metricKind": "MINIMUM_DISTANCE",
+  "neighborOrder": "NEAREST",
+  "siteMemberKind": "POINT",
+  "nearestNeighborK": 1,
+  "clusters": [
+    {
+      "name": "Amber",
+      "color": {
+        "r": 1.0,
+        "g": 0.625,
+        "b": 0.25,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -154.5,
+          "y": 98.0
+        },
+        {
+          "kind": "CIRCLE",
+          "cx": -51.5,
+          "cy": -279.0,
+          "radius": 115.77672477661476
+        }
+      ]
+    },
+    {
+      "name": "Azure",
+      "color": {
+        "r": 0.23750000000000004,
+        "g": 0.59375,
+        "b": 0.95,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -61.5,
+          "y": -40.0
+        },
+        {
+          "kind": "POINT",
+          "x": 343.5,
+          "y": -133.0
+        },
+        {
+          "kind": "POINT",
+          "x": 372.5,
+          "y": 24.0
+        },
+        {
+          "kind": "ELLIPSE",
+          "ax": 120.0,
+          "ay": -40.0,
+          "bx": 285.5,
+          "by": 320.0,
+          "hx": 180.0,
+          "hy": 50.0
+        }
+      ]
+    },
+    {
+      "name": "Rose",
+      "color": {
+        "r": 1.0,
+        "g": 0.30000000000000004,
+        "b": 0.65,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "LINE_SEGMENT",
+          "ax": -376.5,
+          "ay": 12.0,
+          "bx": -37.5,
+          "by": -99.0
+        },
+        {
+          "kind": "LINE_SEGMENT",
+          "ax": -0.5,
+          "ay": -12.0,
+          "bx": -120.0,
+          "by": 220.0
+        },
+        {
+          "kind": "LINE_SEGMENT",
+          "ax": -120.0,
+          "ay": 220.0,
+          "bx": -376.5,
+          "by": 12.0
+        },
+        {
+          "kind": "LINE_SEGMENT",
+          "ax": -210.5,
+          "ay": 87.0,
+          "bx": -37.5,
+          "by": -99.0
+        },
+        {
+          "kind": "LINE_SEGMENT",
+          "ax": -0.5,
+          "ay": -12.0,
+          "bx": -210.5,
+          "by": 87.0
+        },
+        {
+          "kind": "POINT",
+          "x": -87.5,
+          "y": -267.0
+        }
+      ]
+    },
+    {
+      "name": "Lime",
+      "color": {
+        "r": 0.37500000000000006,
+        "g": 0.9,
+        "b": 0.27,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "CIRCLE",
+          "cx": 80.0,
+          "cy": 200.0,
+          "radius": 83.95981181493917
+        },
+        {
+          "kind": "POINT",
+          "x": 272.5,
+          "y": 107.0
+        },
+        {
+          "kind": "LINE",
+          "px": -317.5,
+          "py": -105.0,
+          "qx": 261.5,
+          "qy": -182.0
+        }
+      ]
+    }
+  ]
+}
