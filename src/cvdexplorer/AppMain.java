@@ -304,7 +304,7 @@ public class AppMain implements Drawing {
             state.targetPointCountForActiveCluster = cluster.size();
             selectedClusterIndex = clusterIdx;
             selectedMemberIndex = cluster.size() - 1;
-            selectedHandleIndex = 0;
+            selectedHandleIndex = HandleVisibility.primaryHandleIndex(cluster.members().get(selectedMemberIndex));
         }
 
         if (event.isKeyPress(KeyCode.D) && hasSelection()) {

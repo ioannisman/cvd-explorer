@@ -27,7 +27,7 @@ public final class HelpOverlay {
                 "    r               - Reset to the demo scene",
                 "    Ctrl+s          - Save scene (JSON)",
                 "    Ctrl+o          - Load scene (JSON)",
-                "    Mouse left      - Select/drag a handle; circle/ellipse and line secondary handles appear after selection",
+                "    Mouse left      - Select/drag a handle; circle/ellipse show the curve handle; other handles appear after selection",
                 "    Shift+drag      - Move only selected handle (unsnap from co-located handles)",
                 "    Ctrl            - Control the view:",
                 "      + Mouse left      - Pan",
