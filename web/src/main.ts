@@ -20,7 +20,7 @@ const HIT_RADIUS_CSS = 10;
 /** Match desktop AppMain#DRAG_RASTER_SCALE while a handle is dragged. */
 const DRAG_RASTER_SCALE = 0.32;
 /** Cap backing-store edge length so TeaVM classify stays responsive. */
-const MAX_RASTER_EDGE = 2880;
+const MAX_RASTER_EDGE = 1536;
 
 const canvas = document.querySelector<HTMLCanvasElement>('#diagram');
 const statusEl = document.querySelector<HTMLElement>('#status');
@@ -113,7 +113,7 @@ function hitRadiusPx(): number {
 function syncCanvasResolution(): boolean {
   const rect = canvas!.getBoundingClientRect();
   const css = Math.max(1, Math.min(rect.width, rect.height));
-  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const edge = Math.max(1, Math.min(MAX_RASTER_EDGE, Math.round(css * dpr)));
   if (canvas!.width === edge && canvas!.height === edge && canvasPixelRatio === dpr) {
     return false;
@@ -130,7 +130,11 @@ function displaySize(): { width: number; height: number } {
 
 function rasterSize(): { width: number; height: number } {
   const { width, height } = displaySize();
-  const usePreview = draggingHandle !== null && toggleFastPreview!.checked;
+  // Low-res while dragging (optional) or while the camera is moving — TeaVM is sequential.
+  const usePreview =
+    panning ||
+    zooming ||
+    (draggingHandle !== null && toggleFastPreview!.checked);
   if (!usePreview) {
     return { width, height };
   }
