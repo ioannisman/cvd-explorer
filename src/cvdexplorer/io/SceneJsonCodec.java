@@ -5,6 +5,7 @@ import cvdexplorer.metric.MetricKind;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.EllipseMember;
 import cvdexplorer.model.LineMember;
 import cvdexplorer.model.NeighborOrder;
 import cvdexplorer.model.PointMember;
@@ -73,6 +74,16 @@ public final class SceneJsonCodec {
                     mj.cx = cm.center().x();
                     mj.cy = cm.center().y();
                     mj.radius = cm.radius();
+                    members.add(mj);
+                } else if (member instanceof EllipseMember em) {
+                    MemberJson mj = new MemberJson();
+                    mj.kind = "ELLIPSE";
+                    mj.ax = em.focusA().x();
+                    mj.ay = em.focusA().y();
+                    mj.bx = em.focusB().x();
+                    mj.by = em.focusB().y();
+                    mj.hx = em.controlHandle().x();
+                    mj.hy = em.controlHandle().y();
                     members.add(mj);
                 } else if (member instanceof LineMember lm) {
                     MemberJson mj = new MemberJson();
@@ -222,9 +233,9 @@ public final class SceneJsonCodec {
                         throw new SceneJsonException("CIRCLE member radius must be non-negative in cluster " + clusterName);
                     }
                     Vector center = Vector.xy(mj.cx, mj.cy);
-                    Vector radiusHandle = center.add(Vector.xy(mj.radius, 0.0));
-                    out.add(new CircleMember(center, radiusHandle));
+                    out.add(new CircleMember(center, center.add(Vector.xy(mj.radius, 0.0))));
                 }
+                case "ELLIPSE" -> out.add(parseEllipse(mj, clusterName));
                 case "LINE" -> {
                     if (mj.px == null || mj.py == null || mj.qx == null || mj.qy == null) {
                         throw new SceneJsonException("LINE member requires px, py, qx, qy in cluster " + clusterName);
@@ -238,6 +249,17 @@ public final class SceneJsonCodec {
             throw new SceneJsonException("Too many members in cluster " + clusterName);
         }
         return out;
+    }
+
+    private static EllipseMember parseEllipse(MemberJson mj, String clusterName) throws SceneJsonException {
+        if (mj.ax == null || mj.ay == null || mj.bx == null || mj.by == null || mj.hx == null || mj.hy == null) {
+            throw new SceneJsonException("ELLIPSE member requires ax, ay, bx, by, hx, hy in cluster " + clusterName);
+        }
+        return new EllipseMember(
+                Vector.xy(mj.ax, mj.ay),
+                Vector.xy(mj.bx, mj.by),
+                Vector.xy(mj.hx, mj.hy)
+        );
     }
 
     /** Gson DTO; field names match JSON keys. */
@@ -278,5 +300,7 @@ public final class SceneJsonCodec {
         Double py;
         Double qx;
         Double qy;
+        Double hx;
+        Double hy;
     }
 }

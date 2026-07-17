@@ -2,7 +2,7 @@
 
 [← Documentation home](README.md)
 
-Members in a cluster can be `POINT`, `LINE_SEGMENT`, `CIRCLE`, or `LINE`.
+Members in a cluster can be `POINT`, `LINE_SEGMENT`, `CIRCLE`, `ELLIPSE`, or `LINE`.
 
 **Polygons** and open polygonal chains are not a separate member kind: build them from `LINE_SEGMENT` members and use **`Snap to handles`** in the app to align segment endpoints into closed or chained shapes.
 
@@ -83,3 +83,7 @@ Figures where each cluster uses **circle** members (`CIRCLE`) follow.
 | Nearest (min-max) | Farthest (max-max) |
 |:---:|:---:|
 | <img src="figures/instances/circles_min_max.png" width="420" alt="Circles, maximum distance, nearest" /> | <img src="figures/instances/circles_max_max.png" width="420" alt="Circles, maximum distance, farthest" /> |
+
+## Ellipses (2-ellipses)
+
+A classic **ellipse** has two foci \(f_1,f_2\) and constant \(c\). Its boundary is the set of points where \(d(p,f_1)+d(p,f_2)=c\). The distance from a query point to the member is the **Euclidean distance to that boundary** (computed analytically). The constant \(c\) is set by a control handle \(h\) on the curve: \(c = d(h,f_1)+d(h,f_2)\).

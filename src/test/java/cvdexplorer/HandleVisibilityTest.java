@@ -1,6 +1,7 @@
 package cvdexplorer;
 
 import cvdexplorer.model.CircleMember;
+import cvdexplorer.model.EllipseMember;
 import cvdexplorer.model.LineMember;
 import cvdexplorer.model.PointMember;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,22 @@ class HandleVisibilityTest {
     }
 
     @Test
-    void nonCircleHandlesRemainVisible() {
+    void ellipseSecondaryHandlesAreHiddenUntilSelected() {
+        EllipseMember ellipse = new EllipseMember(
+                Vector.xy(-5, 0),
+                Vector.xy(5, 0),
+                Vector.xy(0, 8)
+        );
+
+        assertTrue(HandleVisibility.isVisible(ellipse, 0, false));
+        assertFalse(HandleVisibility.isVisible(ellipse, 1, false));
+        assertFalse(HandleVisibility.isVisible(ellipse, 2, false));
+        assertTrue(HandleVisibility.isVisible(ellipse, 1, true));
+        assertTrue(HandleVisibility.isVisible(ellipse, 2, true));
+    }
+
+    @Test
+    void nonEllipseHandlesRemainVisible() {
         PointMember point = new PointMember(Vector.xy(1, 2));
 
         assertTrue(HandleVisibility.isVisible(point, 0, false));

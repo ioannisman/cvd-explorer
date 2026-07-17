@@ -183,7 +183,6 @@ public final class SceneState {
         numberOfClusters = clusters.size();
         activeClusterOneBased = Math.max(1, Math.min(numberOfClusters, activeClusterOneBased));
         targetPointCountForActiveCluster = clusters.get(activeClusterOneBased - 1).size();
-        // Keeps ensureActiveClusterMemberCount from fighting the loaded member lists.
         lastActiveClusterOneBasedForMemberSync = activeClusterOneBased;
         clampNearestNeighborK();
     }

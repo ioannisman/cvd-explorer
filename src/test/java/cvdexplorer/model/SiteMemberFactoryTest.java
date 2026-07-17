@@ -39,6 +39,15 @@ class SiteMemberFactoryTest {
     }
 
     @Test
+    void ellipseMemberHasTwoFociAroundHint() {
+        ClusterMember m = SiteMemberFactory.createDefault(SiteMemberKind.ELLIPSE, 0, 0, HINT);
+        EllipseMember e = assertInstanceOf(EllipseMember.class, m);
+        assertEquals(3, e.handleCount());
+        assertTrue(e.focusA().distanceTo(e.focusB()) > 1e-6);
+        assertTrue(e.distanceTo(e.controlHandle()) < 1e-3);
+    }
+
+    @Test
     void lineMemberIsCenteredOnHint() {
         ClusterMember m = SiteMemberFactory.createDefault(SiteMemberKind.LINE, 0, 3, HINT);
         LineMember l = assertInstanceOf(LineMember.class, m);

@@ -2,6 +2,7 @@ package cvdexplorer.metric;
 
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.EllipseMember;
 import cvdexplorer.model.SiteMemberKind;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,28 @@ class MetricMemberCompatibilityTest {
             )
     );
 
+    private static final List<ClusterSite> ELLIPSE_CLUSTERS = List.of(
+            new ClusterSite(
+                    "Beta",
+                    Color.BLUE,
+                    List.of(new EllipseMember(
+                            Vector.xy(-5, 0),
+                            Vector.xy(5, 0),
+                            Vector.xy(0, 10)
+                    ))
+            )
+    );
+
     @ParameterizedTest
     @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE"})
     void pointOnlyMetricsRejectCircleClusters(MetricKind metricKind) {
         assertTrue(MetricMemberCompatibility.invalidMetricMessage(metricKind, CIRCLE_ONLY_CLUSTERS).isPresent());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE"})
+    void pointOnlyMetricsRejectEllipseClusters(MetricKind metricKind) {
+        assertTrue(MetricMemberCompatibility.invalidMetricMessage(metricKind, ELLIPSE_CLUSTERS).isPresent());
     }
 
     @Test
@@ -36,14 +55,9 @@ class MetricMemberCompatibilityTest {
 
     @ParameterizedTest
     @EnumSource(value = MetricKind.class, names = {"SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE"})
-    void pointOnlyMetricsRejectNewCircleMembers(MetricKind metricKind) {
-        assertTrue(MetricMemberCompatibility.invalidNewMemberMessage(
-                metricKind,
-                SiteMemberKind.CIRCLE
-        ).isPresent());
-        assertFalse(MetricMemberCompatibility.invalidNewMemberMessage(
-                metricKind,
-                SiteMemberKind.POINT
-        ).isPresent());
+    void pointOnlyMetricsRejectNewCircleAndEllipseMembers(MetricKind metricKind) {
+        assertTrue(MetricMemberCompatibility.invalidNewMemberMessage(metricKind, SiteMemberKind.CIRCLE).isPresent());
+        assertTrue(MetricMemberCompatibility.invalidNewMemberMessage(metricKind, SiteMemberKind.ELLIPSE).isPresent());
+        assertFalse(MetricMemberCompatibility.invalidNewMemberMessage(metricKind, SiteMemberKind.POINT).isPresent());
     }
 }

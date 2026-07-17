@@ -3,12 +3,15 @@ package cvdexplorer.render;
 import cvdexplorer.HandleVisibility;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
+import cvdexplorer.model.EllipseMember;
 import cvdexplorer.model.LineMember;
 import cvdexplorer.model.SegmentMember;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.drawing.View;
 import xyz.marsavic.geometry.Line;
 import xyz.marsavic.geometry.Vector;
+
+import java.util.List;
 
 public final class MemberOverlayRenderer {
     private static final Color SNAP_INDICATOR_COLOR = Color.hsb(60, 0.9, 1.0, 0.8);
@@ -39,6 +42,10 @@ public final class MemberOverlayRenderer {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
             view.strokeCircleCentered(cm.center(), cm.radius());
+        } else if (member instanceof EllipseMember em) {
+            view.setLineWidth(lw);
+            view.setStroke(memberSelected ? SELECTION_STROKE : edge);
+            strokeEllipse(view, em);
         } else if (member instanceof LineMember lm) {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
@@ -57,6 +64,18 @@ public final class MemberOverlayRenderer {
             view.fillCircleCentered(member.getHandle(h), handleRadiusWorld);
             view.setStroke(handleSelected ? SELECTION_STROKE : edge);
             view.strokeCircleCentered(member.getHandle(h), handleRadiusWorld);
+        }
+    }
+
+    private static void strokeEllipse(View view, EllipseMember em) {
+        List<Vector> outline = em.boundaryPolyline();
+        if (outline.size() < 2) {
+            return;
+        }
+        Vector prev = outline.get(outline.size() - 1);
+        for (Vector point : outline) {
+            view.strokeLineSegment(prev, point);
+            prev = point;
         }
     }
 
