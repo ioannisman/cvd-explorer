@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cvd-explorer TeaVM spike</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.5rem; }
+    pre { background: #f4f4f4; padding: 1rem; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>TeaVM classify spike</h1>
+  <p>Loads <code>cvd-core.js</code> and runs <code>main()</code>. Success fills <code>#spike-result</code> with <code>data-ok="true"</code>.</p>
+  <script type="module">
+    import { main } from './cvd-core.js';
+    main();
+  </script>
+</body>
+</html>

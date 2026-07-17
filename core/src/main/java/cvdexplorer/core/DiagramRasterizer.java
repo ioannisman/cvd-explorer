@@ -40,6 +40,7 @@ public final class DiagramRasterizer {
     private int sizeYp = 0;
     private int sizeXp = 0;
 
+    /** Sequential row scan (no parallel streams). */
     public RasterResult render(
             Transformation tFromPixels,
             Box bImage,
@@ -50,7 +51,7 @@ public final class DiagramRasterizer {
     }
 
     /**
-     * Renders at {@code resolutionScale} of the image extent (clamped to (0, 1]).
+     * Sequential render at {@code resolutionScale} of the image extent (clamped to (0, 1]).
      * Samples are taken in full pixel-space so {@code tFromPixels} stays correct.
      */
     public RasterResult render(
@@ -60,37 +61,76 @@ public final class DiagramRasterizer {
             Colorizer colorizer,
             double resolutionScale
     ) {
+        GridSpec spec = begin(bImage, resolutionScale);
+        if (spec == null) {
+            return null;
+        }
+        for (int y = 0; y < spec.sizeY; y++) {
+            fillRow(tFromPixels, classifier, colorizer, spec.sizeX, y, spec.sx, spec.sy);
+        }
+        return finish(spec.sizeX, spec.sizeY, colorizer != null);
+    }
+
+    /**
+     * Same sampling as {@link #render(Transformation, Box, Classifier, Colorizer, double)},
+     * with rows filled via {@link IntStream#parallel()} (JVM desktop).
+     */
+    public RasterResult renderParallel(
+            Transformation tFromPixels,
+            Box bImage,
+            Classifier classifier,
+            Colorizer colorizer,
+            double resolutionScale
+    ) {
+        GridSpec spec = begin(bImage, resolutionScale);
+        if (spec == null) {
+            return null;
+        }
+        IntStream.range(0, spec.sizeY).parallel().forEach(y ->
+                fillRow(tFromPixels, classifier, colorizer, spec.sizeX, y, spec.sx, spec.sy)
+        );
+        return finish(spec.sizeX, spec.sizeY, colorizer != null);
+    }
+
+    private GridSpec begin(Box bImage, double resolutionScale) {
         Vector diag = bImage.d().abs();
         int fullW = diag.xInt();
         int fullH = diag.yInt();
-
         if (fullW == 0 || fullH == 0) {
             return null;
         }
-
         double scale = Math.min(1.0, Math.max(Double.MIN_VALUE, resolutionScale));
         int sizeX = Math.max(1, (int) Math.round(fullW * scale));
         int sizeY = Math.max(1, (int) Math.round(fullH * scale));
-        double sx = fullW / (double) sizeX;
-        double sy = fullH / (double) sizeY;
-
         ensureBuffers(sizeX, sizeY);
-        IntStream.range(0, sizeY).parallel().forEach(y -> {
-            for (int x = 0; x < sizeX; x++) {
-                Vector pixelCenter = Vector.xy((x + 0.5) * sx, (y + 0.5) * sy);
-                Vector point = tFromPixels.applyTo(pixelCenter);
-                Classification classification = classifier.classify(point);
-                int index = y * sizeX + x;
-                clusterIndices[index] = classification.clusterIndex();
-                memberIndices[index] = classification.memberIndex();
-                if (colorizer != null) {
-                    pixels[index] = colorizer.color(classification);
-                }
-            }
-        });
+        return new GridSpec(sizeX, sizeY, fullW / (double) sizeX, fullH / (double) sizeY);
+    }
 
+    private RasterResult finish(int sizeX, int sizeY, boolean withPixels) {
         OwnershipGrid grid = new OwnershipGrid(sizeX, sizeY, clusterIndices, memberIndices);
-        return new RasterResult(sizeX, sizeY, colorizer != null ? pixels : null, grid);
+        return new RasterResult(sizeX, sizeY, withPixels ? pixels : null, grid);
+    }
+
+    private void fillRow(
+            Transformation tFromPixels,
+            Classifier classifier,
+            Colorizer colorizer,
+            int sizeX,
+            int y,
+            double sx,
+            double sy
+    ) {
+        for (int x = 0; x < sizeX; x++) {
+            Vector pixelCenter = Vector.xy((x + 0.5) * sx, (y + 0.5) * sy);
+            Vector point = tFromPixels.applyTo(pixelCenter);
+            Classification classification = classifier.classify(point);
+            int index = y * sizeX + x;
+            clusterIndices[index] = classification.clusterIndex();
+            memberIndices[index] = classification.memberIndex();
+            if (colorizer != null) {
+                pixels[index] = colorizer.color(classification);
+            }
+        }
     }
 
     private void ensureBuffers(int sizeX, int sizeY) {
@@ -101,5 +141,8 @@ public final class DiagramRasterizer {
             clusterIndices = new int[sizeY * sizeX];
             memberIndices = new int[sizeY * sizeX];
         }
+    }
+
+    private record GridSpec(int sizeX, int sizeY, double sx, double sy) {
     }
 }

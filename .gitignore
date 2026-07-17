@@ -5,3 +5,5 @@ other_repo/
 .cursor/
 __pycache__/
 *.pyc
+web/node_modules/
+web/dist/

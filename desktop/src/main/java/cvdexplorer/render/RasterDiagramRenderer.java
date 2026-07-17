@@ -49,7 +49,7 @@ public class RasterDiagramRenderer {
             Colorizer colorizer,
             double resolutionScale
     ) {
-        DiagramRasterizer.RasterResult result = rasterizer.render(
+        DiagramRasterizer.RasterResult result = rasterizer.renderParallel(
                 tFromPixels,
                 bImage,
                 classifier::classify,

@@ -12,6 +12,8 @@ For neighbor order, distance metrics, and input site types, see the **[documenta
 |--------|------|
 | [`core/`](core/) | Model, metrics, ownership, JSON codec, raster classify |
 | [`desktop/`](desktop/) | JavaFX + drawingfx UI (`AppMain`) |
+| [`web-bridge/`](web-bridge/) | TeaVM compile of core → `cvd-core.js` |
+| [`web/`](web/) | Browser UI (TypeScript + Canvas); see [`web/README.md`](web/README.md) |
 
 ## Building and running
 
@@ -34,7 +36,16 @@ Run tests with coverage report:
 ./gradlew test jacocoRootReport jacocoTestCoverageVerification -Pcoverage
 ```
 
-GitHub Pages: enable **Actions** as the Pages source, then see [`.github/workflows/pages.yml`](.github/workflows/pages.yml) (site at `https://ioannisman.github.io/cvd-explorer/`).
+GitHub Pages: enable **Actions** as the Pages source, then see [`.github/workflows/pages.yml`](.github/workflows/pages.yml) (site at `https://ioannisman.github.io/cvd-explorer/`, web explorer at [`…/explorer/`](https://ioannisman.github.io/cvd-explorer/explorer/)).
+
+### Web explorer
+
+```bash
+./gradlew :web-bridge:generateJavaScript
+cd web && npm install && npm run dev
+```
+
+See [`web/README.md`](web/README.md).
 
 Run the desktop app:
 

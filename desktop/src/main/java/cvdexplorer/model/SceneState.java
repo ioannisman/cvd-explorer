@@ -318,7 +318,7 @@ public final class SceneState {
         Vector center = Vector.xy(x, y);
         ClusterMember first = SiteMemberFactory.createDefault(siteMemberKind, index, 0, center);
         return new ClusterSite(
-                "Cluster " + (index + 1),
+                ClusterNaming.forNewCluster(index),
                 color,
                 List.of(first)
         );
