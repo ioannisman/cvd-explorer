@@ -78,6 +78,10 @@ public final class SceneState {
     @Properties(name = "Distance shading (s)")
     public boolean showShading = false;
 
+    @GadgetBoolean
+    @Properties(name = "Fast draw preview")
+    public boolean fastDrawPreview = true;
+
     private final List<ClusterSite> clusters = new ArrayList<>();
     private final Color backgroundColor = Color.gray(0.92);
 
@@ -199,6 +203,7 @@ public final class SceneState {
         snapToGrid = other.snapToGrid;
         snapToHandles = other.snapToHandles;
         showShading = other.showShading;
+        fastDrawPreview = other.fastDrawPreview;
         siteMemberKind = other.siteMemberKind;
         numberOfClusters = other.numberOfClusters;
         activeClusterOneBased = other.activeClusterOneBased;

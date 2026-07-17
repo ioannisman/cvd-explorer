@@ -29,6 +29,7 @@ public final class HelpOverlay {
                 "    Ctrl+o          - Load scene (JSON)",
                 "    Mouse left      - Select/drag a handle; circle/ellipse show the curve handle; other handles appear after selection",
                 "    Shift+drag      - Move only selected handle (unsnap from co-located handles)",
+                "    Fast draw preview (gadget) - Lower diagram resolution while dragging; full quality on release",
                 "    Ctrl            - Control the view:",
                 "      + Mouse left      - Pan",
                 "      + Mouse wheel     - Zoom",

@@ -111,6 +111,64 @@ class RasterDiagramRendererTest {
     }
 
     @Test
+    void renderWithHalfResolutionProducesSmallerGridAndImage() throws Exception {
+        RasterDiagramRenderer renderer = new RasterDiagramRenderer();
+        Box box = Box.pq(Vector.xy(0, 0), Vector.xy(4, 4)).positive();
+
+        CompletableFuture<Void> done = new CompletableFuture<>();
+        Platform.runLater(() -> {
+            try {
+                RasterDiagramRenderer.RenderResult result = renderer.render(
+                        Transformation.IDENTITY.inverse(),
+                        box,
+                        p -> new RasterDiagramRenderer.Classification(0, 0.0, 0),
+                        c -> 0xff000000,
+                        0.5
+                );
+                assertNotNull(result);
+                RasterDiagramRenderer.OwnershipGrid grid = result.ownershipGrid();
+                assertEquals(2, grid.width());
+                assertEquals(2, grid.height());
+                Image image = result.image();
+                assertNotNull(image);
+                assertEquals(2, (int) image.getWidth());
+                assertEquals(2, (int) image.getHeight());
+                done.complete(null);
+            } catch (Throwable t) {
+                done.completeExceptionally(t);
+            }
+        });
+        done.get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void renderWithFullResolutionScaleMatchesDefaultRenderSize() {
+        RasterDiagramRenderer renderer = new RasterDiagramRenderer();
+        Box box = Box.pq(Vector.xy(0, 0), Vector.xy(4, 4)).positive();
+
+        RasterDiagramRenderer.RenderResult scaled = renderer.render(
+                Transformation.IDENTITY.inverse(),
+                box,
+                p -> new RasterDiagramRenderer.Classification(0, 0.0, 0),
+                null,
+                1.0
+        );
+        RasterDiagramRenderer.RenderResult defaults = renderer.render(
+                Transformation.IDENTITY.inverse(),
+                box,
+                p -> new RasterDiagramRenderer.Classification(0, 0.0, 0),
+                null
+        );
+
+        assertNotNull(scaled);
+        assertNotNull(defaults);
+        assertEquals(defaults.ownershipGrid().width(), scaled.ownershipGrid().width());
+        assertEquals(defaults.ownershipGrid().height(), scaled.ownershipGrid().height());
+        assertEquals(4, scaled.ownershipGrid().width());
+        assertEquals(4, scaled.ownershipGrid().height());
+    }
+
+    @Test
     void clusterColorizerUsesBackgroundForNegativeClusterIndex() {
         Color background = Color.color(0.1, 0.2, 0.3, 0.5);
         ClusterColorizer colorizer = new ClusterColorizer(

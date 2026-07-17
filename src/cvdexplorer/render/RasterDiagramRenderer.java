@@ -59,18 +59,39 @@ public class RasterDiagramRenderer {
             Classifier classifier,
             Colorizer colorizer
     ) {
-        Vector diag = bImage.d().abs();
-        int sizeX = diag.xInt();
-        int sizeY = diag.yInt();
+        return render(tFromPixels, bImage, classifier, colorizer, 1.0);
+    }
 
-        if (sizeX == 0 || sizeY == 0) {
+    /**
+     * Renders the diagram at {@code resolutionScale} of the image extent (clamped to (0, 1]).
+     * Samples are taken in full pixel-space so {@code tFromPixels} stays correct; the returned
+     * image/grid are smaller and intended to be stretched to {@code bImage} when drawn.
+     */
+    public RenderResult render(
+            Transformation tFromPixels,
+            Box bImage,
+            Classifier classifier,
+            Colorizer colorizer,
+            double resolutionScale
+    ) {
+        Vector diag = bImage.d().abs();
+        int fullW = diag.xInt();
+        int fullH = diag.yInt();
+
+        if (fullW == 0 || fullH == 0) {
             return null;
         }
+
+        double scale = Math.min(1.0, Math.max(Double.MIN_VALUE, resolutionScale));
+        int sizeX = Math.max(1, (int) Math.round(fullW * scale));
+        int sizeY = Math.max(1, (int) Math.round(fullH * scale));
+        double sx = fullW / (double) sizeX;
+        double sy = fullH / (double) sizeY;
 
         ensureBuffers(sizeX, sizeY);
         IntStream.range(0, sizeY).parallel().forEach(y -> {
             for (int x = 0; x < sizeX; x++) {
-                Vector pixelCenter = Vector.xy(x + 0.5, y + 0.5);
+                Vector pixelCenter = Vector.xy((x + 0.5) * sx, (y + 0.5) * sy);
                 Vector point = tFromPixels.applyTo(pixelCenter);
                 Classification classification = classifier.classify(point);
                 int index = y * sizeX + x;

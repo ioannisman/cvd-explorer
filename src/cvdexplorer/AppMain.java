@@ -56,6 +56,8 @@ public class AppMain implements Drawing {
     private final double pointRadius = 6.0;
     private final double mouseReach = 10.0;
     private final double draggingMinDistance = 1.0;
+    /** Linear resolution used while dragging (~10× fewer classifications). */
+    private static final double DRAG_RASTER_SCALE = 0.32;
 
     private double pixelWidth = 1.0;
     private boolean dragging = false;
@@ -123,11 +125,13 @@ public class AppMain implements Drawing {
                 state.backgroundColor(),
                 state.showShading
         );
+        double resolutionScale = (dragging && state.fastDrawPreview) ? DRAG_RASTER_SCALE : 1.0;
         RasterDiagramRenderer.RenderResult result = rasterDiagramRenderer.render(
                 transform.inverse(),
                 imageBox,
                 p -> classify(p, preparedScene),
-                state.showDiagram ? colorizer::color : null
+                state.showDiagram ? colorizer::color : null,
+                resolutionScale
         );
 
         if (result == null) {
@@ -139,7 +143,8 @@ public class AppMain implements Drawing {
         if (diagram != null) {
             view.drawImage(imageBox, diagram);
         }
-        if (state.showSkeleton) {
+        boolean skipHeavyOverlays = dragging && state.fastDrawPreview;
+        if (!skipHeavyOverlays && state.showSkeleton) {
             Transformation tFromPixels = transform.inverse();
             skeletonOverlayRenderer.draw(
                     view,
@@ -151,7 +156,7 @@ public class AppMain implements Drawing {
                     )
             );
         }
-        if (state.showRegionSubdivision) {
+        if (!skipHeavyOverlays && state.showRegionSubdivision) {
             Transformation tFromPixels = transform.inverse();
             skeletonOverlayRenderer.drawSubdivisions(
                     view,
