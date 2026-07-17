@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
       - name: Tests and JaCoCo
-        run: chmod +x gradlew && xvfb-run -a ./gradlew test jacocoTestReport jacocoTestCoverageVerification -Pcoverage --no-daemon
+        run: chmod +x gradlew && xvfb-run -a ./gradlew test jacocoRootReport jacocoTestCoverageVerification -Pcoverage --no-daemon
 
       - name: Assemble site (coverage + other + history)
         env:
@@ -53,8 +53,8 @@ jobs:
           TS="${{ github.event.head_commit.timestamp }}"
           if [ -z "$TS" ]; then TS=$(date -u +%Y-%m-%dT%H:%M:%SZ); fi
           python3 scripts/assemble_pages_site.py \
-            --jacoco-xml build/reports/jacoco/test/jacocoTestReport.xml \
-            --jacoco-html-dir build/reports/jacoco/test/html \
+            --jacoco-xml build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml \
+            --jacoco-html-dir build/reports/jacoco/jacocoRootReport/html \
             --pages-src pages \
             --out-site build/pages-site \
             --sha "$GITHUB_SHA" \

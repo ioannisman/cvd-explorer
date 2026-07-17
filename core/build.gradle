@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api files("${rootProject.projectDir}/lib/mars-bits-2026-03-18.jar")
+    implementation 'com.google.code.gson:gson:2.11.0'
+}
+
+tasks.named('jacocoTestReport', JacocoReport) {
+    dependsOn tasks.named('test')
+    onlyIf { rootProject.hasProperty('coverage') }
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    dependsOn tasks.named('test')
+    onlyIf { rootProject.hasProperty('coverage') }
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.40g
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    if (rootProject.hasProperty('coverage')) {
+        dependsOn tasks.named('jacocoTestCoverageVerification')
+    }
+}

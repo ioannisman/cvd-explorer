@@ -34,4 +34,4 @@ jobs:
       - name: Upload JAR to release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/libs/cvd-explorer-all.jar
+          files: desktop/build/libs/cvd-explorer-all.jar

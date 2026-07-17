@@ -1,119 +1,102 @@
 plugins {
-    id 'java'
     id 'jacoco'
-    id 'application'
-    id 'com.gradleup.shadow' version '9.4.0'
 }
 
 group = 'cvd'
 version = '0.1.0-SNAPSHOT'
 
-def javafxModules = ['javafx.controls']
-def coverageEnabled = project.hasProperty('coverage')
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-            exclude 'test/**'
-        }
-        resources {
-            srcDirs = ['src']
-            exclude '**/*.java', 'test/**'
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+
+    group = rootProject.group
+    version = rootProject.version
+
+    def coverageEnabled = rootProject.hasProperty('coverage')
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
-}
 
-dependencies {
-    implementation files(
-            'lib/drawing-fx-2-2022-03-18.jar',
-            'lib/mars-bits-2026-03-18.jar'
-    )
-    implementation 'com.google.code.gson:gson:2.11.0'
+    repositories {
+        mavenCentral()
+    }
 
-    testImplementation platform('org.junit:junit-bom:5.14.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
 
-application {
-    mainClass = 'cvdexplorer.AppMain'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.compilerArgs += ['--add-modules', javafxModules.join(',')]
-}
-
-jacoco {
-    toolVersion = '0.8.14'
-}
-
-tasks.withType(Test).configureEach {
-    useJUnitPlatform()
-    jvmArgs += ['--add-modules', javafxModules.join(',')]
     jacoco {
-        enabled = coverageEnabled
+        toolVersion = '0.8.14'
     }
-    testLogging {
-        events 'passed', 'failed', 'skipped'
-        exceptionFormat 'full'
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        jacoco {
+            enabled = coverageEnabled
+        }
+        testLogging {
+            events 'passed', 'failed', 'skipped'
+            exceptionFormat 'full'
+        }
+    }
+
+    dependencies {
+        testImplementation platform('org.junit:junit-bom:5.14.3')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 }
 
-tasks.named('jacocoTestReport', JacocoReport) {
-    dependsOn tasks.named('test')
-    onlyIf { coverageEnabled }
+tasks.register('test') {
+    dependsOn subprojects.collect { it.tasks.named('test') }
+}
+
+tasks.register('build') {
+    dependsOn subprojects.collect { it.tasks.named('build') }
+}
+
+tasks.register('check') {
+    dependsOn subprojects.collect { it.tasks.named('check') }
+}
+
+tasks.register('run') {
+    dependsOn ':desktop:run'
+}
+
+tasks.register('shadowJar') {
+    dependsOn ':desktop:shadowJar'
+}
+
+tasks.register('jacocoTestReport') {
+    dependsOn subprojects.collect { it.tasks.named('jacocoTestReport') }
+}
+
+tasks.register('jacocoTestCoverageVerification') {
+    dependsOn ':core:jacocoTestCoverageVerification'
+}
+
+tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn subprojects.collect { it.tasks.named('test') }
+    onlyIf { rootProject.hasProperty('coverage') }
+    executionData.setFrom(files(subprojects.collect {
+        it.layout.buildDirectory.file('jacoco/test.exec')
+    }).filter { it.exists() })
+    sourceDirectories.setFrom(files(subprojects.collect {
+        it.sourceSets.main.allSource.srcDirs
+    }))
+    classDirectories.setFrom(files(subprojects.collect {
+        it.sourceSets.main.output
+    }))
     reports {
         xml.required = true
         html.required = true
         csv.required = false
-    }
-}
-
-tasks.named('jacocoTestCoverageVerification') {
-    dependsOn tasks.named('test')
-    onlyIf { coverageEnabled }
-    violationRules {
-        rule {
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                // Most of AppMain / overlays remain untested; raise as tests grow
-                minimum = 0.40g
-            }
-        }
-    }
-}
-
-tasks.named('run') {
-    jvmArgs += ['--add-modules', javafxModules.join(',')]
-    workingDir = projectDir
-}
-
-tasks.shadowJar {
-    mergeServiceFiles()
-    archiveFileName = 'cvd-explorer-all.jar'
-    duplicatesStrategy = DuplicatesStrategy.WARN
-    manifest {
-        attributes 'Main-Class': application.mainClass.get()
     }
 }

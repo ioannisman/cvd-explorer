@@ -1,0 +1,60 @@
+plugins {
+    id 'application'
+    id 'com.gradleup.shadow' version '9.4.0'
+}
+
+def javafxModules = ['javafx.controls']
+
+dependencies {
+    implementation project(':core')
+    implementation files(
+            "${rootProject.projectDir}/lib/drawing-fx-2-2022-03-18.jar",
+            "${rootProject.projectDir}/lib/mars-bits-2026-03-18.jar"
+    )
+}
+
+application {
+    mainClass = 'cvdexplorer.AppMain'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['--add-modules', javafxModules.join(',')]
+}
+
+tasks.withType(Test).configureEach {
+    jvmArgs += ['--add-modules', javafxModules.join(',')]
+}
+
+tasks.named('run') {
+    jvmArgs += ['--add-modules', javafxModules.join(',')]
+    workingDir = rootProject.projectDir
+}
+
+tasks.named('jacocoTestReport', JacocoReport) {
+    dependsOn tasks.named('test')
+    onlyIf { rootProject.hasProperty('coverage') }
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named('check') {
+    // Desktop is mostly AppMain/overlays; coverage gate lives on :core and root aggregate.
+}
+
+
+tasks.shadowJar {
+    mergeServiceFiles()
+    archiveFileName = 'cvd-explorer-all.jar'
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
+
+// Aggregate coverage-friendly alias used by CI historically at root
+tasks.register('jacocoRootReport') {
+    dependsOn tasks.named('jacocoTestReport')
+}
