@@ -855,7 +855,7 @@ cw_WebClassifyMain_$callClinit = () => {
 },
 cw_WebClassifyMain_main = var$1 => {
     cw_WebClassifyMain_$callClinit();
-    cw_WebClassifyMain_installApi$js_body$_69();
+    cw_WebClassifyMain_installApi$js_body$_70();
 },
 cw_WebClassifyMain_computeHandles = $clusters => {
     let $total, $member, $cluster, $xs, var$6, $ys, var$8, $clusterIdx, var$10, $rs, var$12, $gs, var$14, $bs, var$16, $memberIdx, var$18, $withinIdx, var$20, $visible, var$22, $i, $c, $cluster_0, $color, $members, $m, $memberSelected, $h, $handle;
@@ -1224,7 +1224,7 @@ cw_WebClassifyMain__clinit_ = () => {
     cw_WebClassifyMain_ellipseStarts = $rt_createIntArray(0);
     cw_WebClassifyMain_overlayCount = 0;
 },
-cw_WebClassifyMain_installApi$js_body$_69 = () => {
+cw_WebClassifyMain_installApi$js_body$_70 = () => {
     globalThis.cvdCore = { renderFrame : function(w, h) {
         cw_WebClassifyMain_computeFrame$jsocb$_0(w, h);
         var argb = cw_WebClassifyMain_lastArgb$jsocb$_1();
@@ -1294,16 +1294,18 @@ cw_WebClassifyMain_installApi$js_body$_69 = () => {
         return cw_WebClassifyMain_setSiteMemberKindName$jsocb$_50(name);
     }, selectHandle : function(index) {
         cw_WebClassifyMain_selectHandle$jsocb$_51(index);
+    }, cycleSelectedMember : function(delta) {
+        cw_WebClassifyMain_cycleSelectedMember$jsocb$_52(delta);
     }, clearSelection : function() {
-        cw_WebClassifyMain_clearSelection$jsocb$_52();
+        cw_WebClassifyMain_clearSelection$jsocb$_53();
     }, addMemberAt : function(worldX, worldY) {
-        return cw_WebClassifyMain_addMemberAt$jsocb$_53(worldX, worldY);
+        return cw_WebClassifyMain_addMemberAt$jsocb$_54(worldX, worldY);
     }, removeMember : function() {
-        return cw_WebClassifyMain_removeMember$jsocb$_54();
+        return cw_WebClassifyMain_removeMember$jsocb$_55();
     }, addCluster : function() {
-        return cw_WebClassifyMain_addCluster$jsocb$_55();
+        return cw_WebClassifyMain_addCluster$jsocb$_56();
     }, removeCluster : function() {
-        return cw_WebClassifyMain_removeCluster$jsocb$_56();
+        return cw_WebClassifyMain_removeCluster$jsocb$_57();
     } };
 },
 cw_WebClassifyMain_handleClusters$jsocb$_8 = () => {
@@ -1332,6 +1334,84 @@ cw_WebClassifyMain_overlayRadius$jsocb$_37 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_overlayRadius);
 },
+cw_WebClassifyMain_addCluster$jsocb$_56 = () => {
+    let var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11, var$12, var$13, var$14;
+    cw_WebClassifyMain_$callClinit();
+    var$1 = cw_WebClassifyMain_sceneSnapshot;
+    var$1 = cm_MetricMemberCompatibility_invalidNewMemberMessage(var$1.$metricKind, var$1.$siteMemberKind);
+    if (ju_Optional_isPresent(var$1)) {
+        var$1 = ju_Optional_get(var$1);
+        cw_WebClassifyMain_lastError = var$1;
+    } else {
+        var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
+        var$2 = var$1.$size0;
+        if (var$2 >= 32) {
+            var$1 = $rt_s(15);
+            cw_WebClassifyMain_lastError = var$1;
+        } else {
+            var$3 = (360 * var$2 | 0) * 0.618033988749895 % 360.0;
+            var$4 = cm_Rgba_hsb(var$3, 0.65, 0.95);
+            var$5 = xmg_Vector_xy((-280) + ((var$2 % 5 | 0) * 140 | 0) | 0, (-200) + ((var$2 / 5 | 0) * 140 | 0) | 0);
+            var$6 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, var$2, 0, var$5);
+            var$5 = new cm_ClusterSite;
+            cm_ClusterNaming_$callClinit();
+            var$7 = var$3 % 360.0;
+            if (var$7 < 0.0)
+                var$7 = var$7 + 360.0;
+            var$8 = 0;
+            var$9 = Infinity;
+            var$10 = 0;
+            while (true) {
+                var$11 = cm_ClusterNaming_HUE_CENTERS.data;
+                if (var$10 >= var$11.length)
+                    break;
+                var$12 = jl_Math_abs(var$7 - var$11[var$10]) % 360.0;
+                if (var$12 > 180.0)
+                    var$12 = 360.0 - var$12;
+                if (var$12 < var$9) {
+                    var$8 = var$10;
+                    var$9 = var$12;
+                }
+                var$10 = var$10 + 1 | 0;
+            }
+            var$13 = cm_ClusterNaming_NAMES.data[var$8];
+            ju_Collections_$callClinit();
+            var$14 = new ju_TemplateCollections$SingleElementList;
+            jl_Object__init_(var$14);
+            var$14.$value1 = var$6;
+            cm_ClusterSite__init_(var$5, var$13, var$4, var$14);
+            ju_ArrayList_add(var$1, var$5);
+            cw_WebClassifyMain_activeClusterIndex = var$2;
+            cw_WebClassifyMain_selectedClusterIndex = var$2;
+            cw_WebClassifyMain_selectedMemberIndex = 0;
+            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(ju_ArrayList_get((ju_ArrayList_get(cw_WebClassifyMain_sceneSnapshot.$clusters, var$2)).$members, 0));
+            cw_WebClassifyMain_lastError = $rt_s(4);
+            var$1 = $rt_s(4);
+        }
+    }
+    return $rt_ustr(var$1);
+},
+cw_WebClassifyMain_removeCluster$jsocb$_57 = () => {
+    let var$1, var$2, var$3;
+    cw_WebClassifyMain_$callClinit();
+    var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
+    if (var$1.$size0 <= 1) {
+        var$1 = $rt_s(16);
+        cw_WebClassifyMain_lastError = var$1;
+    } else {
+        ju_ArrayList_remove(var$1, cw_WebClassifyMain_activeClusterIndex);
+        var$2 = cw_WebClassifyMain_activeClusterIndex;
+        var$3 = cw_WebClassifyMain_sceneSnapshot.$clusters.$size0;
+        if (var$2 >= var$3)
+            cw_WebClassifyMain_activeClusterIndex = var$3 - 1 | 0;
+        cw_WebClassifyMain_selectedClusterIndex = (-1);
+        cw_WebClassifyMain_selectedMemberIndex = (-1);
+        cw_WebClassifyMain_selectedHandleIndex = (-1);
+        cw_WebClassifyMain_lastError = $rt_s(4);
+        var$1 = $rt_s(4);
+    }
+    return $rt_ustr(var$1);
+},
 cw_WebClassifyMain_lastError$jsocb$_20 = () => {
     cw_WebClassifyMain_$callClinit();
     return $rt_ustr(cw_WebClassifyMain_lastError);
@@ -1343,6 +1423,36 @@ cw_WebClassifyMain_ellipseStarts$jsocb$_40 = () => {
 cw_WebClassifyMain_overlayMembers$jsocb$_32 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap0(cw_WebClassifyMain_overlayMembers);
+},
+cw_WebClassifyMain_removeMember$jsocb$_55 = () => {
+    let var$1, var$2, var$3, var$4;
+    cw_WebClassifyMain_$callClinit();
+    if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
+        var$1 = $rt_s(17);
+        cw_WebClassifyMain_lastError = var$1;
+    } else {
+        var$2 = cw_WebClassifyMain_selectedClusterIndex;
+        if (var$2 < 0)
+            var$2 = cw_WebClassifyMain_activeClusterIndex;
+        var$3 = cw_WebClassifyMain_selectedMemberIndex;
+        var$1 = ju_ArrayList_get(cw_WebClassifyMain_sceneSnapshot.$clusters, var$2);
+        if (!(var$3 >= 0 && var$3 < cm_ClusterSite_size(var$1)))
+            var$3 = cm_ClusterSite_size(var$1) - 1 | 0;
+        if (cm_ClusterSite_size(var$1) <= 1) {
+            var$1 = $rt_s(18);
+            cw_WebClassifyMain_lastError = var$1;
+        } else {
+            ju_ArrayList_remove(var$1.$members, var$3);
+            cw_WebClassifyMain_selectedClusterIndex = var$2;
+            var$4 = jl_Math_min(var$3, cm_ClusterSite_size(var$1) - 1 | 0);
+            cw_WebClassifyMain_selectedMemberIndex = var$4;
+            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(ju_ArrayList_get(var$1.$members, var$4));
+            cw_WebClassifyMain_activeClusterIndex = var$2;
+            cw_WebClassifyMain_lastError = $rt_s(4);
+            var$1 = $rt_s(4);
+        }
+    }
+    return $rt_ustr(var$1);
 },
 cw_WebClassifyMain_activeClusterIndex$jsocb$_22 = () => {
     cw_WebClassifyMain_$callClinit();
@@ -1357,7 +1467,7 @@ cw_WebClassifyMain_setNearestNeighborK$jsocb$_46 = var$1 => {
         cw_WebClassifyMain_lastError = $rt_s(4);
         var$1 = $rt_s(4);
     } else {
-        var$1 = $rt_s(15);
+        var$1 = $rt_s(19);
         cw_WebClassifyMain_lastError = var$1;
     }
     return $rt_ustr(var$1);
@@ -1400,30 +1510,32 @@ cw_WebClassifyMain_lastHeight$jsocb$_5 = () => {
     cw_WebClassifyMain_$callClinit();
     return cw_WebClassifyMain_lastHeight;
 },
-cw_WebClassifyMain_removeMember$jsocb$_54 = () => {
-    let var$1, var$2, var$3, var$4;
+cw_WebClassifyMain_addMemberAt$jsocb$_54 = (var$1, var$2) => {
+    let var$3, var$4, var$5;
     cw_WebClassifyMain_$callClinit();
-    if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
-        var$1 = $rt_s(16);
+    var$3 = var$1;
+    var$4 = var$2;
+    var$1 = cw_WebClassifyMain_sceneSnapshot;
+    var$1 = cm_MetricMemberCompatibility_invalidNewMemberMessage(var$1.$metricKind, var$1.$siteMemberKind);
+    if (ju_Optional_isPresent(var$1)) {
+        var$1 = ju_Optional_get(var$1);
+        cw_WebClassifyMain_lastError = var$1;
+    } else if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
+        var$1 = $rt_s(20);
         cw_WebClassifyMain_lastError = var$1;
     } else {
-        var$2 = cw_WebClassifyMain_selectedClusterIndex;
-        if (var$2 < 0)
-            var$2 = cw_WebClassifyMain_activeClusterIndex;
-        var$3 = cw_WebClassifyMain_selectedMemberIndex;
-        var$1 = ju_ArrayList_get(cw_WebClassifyMain_sceneSnapshot.$clusters, var$2);
-        if (!(var$3 >= 0 && var$3 < cm_ClusterSite_size(var$1)))
-            var$3 = cm_ClusterSite_size(var$1) - 1 | 0;
-        if (cm_ClusterSite_size(var$1) <= 1) {
-            var$1 = $rt_s(17);
+        var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
+        var$5 = cw_WebClassifyMain_activeClusterIndex;
+        var$1 = ju_ArrayList_get(var$1, var$5);
+        if (cm_ClusterSite_size(var$1) >= 32) {
+            var$1 = $rt_s(21);
             cw_WebClassifyMain_lastError = var$1;
         } else {
-            ju_ArrayList_remove(var$1.$members, var$3);
-            cw_WebClassifyMain_selectedClusterIndex = var$2;
-            var$4 = jl_Math_min(var$3, cm_ClusterSite_size(var$1) - 1 | 0);
-            cw_WebClassifyMain_selectedMemberIndex = var$4;
-            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(ju_ArrayList_get(var$1.$members, var$4));
-            cw_WebClassifyMain_activeClusterIndex = var$2;
+            var$2 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, cw_WebClassifyMain_activeClusterIndex, cm_ClusterSite_size(var$1), xmg_Vector_xy(var$3, var$4));
+            ju_ArrayList_add(var$1.$members, var$2);
+            cw_WebClassifyMain_selectedClusterIndex = cw_WebClassifyMain_activeClusterIndex;
+            cw_WebClassifyMain_selectedMemberIndex = cm_ClusterSite_size(var$1) - 1 | 0;
+            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(var$2);
             cw_WebClassifyMain_lastError = $rt_s(4);
             var$1 = $rt_s(4);
         }
@@ -1444,7 +1556,7 @@ cw_WebClassifyMain_setNeighborOrderName$jsocb$_45 = var$1 => {
             $$je = $rt_wrapException($$e);
             if ($$je instanceof jl_IllegalArgumentException) {
                 var$2 = jl_StringBuilder__init_();
-                jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(18)), var$1);
+                jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(22)), var$1);
                 var$2 = jl_StringBuilder_toString(var$2);
                 cw_WebClassifyMain_lastError = var$2;
                 break a;
@@ -1477,7 +1589,7 @@ cw_WebClassifyMain_setWorldView$jsocb$_48 = (var$1, var$2, var$3, var$4) => {
         cw_WebClassifyMain_worldMaxY = var$8;
         cw_WebClassifyMain_lastError = $rt_s(4);
     } else
-        cw_WebClassifyMain_lastError = $rt_s(19);
+        cw_WebClassifyMain_lastError = $rt_s(23);
 },
 cw_WebClassifyMain_setShadingEnabled$jsocb$_47 = var$1 => {
     cw_WebClassifyMain_$callClinit();
@@ -1495,30 +1607,42 @@ cw_WebClassifyMain_selectedMemberIndex$jsocb$_26 = () => {
     cw_WebClassifyMain_$callClinit();
     return cw_WebClassifyMain_selectedMemberIndex;
 },
+cw_WebClassifyMain_cycleSelectedMember$jsocb$_52 = var$1 => {
+    let var$2, var$3, var$4, var$5;
+    cw_WebClassifyMain_$callClinit();
+    var$2 = var$1;
+    if (!ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
+        var$3 = cw_WebClassifyMain_activeClusterIndex;
+        if (!(var$3 >= 0 && var$3 < cw_WebClassifyMain_sceneSnapshot.$clusters.$size0))
+            cw_WebClassifyMain_activeClusterIndex = 0;
+        var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
+        var$3 = cw_WebClassifyMain_activeClusterIndex;
+        var$1 = ju_ArrayList_get(var$1, var$3);
+        var$3 = cm_ClusterSite_size(var$1);
+        if (var$3 > 0) {
+            a: {
+                var$4 = cw_WebClassifyMain_selectedClusterIndex;
+                var$5 = cw_WebClassifyMain_activeClusterIndex;
+                if (var$4 == var$5) {
+                    var$4 = cw_WebClassifyMain_selectedMemberIndex;
+                    if (var$4 >= 0)
+                        break a;
+                }
+                var$4 = var$2 <= 0 ? 0 : (-1);
+            }
+            var$2 = var$4 + var$2 | 0;
+            var$4 = var$2 % var$3 | 0;
+            if ((var$2 ^ var$3) < 0 && var$4)
+                var$4 = var$4 + var$3 | 0;
+            cw_WebClassifyMain_selectedClusterIndex = var$5;
+            cw_WebClassifyMain_selectedMemberIndex = var$4;
+            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(ju_ArrayList_get(var$1.$members, var$4));
+        }
+    }
+},
 cw_WebClassifyMain_ellipseXs$jsocb$_38 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_ellipseXs);
-},
-cw_WebClassifyMain_removeCluster$jsocb$_56 = () => {
-    let var$1, var$2, var$3;
-    cw_WebClassifyMain_$callClinit();
-    var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
-    if (var$1.$size0 <= 1) {
-        var$1 = $rt_s(20);
-        cw_WebClassifyMain_lastError = var$1;
-    } else {
-        ju_ArrayList_remove(var$1, cw_WebClassifyMain_activeClusterIndex);
-        var$2 = cw_WebClassifyMain_activeClusterIndex;
-        var$3 = cw_WebClassifyMain_sceneSnapshot.$clusters.$size0;
-        if (var$2 >= var$3)
-            cw_WebClassifyMain_activeClusterIndex = var$3 - 1 | 0;
-        cw_WebClassifyMain_selectedClusterIndex = (-1);
-        cw_WebClassifyMain_selectedMemberIndex = (-1);
-        cw_WebClassifyMain_selectedHandleIndex = (-1);
-        cw_WebClassifyMain_lastError = $rt_s(4);
-        var$1 = $rt_s(4);
-    }
-    return $rt_ustr(var$1);
 },
 cw_WebClassifyMain_handleXs$jsocb$_6 = () => {
     cw_WebClassifyMain_$callClinit();
@@ -1617,8 +1741,8 @@ cw_WebClassifyMain_clusterCount$jsocb$_21 = () => {
 cw_WebClassifyMain_handleGs$jsocb$_13 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_handleGs);
-},
-cw_WebClassifyMain_overlayAy$jsocb$_34 = () => {
+};
+let cw_WebClassifyMain_overlayAy$jsocb$_34 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_overlayAy);
 },
@@ -1629,8 +1753,8 @@ cw_WebClassifyMain_metricKindName$jsocb$_16 = () => {
 cw_WebClassifyMain_selectedClusterIndex$jsocb$_25 = () => {
     cw_WebClassifyMain_$callClinit();
     return cw_WebClassifyMain_selectedClusterIndex;
-};
-let cw_WebClassifyMain_ellipseYs$jsocb$_39 = () => {
+},
+cw_WebClassifyMain_ellipseYs$jsocb$_39 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_ellipseYs);
 },
@@ -1650,13 +1774,6 @@ cw_WebClassifyMain_overlayAx$jsocb$_33 = () => {
     cw_WebClassifyMain_$callClinit();
     return otji_JS_wrap(cw_WebClassifyMain_overlayAx);
 },
-cw_WebClassifyMain_clearSelection$jsocb$_52 = () => {
-    cw_WebClassifyMain_$callClinit();
-    cw_WebClassifyMain_selectedClusterIndex = (-1);
-    cw_WebClassifyMain_selectedMemberIndex = (-1);
-    cw_WebClassifyMain_selectedHandleIndex = (-1);
-    cw_WebClassifyMain_endHandleDrag();
-},
 cw_WebClassifyMain_setActiveClusterIndex$jsocb$_49 = var$1 => {
     let var$2;
     cw_WebClassifyMain_$callClinit();
@@ -1666,7 +1783,7 @@ cw_WebClassifyMain_setActiveClusterIndex$jsocb$_49 = var$1 => {
         cw_WebClassifyMain_lastError = $rt_s(4);
         var$1 = $rt_s(4);
     } else {
-        var$1 = $rt_s(21);
+        var$1 = $rt_s(24);
         cw_WebClassifyMain_lastError = var$1;
     }
     return $rt_ustr(var$1);
@@ -1700,7 +1817,7 @@ cw_WebClassifyMain_setMetricKindName$jsocb$_44 = var$1 => {
                 }
             }
             var$2 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(22)), var$1);
+            jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(25)), var$1);
             var$1 = jl_StringBuilder_toString(var$2);
             cw_WebClassifyMain_lastError = var$1;
             break a;
@@ -1891,7 +2008,7 @@ cw_WebClassifyMain_computeFrame$jsocb$_0 = (var$1, var$2) => {
                     }
                 }
                 var$1 = new jl_IllegalStateException;
-                jl_RuntimeException__init_(var$1, $rt_s(23));
+                jl_RuntimeException__init_(var$1, $rt_s(26));
                 $rt_throw(var$1);
             }
             var$1 = ju_AbstractList$1_next(var$2);
@@ -1906,7 +2023,7 @@ cw_WebClassifyMain_computeFrame$jsocb$_0 = (var$1, var$2) => {
         $rt_throw(var$1);
     }
     var$2 = new jl_IllegalArgumentException;
-    jl_RuntimeException__init_(var$2, $rt_s(24));
+    jl_RuntimeException__init_(var$2, $rt_s(27));
     $rt_throw(var$2);
 },
 cw_WebClassifyMain_clusterNameAt$jsocb$_28 = var$1 => {
@@ -1928,95 +2045,6 @@ cw_WebClassifyMain_clusterNameAt$jsocb$_28 = var$1 => {
 cw_WebClassifyMain_overlayCount$jsocb$_29 = () => {
     cw_WebClassifyMain_$callClinit();
     return cw_WebClassifyMain_overlayCount;
-},
-cw_WebClassifyMain_addMemberAt$jsocb$_53 = (var$1, var$2) => {
-    let var$3, var$4, var$5;
-    cw_WebClassifyMain_$callClinit();
-    var$3 = var$1;
-    var$4 = var$2;
-    var$1 = cw_WebClassifyMain_sceneSnapshot;
-    var$1 = cm_MetricMemberCompatibility_invalidNewMemberMessage(var$1.$metricKind, var$1.$siteMemberKind);
-    if (ju_Optional_isPresent(var$1)) {
-        var$1 = ju_Optional_get(var$1);
-        cw_WebClassifyMain_lastError = var$1;
-    } else if (ju_AbstractCollection_isEmpty(cw_WebClassifyMain_sceneSnapshot.$clusters)) {
-        var$1 = $rt_s(25);
-        cw_WebClassifyMain_lastError = var$1;
-    } else {
-        var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
-        var$5 = cw_WebClassifyMain_activeClusterIndex;
-        var$1 = ju_ArrayList_get(var$1, var$5);
-        if (cm_ClusterSite_size(var$1) >= 32) {
-            var$1 = $rt_s(26);
-            cw_WebClassifyMain_lastError = var$1;
-        } else {
-            var$2 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, cw_WebClassifyMain_activeClusterIndex, cm_ClusterSite_size(var$1), xmg_Vector_xy(var$3, var$4));
-            ju_ArrayList_add(var$1.$members, var$2);
-            cw_WebClassifyMain_selectedClusterIndex = cw_WebClassifyMain_activeClusterIndex;
-            cw_WebClassifyMain_selectedMemberIndex = cm_ClusterSite_size(var$1) - 1 | 0;
-            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(var$2);
-            cw_WebClassifyMain_lastError = $rt_s(4);
-            var$1 = $rt_s(4);
-        }
-    }
-    return $rt_ustr(var$1);
-},
-cw_WebClassifyMain_addCluster$jsocb$_55 = () => {
-    let var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11, var$12, var$13, var$14;
-    cw_WebClassifyMain_$callClinit();
-    var$1 = cw_WebClassifyMain_sceneSnapshot;
-    var$1 = cm_MetricMemberCompatibility_invalidNewMemberMessage(var$1.$metricKind, var$1.$siteMemberKind);
-    if (ju_Optional_isPresent(var$1)) {
-        var$1 = ju_Optional_get(var$1);
-        cw_WebClassifyMain_lastError = var$1;
-    } else {
-        var$1 = cw_WebClassifyMain_sceneSnapshot.$clusters;
-        var$2 = var$1.$size0;
-        if (var$2 >= 32) {
-            var$1 = $rt_s(27);
-            cw_WebClassifyMain_lastError = var$1;
-        } else {
-            var$3 = (360 * var$2 | 0) * 0.618033988749895 % 360.0;
-            var$4 = cm_Rgba_hsb(var$3, 0.65, 0.95);
-            var$5 = xmg_Vector_xy((-280) + ((var$2 % 5 | 0) * 140 | 0) | 0, (-200) + ((var$2 / 5 | 0) * 140 | 0) | 0);
-            var$6 = cm_SiteMemberFactory_createDefault(cw_WebClassifyMain_sceneSnapshot.$siteMemberKind, var$2, 0, var$5);
-            var$5 = new cm_ClusterSite;
-            cm_ClusterNaming_$callClinit();
-            var$7 = var$3 % 360.0;
-            if (var$7 < 0.0)
-                var$7 = var$7 + 360.0;
-            var$8 = 0;
-            var$9 = Infinity;
-            var$10 = 0;
-            while (true) {
-                var$11 = cm_ClusterNaming_HUE_CENTERS.data;
-                if (var$10 >= var$11.length)
-                    break;
-                var$12 = jl_Math_abs(var$7 - var$11[var$10]) % 360.0;
-                if (var$12 > 180.0)
-                    var$12 = 360.0 - var$12;
-                if (var$12 < var$9) {
-                    var$8 = var$10;
-                    var$9 = var$12;
-                }
-                var$10 = var$10 + 1 | 0;
-            }
-            var$13 = cm_ClusterNaming_NAMES.data[var$8];
-            ju_Collections_$callClinit();
-            var$14 = new ju_TemplateCollections$SingleElementList;
-            jl_Object__init_(var$14);
-            var$14.$value1 = var$6;
-            cm_ClusterSite__init_(var$5, var$13, var$4, var$14);
-            ju_ArrayList_add(var$1, var$5);
-            cw_WebClassifyMain_activeClusterIndex = var$2;
-            cw_WebClassifyMain_selectedClusterIndex = var$2;
-            cw_WebClassifyMain_selectedMemberIndex = 0;
-            cw_WebClassifyMain_selectedHandleIndex = c_HandleVisibility_primaryHandleIndex(ju_ArrayList_get((ju_ArrayList_get(cw_WebClassifyMain_sceneSnapshot.$clusters, var$2)).$members, 0));
-            cw_WebClassifyMain_lastError = $rt_s(4);
-            var$1 = $rt_s(4);
-        }
-    }
-    return $rt_ustr(var$1);
 },
 cw_WebClassifyMain_handleMembers$jsocb$_9 = () => {
     cw_WebClassifyMain_$callClinit();
@@ -2083,6 +2111,13 @@ cw_WebClassifyMain_overlayBy$jsocb$_36 = () => {
 cw_WebClassifyMain_handleTotal$jsocb$_15 = () => {
     cw_WebClassifyMain_$callClinit();
     return cw_WebClassifyMain_handleTotal;
+},
+cw_WebClassifyMain_clearSelection$jsocb$_53 = () => {
+    cw_WebClassifyMain_$callClinit();
+    cw_WebClassifyMain_selectedClusterIndex = (-1);
+    cw_WebClassifyMain_selectedMemberIndex = (-1);
+    cw_WebClassifyMain_selectedHandleIndex = (-1);
+    cw_WebClassifyMain_endHandleDrag();
 },
 jl_ClassCastException = $rt_classWithoutFields(jl_RuntimeException),
 otp_Platform = $rt_classWithoutFields(),
@@ -2976,7 +3011,72 @@ ju_TemplateCollections$TwoElementsList_get = ($this, $index) => {
 jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException),
 otj_JSObject = $rt_classWithoutFields(0),
 otjc_JSString = $rt_classWithoutFields(),
-otjc_JSBoolean = $rt_classWithoutFields(),
+cm_MetricMemberCompatibility = $rt_classWithoutFields(),
+cm_MetricMemberCompatibility_requiresPointOnlyMembers = $metricKind => {
+    cm_MetricKind_$callClinit();
+    return $metricKind !== cm_MetricKind_SUM_OF_DISTANCES && $metricKind !== cm_MetricKind_MEAN_DISTANCE && $metricKind !== cm_MetricKind_KTH_NEAREST_DISTANCE ? 0 : 1;
+},
+cm_MetricMemberCompatibility_pointOnlyMetricMessage = $metricKind => {
+    let var$2;
+    var$2 = $metricKind.$name;
+    $metricKind = jl_StringBuilder__init_();
+    jl_StringBuilder_append(jl_StringBuilder_append($metricKind, var$2), $rt_s(44));
+    return jl_StringBuilder_toString($metricKind);
+},
+cm_MetricMemberCompatibility_invalidNewMemberMessage = ($metricKind, $memberKind) => {
+    if (cm_MetricMemberCompatibility_requiresPointOnlyMembers($metricKind)) {
+        cm_SiteMemberKind_$callClinit();
+        if ($memberKind !== cm_SiteMemberKind_POINT)
+            return ju_Optional_of(cm_MetricMemberCompatibility_pointOnlyMetricMessage($metricKind));
+    }
+    return ju_Optional_empty();
+};
+function ju_Optional() {
+    jl_Object.call(this);
+    this.$value0 = null;
+}
+let ju_Optional_emptyInstance = null,
+ju_Optional__init_0 = ($this, $value) => {
+    $this.$value0 = $value;
+},
+ju_Optional__init_ = var_0 => {
+    let var_1 = new ju_Optional();
+    ju_Optional__init_0(var_1, var_0);
+    return var_1;
+},
+ju_Optional_empty = () => {
+    if (ju_Optional_emptyInstance === null)
+        ju_Optional_emptyInstance = ju_Optional__init_(null);
+    return ju_Optional_emptyInstance;
+},
+ju_Optional_of = $value => {
+    return ju_Optional__init_(ju_Objects_requireNonNull($value));
+},
+ju_Optional_get = $this => {
+    let var$1;
+    var$1 = $this.$value0;
+    if (var$1 !== null)
+        return var$1;
+    var$1 = new ju_NoSuchElementException;
+    jl_Exception__init_(var$1);
+    $rt_throw(var$1);
+},
+ju_Optional_isPresent = $this => {
+    return $this.$value0 === null ? 0 : 1;
+},
+c_HandleVisibility = $rt_classWithoutFields(),
+c_HandleVisibility_primaryHandleIndex = $member => {
+    if ($member instanceof cm_CircleMember)
+        return 1;
+    if (!($member instanceof cm_EllipseMember))
+        return 0;
+    return 2;
+},
+c_HandleVisibility_isVisible = ($member, $handleIndex, $memberSelected) => {
+    if (!($member instanceof cm_CircleMember) && !($member instanceof cm_EllipseMember) && !($member instanceof cm_LineMember))
+        return 1;
+    return $handleIndex != c_HandleVisibility_primaryHandleIndex($member) && !$memberSelected ? 0 : 1;
+},
 jl_Math = $rt_classWithoutFields(),
 jl_Math_sin = var$1 => {
     return Math.sin(var$1);
@@ -3027,71 +3127,38 @@ jl_Math_abs = var$1 => {
 jl_Math_sign = var$1 => {
     return Math.sign(var$1);
 },
-c_HandleVisibility = $rt_classWithoutFields(),
-c_HandleVisibility_primaryHandleIndex = var$1 => {
-    if (var$1 instanceof cm_CircleMember)
-        return 1;
-    if (!(var$1 instanceof cm_EllipseMember))
-        return 0;
-    return 2;
-},
-c_HandleVisibility_isVisible = ($member, $handleIndex, $memberSelected) => {
-    if (!($member instanceof cm_CircleMember) && !($member instanceof cm_EllipseMember) && !($member instanceof cm_LineMember))
-        return 1;
-    return $handleIndex != c_HandleVisibility_primaryHandleIndex($member) && !$memberSelected ? 0 : 1;
-};
-function ju_Optional() {
-    jl_Object.call(this);
-    this.$value0 = null;
-}
-let ju_Optional_emptyInstance = null,
-ju_Optional__init_0 = ($this, $value) => {
-    $this.$value0 = $value;
-},
-ju_Optional__init_ = var_0 => {
-    let var_1 = new ju_Optional();
-    ju_Optional__init_0(var_1, var_0);
-    return var_1;
-},
-ju_Optional_empty = () => {
-    if (ju_Optional_emptyInstance === null)
-        ju_Optional_emptyInstance = ju_Optional__init_(null);
-    return ju_Optional_emptyInstance;
-},
-ju_Optional_of = $value => {
-    return ju_Optional__init_(ju_Objects_requireNonNull($value));
-},
-ju_Optional_get = $this => {
-    let var$1;
-    var$1 = $this.$value0;
-    if (var$1 !== null)
-        return var$1;
-    var$1 = new ju_NoSuchElementException;
-    jl_Exception__init_(var$1);
-    $rt_throw(var$1);
-},
-ju_Optional_isPresent = $this => {
-    return $this.$value0 === null ? 0 : 1;
-},
-cm_MetricMemberCompatibility = $rt_classWithoutFields(),
-cm_MetricMemberCompatibility_requiresPointOnlyMembers = $metricKind => {
-    cm_MetricKind_$callClinit();
-    return $metricKind !== cm_MetricKind_SUM_OF_DISTANCES && $metricKind !== cm_MetricKind_MEAN_DISTANCE && $metricKind !== cm_MetricKind_KTH_NEAREST_DISTANCE ? 0 : 1;
-},
-cm_MetricMemberCompatibility_pointOnlyMetricMessage = $metricKind => {
-    let var$2;
-    var$2 = $metricKind.$name;
-    $metricKind = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append($metricKind, var$2), $rt_s(44));
-    return jl_StringBuilder_toString($metricKind);
-},
-cm_MetricMemberCompatibility_invalidNewMemberMessage = ($metricKind, $memberKind) => {
-    if (cm_MetricMemberCompatibility_requiresPointOnlyMembers($metricKind)) {
-        cm_SiteMemberKind_$callClinit();
-        if ($memberKind !== cm_SiteMemberKind_POINT)
-            return ju_Optional_of(cm_MetricMemberCompatibility_pointOnlyMetricMessage($metricKind));
+otjc_JSBoolean = $rt_classWithoutFields(),
+cm_SiteMemberFactory = $rt_classWithoutFields(),
+cm_SiteMemberFactory_createDefault = (var$1, $clusterIndex, $memberIndex, $hint) => {
+    let $half, $radius, $angle;
+    a: {
+        cm_SiteMemberFactory$1_$callClinit();
+        switch (cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind.data[var$1.$ordinal]) {
+            case 1:
+                break;
+            case 2:
+                $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
+                var$1 = cm_SegmentMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
+                break a;
+            case 3:
+                $radius = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
+                var$1 = cm_CircleMember__init_($hint, xmg_Vector_add($hint, $radius));
+                break a;
+            case 4:
+                $angle = 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31);
+                $half = xmg_Vector_polar(18.0, $angle);
+                var$1 = cm_EllipseMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half), xmg_Vector_add($hint, xmg_Vector_polar(40.0, $angle + 1.5707963267948966)));
+                break a;
+            case 5:
+                $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
+                var$1 = cm_LineMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
+                break a;
+            default:
+                $rt_throw(jl_MatchException__init_(null, null));
+        }
+        var$1 = cm_PointMember__init_($hint);
     }
-    return ju_Optional_empty();
+    return var$1;
 },
 cc_ScenePreparation = $rt_classWithoutFields(),
 cc_ScenePreparation_MINIMUM_DISTANCE = null,
@@ -3182,42 +3249,22 @@ function cc_DiagramRasterizer$OwnershipGrid() {
     a.$clusterIndices0 = null;
     a.$memberIndices0 = null;
 }
-let cm_SiteMemberFactory = $rt_classWithoutFields(),
-cm_SiteMemberFactory_createDefault = ($kind, $clusterIndex, $memberIndex, $hint) => {
-    let $half, $radius, $angle;
-    a: {
-        cm_SiteMemberFactory$1_$callClinit();
-        switch (cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind.data[$kind.$ordinal]) {
-            case 1:
-                break;
-            case 2:
-                $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                $kind = cm_SegmentMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
-                break a;
-            case 3:
-                $radius = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                $kind = cm_CircleMember__init_($hint, xmg_Vector_add($hint, $radius));
-                break a;
-            case 4:
-                $angle = 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31);
-                $half = xmg_Vector_polar(18.0, $angle);
-                $kind = cm_EllipseMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half), xmg_Vector_add($hint, xmg_Vector_polar(40.0, $angle + 1.5707963267948966)));
-                break a;
-            case 5:
-                $half = xmg_Vector_polar(22.0, 6.283185307179586 * ($memberIndex * 0.618033988749895 + $clusterIndex * 0.31));
-                $kind = cm_LineMember__init_(xmg_Vector_sub($hint, $half), xmg_Vector_add($hint, $half));
-                break a;
-            default:
-                $rt_throw(jl_MatchException__init_(null, null));
-        }
-        $kind = cm_PointMember__init_($hint);
-    }
-    return $kind;
-};
 function xmu_Hash() {
     jl_Object.call(this);
     this.$h = Long_ZERO;
 }
+let ju_NoSuchElementException = $rt_classWithoutFields(jl_RuntimeException),
+cm_ClusterNaming = $rt_classWithoutFields(),
+cm_ClusterNaming_NAMES = null,
+cm_ClusterNaming_HUE_CENTERS = null,
+cm_ClusterNaming_$callClinit = () => {
+    cm_ClusterNaming_$callClinit = $rt_eraseClinit(cm_ClusterNaming);
+    cm_ClusterNaming__clinit_();
+},
+cm_ClusterNaming__clinit_ = () => {
+    cm_ClusterNaming_NAMES = $rt_wrapArray(jl_String, [$rt_s(45), $rt_s(46), $rt_s(11), $rt_s(47), $rt_s(14), $rt_s(48), $rt_s(49), $rt_s(50), $rt_s(12), $rt_s(51), $rt_s(52), $rt_s(53), $rt_s(54), $rt_s(13)]);
+    cm_ClusterNaming_HUE_CENTERS = $rt_createDoubleArrayFromData([0.0, 20.0, 35.0, 55.0, 100.0, 130.0, 160.0, 185.0, 210.0, 235.0, 255.0, 275.0, 300.0, 330.0]);
+};
 function cm_CircleMember() {
     let a = this; jl_Record.call(a);
     a.$center = null;
@@ -3518,6 +3565,83 @@ cm_EllipseMember_withHandle = ($this, $index, $v) => {
         $rt_throw(jl_IndexOutOfBoundsException__init_($index));
     }
     return var$3;
+},
+cm_SiteMemberFactory$1 = $rt_classWithoutFields(),
+cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = null,
+cm_SiteMemberFactory$1_$callClinit = () => {
+    cm_SiteMemberFactory$1_$callClinit = $rt_eraseClinit(cm_SiteMemberFactory$1);
+    cm_SiteMemberFactory$1__clinit_();
+},
+cm_SiteMemberFactory$1__clinit_ = () => {
+    let var$1, var$2;
+    cm_SiteMemberKind_$callClinit();
+    var$1 = $rt_createIntArray((cm_SiteMemberKind_$VALUES.$clone0()).data.length);
+    var$2 = var$1.data;
+    cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = var$1;
+    var$2[cm_SiteMemberKind_POINT.$ordinal] = 1;
+    var$2[cm_SiteMemberKind_LINE_SEGMENT.$ordinal] = 2;
+    var$2[cm_SiteMemberKind_CIRCLE.$ordinal] = 3;
+    var$2[cm_SiteMemberKind_ELLIPSE.$ordinal] = 4;
+    var$2[cm_SiteMemberKind_LINE.$ordinal] = 5;
+};
+function cm_SegmentMember() {
+    let a = this; jl_Record.call(a);
+    a.$a0 = null;
+    a.$b0 = null;
+}
+let cm_SegmentMember__init_0 = ($this, $a, $b) => {
+    $this.$a0 = $a;
+    $this.$b0 = $b;
+},
+cm_SegmentMember__init_ = (var_0, var_1) => {
+    let var_2 = new cm_SegmentMember();
+    cm_SegmentMember__init_0(var_2, var_0, var_1);
+    return var_2;
+},
+cm_SegmentMember_distanceTo = ($this, $point) => {
+    let $ap, $ab, $ab2, $t;
+    $ap = xmg_Vector_sub($point, $this.$a0);
+    $ab = xmg_Vector_sub($this.$b0, $this.$a0);
+    $ab2 = xmg_Vector_lengthSquared($ab);
+    if ($ab2 <= 0.0)
+        return xmg_Vector_distanceTo($point, $this.$a0);
+    $t = jl_Math_max0(0.0, jl_Math_min0(1.0, xmg_Vector_dot($ap, $ab) / $ab2));
+    return xmg_Vector_distanceTo($point, xmg_Vector_add($this.$a0, xmg_Vector_mul($ab, $t)));
+},
+cm_SegmentMember_handleCount = $this => {
+    return 2;
+},
+cm_SegmentMember_getHandle = ($this, $index) => {
+    let var$2;
+    a: {
+        switch ($index) {
+            case 0:
+                break;
+            case 1:
+                var$2 = $this.$b0;
+                break a;
+            default:
+                $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+        }
+        var$2 = $this.$a0;
+    }
+    return var$2;
+},
+cm_SegmentMember_withHandle = ($this, $index, $v) => {
+    let var$3;
+    a: {
+        switch ($index) {
+            case 0:
+                var$3 = cm_SegmentMember__init_($v, $this.$b0);
+                break a;
+            case 1:
+                var$3 = cm_SegmentMember__init_($this.$a0, $v);
+                break a;
+            default:
+        }
+        $rt_throw(jl_IndexOutOfBoundsException__init_($index));
+    }
+    return var$3;
 };
 function cm_LineMember() {
     let a = this; jl_Record.call(a);
@@ -3578,7 +3702,20 @@ cm_LineMember_withHandle = ($this, $index, $v) => {
     }
     return var$3;
 },
-ju_NoSuchElementException = $rt_classWithoutFields(jl_RuntimeException);
+jl_MatchException = $rt_classWithoutFields(jl_RuntimeException),
+jl_MatchException__init_0 = ($this, $message, $cause) => {
+    jl_Throwable_initNativeException($this);
+    $this.$suppressionEnabled = 1;
+    $this.$writableStackTrace = 1;
+    jl_Throwable_fillInStackTrace($this);
+    $this.$message = $message;
+    $this.$cause = $cause;
+},
+jl_MatchException__init_ = (var_0, var_1) => {
+    let var_2 = new jl_MatchException();
+    jl_MatchException__init_0(var_2, var_0, var_1);
+    return var_2;
+};
 function xmg_Interval() {
     let a = this; jl_Object.call(a);
     a.$p = 0.0;
@@ -3661,65 +3798,6 @@ function cc_DiagramRasterizer$GridSpec() {
     a.$sx = 0.0;
     a.$sy = 0.0;
 }
-function cm_SegmentMember() {
-    let a = this; jl_Record.call(a);
-    a.$a0 = null;
-    a.$b0 = null;
-}
-let cm_SegmentMember__init_0 = ($this, $a, $b) => {
-    $this.$a0 = $a;
-    $this.$b0 = $b;
-},
-cm_SegmentMember__init_ = (var_0, var_1) => {
-    let var_2 = new cm_SegmentMember();
-    cm_SegmentMember__init_0(var_2, var_0, var_1);
-    return var_2;
-},
-cm_SegmentMember_distanceTo = ($this, $point) => {
-    let $ap, $ab, $ab2, $t;
-    $ap = xmg_Vector_sub($point, $this.$a0);
-    $ab = xmg_Vector_sub($this.$b0, $this.$a0);
-    $ab2 = xmg_Vector_lengthSquared($ab);
-    if ($ab2 <= 0.0)
-        return xmg_Vector_distanceTo($point, $this.$a0);
-    $t = jl_Math_max0(0.0, jl_Math_min0(1.0, xmg_Vector_dot($ap, $ab) / $ab2));
-    return xmg_Vector_distanceTo($point, xmg_Vector_add($this.$a0, xmg_Vector_mul($ab, $t)));
-},
-cm_SegmentMember_handleCount = $this => {
-    return 2;
-},
-cm_SegmentMember_getHandle = ($this, $index) => {
-    let var$2;
-    a: {
-        switch ($index) {
-            case 0:
-                break;
-            case 1:
-                var$2 = $this.$b0;
-                break a;
-            default:
-                $rt_throw(jl_IndexOutOfBoundsException__init_($index));
-        }
-        var$2 = $this.$a0;
-    }
-    return var$2;
-},
-cm_SegmentMember_withHandle = ($this, $index, $v) => {
-    let var$3;
-    a: {
-        switch ($index) {
-            case 0:
-                var$3 = cm_SegmentMember__init_($v, $this.$b0);
-                break a;
-            case 1:
-                var$3 = cm_SegmentMember__init_($this.$a0, $v);
-                break a;
-            default:
-        }
-        $rt_throw(jl_IndexOutOfBoundsException__init_($index));
-    }
-    return var$3;
-};
 function jl_Double() {
     jl_Number.call(this);
     this.$value = 0.0;
@@ -3753,50 +3831,41 @@ jl_Double_compareTo = ($this, var$1) => {
 jl_Double__clinit_ = () => {
     jl_Double_TYPE = $rt_cls($rt_doublecls);
 },
-cm_SiteMemberFactory$1 = $rt_classWithoutFields(),
-cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = null,
-cm_SiteMemberFactory$1_$callClinit = () => {
-    cm_SiteMemberFactory$1_$callClinit = $rt_eraseClinit(cm_SiteMemberFactory$1);
-    cm_SiteMemberFactory$1__clinit_();
-},
-cm_SiteMemberFactory$1__clinit_ = () => {
-    let var$1, var$2;
-    cm_SiteMemberKind_$callClinit();
-    var$1 = $rt_createIntArray((cm_SiteMemberKind_$VALUES.$clone0()).data.length);
-    var$2 = var$1.data;
-    cm_SiteMemberFactory$1_$SwitchMap$cvdexplorer$model$SiteMemberKind = var$1;
-    var$2[cm_SiteMemberKind_POINT.$ordinal] = 1;
-    var$2[cm_SiteMemberKind_LINE_SEGMENT.$ordinal] = 2;
-    var$2[cm_SiteMemberKind_CIRCLE.$ordinal] = 3;
-    var$2[cm_SiteMemberKind_ELLIPSE.$ordinal] = 4;
-    var$2[cm_SiteMemberKind_LINE.$ordinal] = 5;
-},
-jl_MatchException = $rt_classWithoutFields(jl_RuntimeException),
-jl_MatchException__init_0 = ($this, $message, $cause) => {
-    jl_Throwable_initNativeException($this);
-    $this.$suppressionEnabled = 1;
-    $this.$writableStackTrace = 1;
-    jl_Throwable_fillInStackTrace($this);
-    $this.$message = $message;
-    $this.$cause = $cause;
-},
-jl_MatchException__init_ = (var_0, var_1) => {
-    let var_2 = new jl_MatchException();
-    jl_MatchException__init_0(var_2, var_0, var_1);
-    return var_2;
-},
-cm_ClusterNaming = $rt_classWithoutFields(),
-cm_ClusterNaming_NAMES = null,
-cm_ClusterNaming_HUE_CENTERS = null,
-cm_ClusterNaming_$callClinit = () => {
-    cm_ClusterNaming_$callClinit = $rt_eraseClinit(cm_ClusterNaming);
-    cm_ClusterNaming__clinit_();
-},
-cm_ClusterNaming__clinit_ = () => {
-    cm_ClusterNaming_NAMES = $rt_wrapArray(jl_String, [$rt_s(45), $rt_s(46), $rt_s(11), $rt_s(47), $rt_s(14), $rt_s(48), $rt_s(49), $rt_s(50), $rt_s(12), $rt_s(51), $rt_s(52), $rt_s(53), $rt_s(54), $rt_s(13)]);
-    cm_ClusterNaming_HUE_CENTERS = $rt_createDoubleArrayFromData([0.0, 20.0, 35.0, 55.0, 100.0, 130.0, 160.0, 185.0, 210.0, 235.0, 255.0, 275.0, 300.0, 330.0]);
-},
 jl_NullPointerException = $rt_classWithoutFields(jl_RuntimeException),
+ju_Collections = $rt_classWithoutFields(),
+ju_Collections_EMPTY_SET = null,
+ju_Collections_EMPTY_MAP = null,
+ju_Collections_EMPTY_LIST = null,
+ju_Collections_EMPTY_ITERATOR = null,
+ju_Collections_EMPTY_LIST_ITERATOR = null,
+ju_Collections_reverseOrder = null,
+ju_Collections_$callClinit = () => {
+    ju_Collections_$callClinit = $rt_eraseClinit(ju_Collections);
+    ju_Collections__clinit_();
+},
+ju_Collections__clinit_ = () => {
+    ju_Collections_EMPTY_SET = new ju_Collections$1;
+    ju_Collections_EMPTY_MAP = new ju_Collections$2;
+    ju_Collections_EMPTY_LIST = new ju_Collections$3;
+    ju_Collections_EMPTY_ITERATOR = new ju_Collections$4;
+    ju_Collections_EMPTY_LIST_ITERATOR = new ju_Collections$5;
+    ju_Collections_reverseOrder = new ju_Collections$_clinit_$lambda$_59_0;
+},
+xmu_Numeric = $rt_classWithoutFields(),
+xmu_Numeric_PHI = 0.0,
+xmu_Numeric_ALMOST_ONE = 0.0,
+xmu_Numeric_$callClinit = () => {
+    xmu_Numeric_$callClinit = $rt_eraseClinit(xmu_Numeric);
+    xmu_Numeric__clinit_();
+},
+xmu_Numeric__clinit_ = () => {
+    let var$1;
+    xmu_Numeric_PHI = (jl_Math_sqrt(5.0) + 1.0) / 2.0;
+    var$1 = 1.0;
+    if (!(isNaN(var$1) ? 1 : 0))
+        var$1 = $rt_longBitsToDouble(Long_sub(!(isNaN(var$1) ? 1 : 0) ? $rt_doubleToRawLongBits(var$1) : Long_create(0, 2146959360), Long_fromInt(1)));
+    xmu_Numeric_ALMOST_ONE = var$1;
+},
 cm_ClusterMetric = $rt_classWithoutFields(0),
 cm_ClusterMetric_evaluate = ($this, $point, $cluster) => {
     return $this.$evaluate0($point, $cluster.$members);
@@ -4056,53 +4125,6 @@ function cc_DiagramRasterizer$Classification() {
     a.$score1 = 0.0;
     a.$memberIndex1 = 0;
 }
-let xmu_Numeric = $rt_classWithoutFields(),
-xmu_Numeric_PHI = 0.0,
-xmu_Numeric_ALMOST_ONE = 0.0,
-xmu_Numeric_$callClinit = () => {
-    xmu_Numeric_$callClinit = $rt_eraseClinit(xmu_Numeric);
-    xmu_Numeric__clinit_();
-},
-xmu_Numeric__clinit_ = () => {
-    let var$1;
-    xmu_Numeric_PHI = (jl_Math_sqrt(5.0) + 1.0) / 2.0;
-    var$1 = 1.0;
-    if (!(isNaN(var$1) ? 1 : 0))
-        var$1 = $rt_longBitsToDouble(Long_sub(!(isNaN(var$1) ? 1 : 0) ? $rt_doubleToRawLongBits(var$1) : Long_create(0, 2146959360), Long_fromInt(1)));
-    xmu_Numeric_ALMOST_ONE = var$1;
-},
-ju_Collections = $rt_classWithoutFields(),
-ju_Collections_EMPTY_SET = null,
-ju_Collections_EMPTY_MAP = null,
-ju_Collections_EMPTY_LIST = null,
-ju_Collections_EMPTY_ITERATOR = null,
-ju_Collections_EMPTY_LIST_ITERATOR = null,
-ju_Collections_reverseOrder = null,
-ju_Collections_$callClinit = () => {
-    ju_Collections_$callClinit = $rt_eraseClinit(ju_Collections);
-    ju_Collections__clinit_();
-},
-ju_Collections__clinit_ = () => {
-    ju_Collections_EMPTY_SET = new ju_Collections$1;
-    ju_Collections_EMPTY_MAP = new ju_Collections$2;
-    ju_Collections_EMPTY_LIST = new ju_Collections$3;
-    ju_Collections_EMPTY_ITERATOR = new ju_Collections$4;
-    ju_Collections_EMPTY_LIST_ITERATOR = new ju_Collections$5;
-    ju_Collections_reverseOrder = new ju_Collections$_clinit_$lambda$_59_0;
-};
-function ju_OptionalInt() {
-    jl_Object.call(this);
-    this.$value2 = 0;
-}
-let ju_OptionalInt_emptyInstance = null,
-ju_OptionalInt__init_0 = ($this, $value) => {
-    $this.$value2 = $value;
-},
-ju_OptionalInt__init_ = var_0 => {
-    let var_1 = new ju_OptionalInt();
-    ju_OptionalInt__init_0(var_1, var_0);
-    return var_1;
-};
 function ju_TemplateCollections$SingleElementList() {
     ju_TemplateCollections$AbstractImmutableList.call(this);
     this.$value1 = null;
@@ -4117,6 +4139,19 @@ ju_TemplateCollections$SingleElementList_get = ($this, $index) => {
     var$2 = new jl_IndexOutOfBoundsException;
     jl_Exception__init_(var$2);
     $rt_throw(var$2);
+};
+function ju_OptionalInt() {
+    jl_Object.call(this);
+    this.$value2 = 0;
+}
+let ju_OptionalInt_emptyInstance = null,
+ju_OptionalInt__init_0 = ($this, $value) => {
+    $this.$value2 = $value;
+},
+ju_OptionalInt__init_ = var_0 => {
+    let var_1 = new ju_OptionalInt();
+    ju_OptionalInt__init_0(var_1, var_0);
+    return var_1;
 },
 ju_Set = $rt_classWithoutFields(0),
 ju_AbstractSet = $rt_classWithoutFields(ju_AbstractCollection),
@@ -4381,11 +4416,12 @@ ju_TemplateCollections$TwoElementsList, 0, ju_TemplateCollections$AbstractImmuta
 jl_IllegalArgumentException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 otj_JSObject, 0, jl_Object, [], 1537, 0, 0, 0,
 otjc_JSString, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
-otjc_JSBoolean, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
-jl_Math, 0, jl_Object, [], 17, 0, 0, 0,
-c_HandleVisibility, 0, jl_Object, [], 17, 0, 0, 0,
-ju_Optional, 0, jl_Object, [], 17, 0, 0, 0,
 cm_MetricMemberCompatibility, 0, jl_Object, [], 17, 0, 0, 0,
+ju_Optional, 0, jl_Object, [], 17, 0, 0, 0,
+c_HandleVisibility, 0, jl_Object, [], 17, 0, 0, 0,
+jl_Math, 0, jl_Object, [], 17, 0, 0, 0,
+otjc_JSBoolean, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
+cm_SiteMemberFactory, 0, jl_Object, [], 17, 0, 0, 0,
 cc_ScenePreparation, 0, jl_Object, [], 17, 0, () => cc_ScenePreparation_$callClinit(), 0,
 cr_ClusterColorizer, 0, jl_Object, [], 17, 0, 0, 0,
 cc_ScenePreparation$PreparedScene, 0, jl_Record, [], 17, 0, 0, 0,
@@ -4397,36 +4433,35 @@ cw_WebClassifyMain$computeFrame$lambda$_2_1, 0, jl_Object, [cc_DiagramRasterizer
 jl_IllegalStateException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
 cc_DiagramRasterizer$RasterResult, 0, jl_Record, [], 17, 0, 0, 0,
 cc_DiagramRasterizer$OwnershipGrid, 0, jl_Record, [], 17, 0, 0, 0,
-cm_SiteMemberFactory, 0, jl_Object, [], 17, 0, 0, 0,
 xmu_Hash, 0, jl_Object, [xmu_Hashable], 17, 0, 0, 0,
+ju_NoSuchElementException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
+cm_ClusterNaming, 0, jl_Object, [], 17, 0, () => cm_ClusterNaming_$callClinit(), 0,
 cm_CircleMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_CircleMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_CircleMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_CircleMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_CircleMember_withHandle)],
 cm_EllipseMember, 0, jl_Object, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_EllipseMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_EllipseMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_EllipseMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_EllipseMember_withHandle)],
+cm_SiteMemberFactory$1, 0, jl_Object, [], 32768, 0, () => cm_SiteMemberFactory$1_$callClinit(), 0,
+cm_SegmentMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_SegmentMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_SegmentMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_SegmentMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_SegmentMember_withHandle)],
 cm_LineMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_LineMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_LineMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_LineMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_LineMember_withHandle)],
-ju_NoSuchElementException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
+jl_MatchException, 0, jl_RuntimeException, [], 17, 0, 0, 0,
 xmg_Interval, 0, jl_Object, [jl_Iterable], 17, 0, () => xmg_Interval_$callClinit(), 0,
 xmg_Transformation, 0, jl_Object, [], 17, 0, () => xmg_Transformation_$callClinit(), 0,
 cc_DiagramRasterizer$GridSpec, 0, jl_Record, [], 16, 0, 0, 0,
-cm_SegmentMember, 0, jl_Record, [cm_ClusterMember], 17, 0, 0, ["$distanceTo", $rt_wrapFunction1(cm_SegmentMember_distanceTo), "$handleCount", $rt_wrapFunction0(cm_SegmentMember_handleCount), "$getHandle", $rt_wrapFunction1(cm_SegmentMember_getHandle), "$withHandle", $rt_wrapFunction2(cm_SegmentMember_withHandle)],
 jl_Double, 0, jl_Number, [jl_Comparable], 1, 0, () => jl_Double_$callClinit(), ["$compareTo", $rt_wrapFunction1(jl_Double_compareTo)],
-cm_SiteMemberFactory$1, 0, jl_Object, [], 32768, 0, () => cm_SiteMemberFactory$1_$callClinit(), 0,
-jl_MatchException, 0, jl_RuntimeException, [], 17, 0, 0, 0,
-cm_ClusterNaming, 0, jl_Object, [], 17, 0, () => cm_ClusterNaming_$callClinit(), 0,
 jl_NullPointerException, 0, jl_RuntimeException, [], 1, 0, 0, 0,
+ju_Collections, 0, jl_Object, [], 17, 0, () => ju_Collections_$callClinit(), 0,
+xmu_Numeric, 0, jl_Object, [], 1, 0, () => xmu_Numeric_$callClinit(), 0,
 cm_ClusterMetric, 0, jl_Object, [], 1537, 0, 0, 0,
 cm_NearestMemberMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_NearestMemberMetric_evaluate)],
 cm_FarthestMemberMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_FarthestMemberMetric_evaluate)],
 cm_SumOfDistancesMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_SumOfDistancesMetric_evaluate)],
 cm_MeanOfDistancesMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, () => cm_MeanOfDistancesMetric_$callClinit(), ["$evaluate0", $rt_wrapFunction2(cm_MeanOfDistancesMetric_evaluate)],
-cc_ClusterOwnershipSelector, 0, jl_Object, [], 17, 0, 0, 0,
-cc_ScenePreparation$1, 0, jl_Object, [], 32768, 0, () => cc_ScenePreparation$1_$callClinit(), 0,
-juf_ToIntFunction, 0, jl_Object, [], 1537, 0, 0, 0]);
-$rt_metadata([cc_ScenePreparation$metricFor$lambda$_2_0, 0, jl_Object, [juf_ToIntFunction], 1, 0, 0, 0,
+cc_ClusterOwnershipSelector, 0, jl_Object, [], 17, 0, 0, 0]);
+$rt_metadata([cc_ScenePreparation$1, 0, jl_Object, [], 32768, 0, () => cc_ScenePreparation$1_$callClinit(), 0,
+juf_ToIntFunction, 0, jl_Object, [], 1537, 0, 0, 0,
+cc_ScenePreparation$metricFor$lambda$_2_0, 0, jl_Object, [juf_ToIntFunction], 1, 0, 0, 0,
 cm_KthNearestPointDistanceMetric, 0, jl_Object, [cm_ClusterMetric], 17, 0, 0, ["$evaluate0", $rt_wrapFunction2(cm_KthNearestPointDistanceMetric_evaluate)],
 cc_DiagramRasterizer$Classification, 0, jl_Record, [], 17, 0, 0, 0,
-xmu_Numeric, 0, jl_Object, [], 1, 0, () => xmu_Numeric_$callClinit(), 0,
-ju_Collections, 0, jl_Object, [], 17, 0, () => ju_Collections_$callClinit(), 0,
-ju_OptionalInt, 0, jl_Object, [], 1, 0, 0, 0,
 ju_TemplateCollections$SingleElementList, 0, ju_TemplateCollections$AbstractImmutableList, [ju_RandomAccess], 0, 0, 0, ["$size", $rt_wrapFunction0(ju_TemplateCollections$SingleElementList_size), "$get", $rt_wrapFunction1(ju_TemplateCollections$SingleElementList_get)],
+ju_OptionalInt, 0, jl_Object, [], 1, 0, 0, 0,
 ju_Set, 0, jl_Object, [ju_Collection], 1537, 0, 0, 0,
 ju_AbstractSet, 0, ju_AbstractCollection, [ju_Set], 1025, 0, 0, 0,
 ju_TemplateCollections$AbstractImmutableSet, 0, ju_AbstractSet, [], 1024, 0, 0, 0,
@@ -4477,9 +4512,9 @@ let $rt_booleanArrayCls = $rt_arraycls($rt_booleancls),
 $rt_charArrayCls = $rt_arraycls($rt_charcls),
 $rt_intArrayCls = $rt_arraycls($rt_intcls),
 $rt_doubleArrayCls = $rt_arraycls($rt_doublecls);
-$rt_stringPool(["0", "null", "interface ", "class ", "", "[L", "POINT", "SEGMENT", "CIRCLE", "LINE", "ELLIPSE", "Amber", "Azure", "Rose", "Lime", "Metric parameter k must be between 1 and 32", "No clusters", "Cannot remove the last member of a cluster", "Unknown neighbor order: ", "World view requires max > min on both axes", "Cannot remove the last cluster", "Active cluster index out of range", "Unknown metric: ", "rasterizer returned null", "width and height must be positive", "No clusters to add a member to",
-"Active cluster already has the maximum number of members", "Already at the maximum number of clusters", "Unknown site member kind: ", "Class does not represent enum", "Enum ", " does not have the ", " constant", "Can\'t compare ", " to ", "MINIMUM_DISTANCE", "MAXIMUM_DISTANCE", "SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE", "NEAREST", "FARTHEST", "Index out of range: ", "LINE_SEGMENT", " is only supported for clusters made entirely of points.", "Red", "Orange", "Yellow", "Green", "Teal", "Cyan",
-"Blue", "Indigo", "Violet", "Magenta"]);
+$rt_stringPool(["0", "null", "interface ", "class ", "", "[L", "POINT", "SEGMENT", "CIRCLE", "LINE", "ELLIPSE", "Amber", "Azure", "Rose", "Lime", "Already at the maximum number of clusters", "Cannot remove the last cluster", "No clusters", "Cannot remove the last member of a cluster", "Metric parameter k must be between 1 and 32", "No clusters to add a member to", "Active cluster already has the maximum number of members", "Unknown neighbor order: ", "World view requires max > min on both axes", "Active cluster index out of range",
+"Unknown metric: ", "rasterizer returned null", "width and height must be positive", "Unknown site member kind: ", "Class does not represent enum", "Enum ", " does not have the ", " constant", "Can\'t compare ", " to ", "MINIMUM_DISTANCE", "MAXIMUM_DISTANCE", "SUM_OF_DISTANCES", "MEAN_DISTANCE", "KTH_NEAREST_DISTANCE", "NEAREST", "FARTHEST", "Index out of range: ", "LINE_SEGMENT", " is only supported for clusters made entirely of points.", "Red", "Orange", "Yellow", "Green", "Teal", "Cyan", "Blue", "Indigo",
+"Violet", "Magenta"]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };

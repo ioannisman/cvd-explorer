@@ -701,12 +701,27 @@ function cycleActiveCluster(delta: number): void {
   onSceneControlChange();
 }
 
+function cycleSelectedMember(delta: number): void {
+  requestClassify({
+    settings: currentSettings(),
+    actions: [{ type: 'cycleSelectedMember', delta }],
+  });
+}
+
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) {
     return false;
   }
   const tag = target.tagName;
   return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || target.isContentEditable;
+}
+
+function addCluster(): void {
+  requestClassify({ settings: currentSettings(), actions: [{ type: 'addCluster' }] });
+}
+
+function removeCluster(): void {
+  requestClassify({ settings: currentSettings(), actions: [{ type: 'removeCluster' }] });
 }
 
 function onKeyDown(event: KeyboardEvent): void {
@@ -751,19 +766,35 @@ function onKeyDown(event: KeyboardEvent): void {
       break;
     case 'n':
       event.preventDefault();
-      cycleActiveCluster(1);
+      if (event.shiftKey) {
+        cycleActiveCluster(1);
+      } else {
+        cycleSelectedMember(1);
+      }
       break;
     case 'p':
       event.preventDefault();
-      cycleActiveCluster(-1);
+      if (event.shiftKey) {
+        cycleActiveCluster(-1);
+      } else {
+        cycleSelectedMember(-1);
+      }
       break;
     case 'a':
       event.preventDefault();
-      addMemberAtPointerOrCenter();
+      if (event.shiftKey) {
+        addCluster();
+      } else {
+        addMemberAtPointerOrCenter();
+      }
       break;
     case 'd':
       event.preventDefault();
-      removeActiveMember();
+      if (event.shiftKey) {
+        removeCluster();
+      } else {
+        removeActiveMember();
+      }
       break;
     case 'Escape':
       if (!helpOverlay!.hidden) {
@@ -815,12 +846,8 @@ function wireControls(): void {
 
   btnAddMember!.addEventListener('click', () => addMemberAtPointerOrCenter());
   btnRemoveMember!.addEventListener('click', () => removeActiveMember());
-  btnAddCluster!.addEventListener('click', () => {
-    requestClassify({ settings: currentSettings(), actions: [{ type: 'addCluster' }] });
-  });
-  btnRemoveCluster!.addEventListener('click', () => {
-    requestClassify({ settings: currentSettings(), actions: [{ type: 'removeCluster' }] });
-  });
+  btnAddCluster!.addEventListener('click', () => addCluster());
+  btnRemoveCluster!.addEventListener('click', () => removeCluster());
   btnResetView!.addEventListener('click', () => {
     worldView = defaultWorldView();
     requestClassify({ settings: currentSettings() });

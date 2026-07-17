@@ -332,6 +332,31 @@ public final class WebClassifyMain {
         endHandleDrag();
     }
 
+    /**
+     * Cycle the selected member within the active cluster ({@code delta} +1 next / -1 previous).
+     * Matches desktop n/p behavior.
+     */
+    public static void cycleSelectedMember(int delta) {
+        if (sceneSnapshot.clusters().isEmpty()) {
+            return;
+        }
+        if (activeClusterIndex < 0 || activeClusterIndex >= sceneSnapshot.clusters().size()) {
+            activeClusterIndex = 0;
+        }
+        ClusterSite cluster = sceneSnapshot.clusters().get(activeClusterIndex);
+        int memberCount = cluster.size();
+        if (memberCount <= 0) {
+            return;
+        }
+        int current = (selectedClusterIndex == activeClusterIndex && selectedMemberIndex >= 0)
+                ? selectedMemberIndex
+                : (delta > 0 ? -1 : 0);
+        int next = Math.floorMod(current + delta, memberCount);
+        selectedClusterIndex = activeClusterIndex;
+        selectedMemberIndex = next;
+        selectedHandleIndex = HandleVisibility.primaryHandleIndex(cluster.members().get(next));
+    }
+
     /** Adds a member of the current site kind to the active cluster at the given world point. */
     public static String addMemberAt(double worldX, double worldY) {
         Optional<String> invalid = MetricMemberCompatibility.invalidNewMemberMessage(
@@ -922,6 +947,9 @@ public final class WebClassifyMain {
                     + "  },"
                     + "  selectHandle: function (index) {"
                     + "    javaMethods.get('cvdexplorer.web.WebClassifyMain.selectHandle(I)V').invoke(index);"
+                    + "  },"
+                    + "  cycleSelectedMember: function (delta) {"
+                    + "    javaMethods.get('cvdexplorer.web.WebClassifyMain.cycleSelectedMember(I)V').invoke(delta);"
                     + "  },"
                     + "  clearSelection: function () {"
                     + "    javaMethods.get('cvdexplorer.web.WebClassifyMain.clearSelection()V').invoke();"

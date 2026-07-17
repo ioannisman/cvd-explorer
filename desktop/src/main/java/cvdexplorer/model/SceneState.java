@@ -17,15 +17,15 @@ public final class SceneState {
     public static final int MAX_MEMBERS_PER_CLUSTER = SceneLimits.MAX_MEMBERS_PER_CLUSTER;
 
     @GadgetInteger(min = 1, max = MAX_CLUSTERS)
-    @Properties(name = "Number of clusters")
+    @Properties(name = "Number of clusters (Shift+a/d)")
     public int numberOfClusters = 1;
 
     @GadgetInteger(min = 1, max = MAX_CLUSTERS)
-    @Properties(name = "Active cluster (n/p)")
+    @Properties(name = "Active cluster (Shift+n/p)")
     public int activeClusterOneBased = 1;
 
     @GadgetInteger(min = 1, max = MAX_MEMBERS_PER_CLUSTER)
-    @Properties(name = "Members in active cluster (a/d)")
+    @Properties(name = "Members in active cluster (n/p, a/d)")
     public int targetPointCountForActiveCluster = 1;
 
     @GadgetEnum(enumClass = SiteMemberKind.class)

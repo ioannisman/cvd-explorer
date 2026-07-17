@@ -80,6 +80,7 @@ export type CvdAuthoringAction =
   | { type: 'clearSelection' }
   | { type: 'beginHandleDrag'; index: number }
   | { type: 'endHandleDrag' }
+  | { type: 'cycleSelectedMember'; delta: number }
   | { type: 'addMemberAt'; worldX: number; worldY: number }
   | { type: 'removeMember' }
   | { type: 'addCluster' }
@@ -98,6 +99,7 @@ export type CvdCore = {
   setActiveClusterIndex: (index: number) => string;
   setSiteMemberKind: (name: string) => string;
   selectHandle: (index: number) => void;
+  cycleSelectedMember: (delta: number) => void;
   clearSelection: () => void;
   addMemberAt: (worldX: number, worldY: number) => string;
   removeMember: () => string;

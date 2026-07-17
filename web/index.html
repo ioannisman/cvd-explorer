@@ -235,7 +235,7 @@
         <h2>Authoring</h2>
         <div class="group">
           <label>
-            Active cluster (n/p)
+            Active cluster (Shift+n/p)
             <select id="select-cluster"></select>
           </label>
           <label>
@@ -251,8 +251,8 @@
           <div class="actions">
             <button type="button" id="btn-add-member">Add member (a)</button>
             <button type="button" id="btn-remove-member">Remove member (d)</button>
-            <button type="button" id="btn-add-cluster">Add cluster</button>
-            <button type="button" id="btn-remove-cluster">Remove cluster</button>
+            <button type="button" id="btn-add-cluster">Add cluster (Shift+a)</button>
+            <button type="button" id="btn-remove-cluster">Remove cluster (Shift+d)</button>
           </div>
           <label class="row"><input type="checkbox" id="toggle-place-member" /> Place member on click</label>
         </div>
@@ -289,8 +289,10 @@
           <li><strong>h</strong> — toggle help</li>
           <li><strong>c / m / k / v</strong> — diagram / members / skeleton / subdivision</li>
           <li><strong>f</strong> — snap to handles</li>
-          <li><strong>n / p</strong> — next / previous active cluster</li>
+          <li><strong>n / p</strong> — next / previous member in active cluster</li>
+          <li><strong>Shift+n / Shift+p</strong> — next / previous active cluster</li>
           <li><strong>a / d</strong> — add member at pointer / remove member</li>
+          <li><strong>Shift+a / Shift+d</strong> — add / remove cluster</li>
           <li>No load/save yet</li>
         </ul>
         <button type="button" id="btn-close-help">Close</button>

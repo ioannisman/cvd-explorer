@@ -17,6 +17,7 @@ function cvdCore(): CvdCore {
     !core.moveHandle ||
     !core.beginHandleDrag ||
     !core.endHandleDrag ||
+    !core.cycleSelectedMember ||
     !core.setMetricKind ||
     !core.addMemberAt ||
     !core.setWorldView
@@ -65,6 +66,9 @@ function applyActions(core: CvdCore, actions: CvdAuthoringAction[]): void {
         break;
       case 'endHandleDrag':
         core.endHandleDrag();
+        break;
+      case 'cycleSelectedMember':
+        core.cycleSelectedMember(action.delta);
         break;
       case 'addMemberAt':
         core.addMemberAt(action.worldX, action.worldY);
