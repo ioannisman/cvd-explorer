@@ -46,5 +46,5 @@ cd web && npm run preview
 
 - Drag uses low-res preview (~0.32×, same idea as desktop) then a full-res pass on release (toggleable).
 - Classify stays off the UI thread; requests coalesce while a frame is in flight.
-- Canvas backing store tracks layout size × `devicePixelRatio` (capped at 2048²) so Retina displays stay sharp.
+- Canvas backing store tracks layout size (up to ~960px CSS) × `devicePixelRatio` (capped at 3, edge capped at 2880) so Retina displays stay sharp.
 - Visible controls: metric, neighbor order, `k`, diagram/members/skeleton, region subdivision, fast preview. Authoring: active cluster, site kind, add/remove member & cluster, place-on-click. Member overlays for segment/circle/ellipse/line. Camera: wheel zoom, empty/middle-drag pan, reset. Snap to handles. Colocated handle co-move (Shift+drag detaches). Shortcuts: `h` `c` `m` `k` `v` `f` `n`/`p` (member) `Shift+n`/`Shift+p` (cluster) `a`/`d` `Shift+a`/`Shift+d` (shown in the panel). Help panel. No load/save.

@@ -20,7 +20,7 @@ const HIT_RADIUS_CSS = 10;
 /** Match desktop AppMain#DRAG_RASTER_SCALE while a handle is dragged. */
 const DRAG_RASTER_SCALE = 0.32;
 /** Cap backing-store edge length so TeaVM classify stays responsive. */
-const MAX_RASTER_EDGE = 2048;
+const MAX_RASTER_EDGE = 2880;
 
 const canvas = document.querySelector<HTMLCanvasElement>('#diagram');
 const statusEl = document.querySelector<HTMLElement>('#status');
@@ -113,7 +113,7 @@ function hitRadiusPx(): number {
 function syncCanvasResolution(): boolean {
   const rect = canvas!.getBoundingClientRect();
   const css = Math.max(1, Math.min(rect.width, rect.height));
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const edge = Math.max(1, Math.min(MAX_RASTER_EDGE, Math.round(css * dpr)));
   if (canvas!.width === edge && canvas!.height === edge && canvasPixelRatio === dpr) {
     return false;
@@ -385,14 +385,18 @@ function paint(frame: CvdFrame, ms: number): void {
     ctx!.fillRect(0, 0, dw, dh);
   }
 
-  // Hide overlays while the camera is moving, or until a frame matches the live view.
+  // Hide skeleton/subdivision while camera moves or during fast-preview drag.
+  // Keep members visible while dragging so the selected site (and others) stay visible as they move.
   const cameraBusy = panning || zooming;
   const frameMatchesView = worldBoundsMatch(frame.worldView, boundsOf(worldView));
-  const skipHeavyOverlays =
+  const skipContourOverlays =
     cameraBusy ||
     !frameMatchesView ||
     (draggingHandle !== null && toggleFastPreview!.checked);
-  if (!skipHeavyOverlays && toggleSkeleton!.checked) {
+  const skipMembers =
+    cameraBusy || !frameMatchesView;
+
+  if (!skipContourOverlays && toggleSkeleton!.checked) {
     strokeSegments(
       extractSkeletonSegments(frame.owners, frame.width, frame.height),
       scaleX,
@@ -402,7 +406,7 @@ function paint(frame: CvdFrame, ms: number): void {
     );
   }
 
-  if (!skipHeavyOverlays && toggleSubdivision!.checked && frame.members) {
+  if (!skipContourOverlays && toggleSubdivision!.checked && frame.members) {
     strokeSegments(
       extractSubdivisionSegments(frame.owners, frame.members, frame.width, frame.height),
       scaleX,
@@ -412,20 +416,12 @@ function paint(frame: CvdFrame, ms: number): void {
     );
   }
 
-  if (toggleMembers!.checked && !skipHeavyOverlays) {
+  if (toggleMembers!.checked && !skipMembers) {
     try {
       drawMemberOverlays(ctx!, frame, (wx, wy) => toPixel(wx, wy));
     } catch (err) {
       console.error('Member overlay draw failed', err);
     }
-    try {
-      drawHandles(frame, dw, dh);
-    } catch (err) {
-      console.error('Handle draw failed', err);
-    }
-    drawSnapIndicator();
-  } else if (toggleMembers!.checked && draggingHandle !== null) {
-    // Keep the active handle visible while dragging so editing still has a target.
     try {
       drawHandles(frame, dw, dh);
     } catch (err) {
