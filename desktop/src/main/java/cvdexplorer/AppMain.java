@@ -685,7 +685,7 @@ public class AppMain implements Drawing {
             }
 
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Cluster Voronoi Explorer");
+            alert.setTitle("Cluster Voronoi Diagrams Explorer");
             alert.setHeaderText(header);
             alert.setContentText(message);
             Window owner = firstShowingWindow();
@@ -766,7 +766,7 @@ public class AppMain implements Drawing {
 
     public static void main(String[] args) {
         Options options = Options.redrawOnEvents();
-        options.windowTitle = "Cluster Voronoi Explorer";
+        options.windowTitle = "Cluster Voronoi Diagrams Explorer";
         options.drawingSize = sizeInitial;
         options.gridSubdivision = 8;
         options.gridInterval = gridCellD.x() * options.gridSubdivision;

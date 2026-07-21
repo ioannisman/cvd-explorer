@@ -1,6 +1,6 @@
-# cvd-explorer web
+# cluster-voronoi-diagrams-explorer (web)
 
-Browser shell for the cluster Voronoi explorer. Classify runs in a **Web Worker** via TeaVM-compiled `:core` (`cvd-core.js`). **No load/save** in v1.
+Browser shell for the Cluster Voronoi Diagrams explorer. Classify runs in a **Web Worker** via TeaVM-compiled `:core` (`cvd-core.js`). **No load/save** in v1.
 
 ## Prerequisites
 

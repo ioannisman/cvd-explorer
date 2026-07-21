@@ -47,7 +47,7 @@ tasks.named('check') {
 
 tasks.shadowJar {
     mergeServiceFiles()
-    archiveFileName = 'cvd-explorer-all.jar'
+    archiveFileName = 'cluster-voronoi-diagrams-explorer-all.jar'
     duplicatesStrategy = DuplicatesStrategy.WARN
     manifest {
         attributes 'Main-Class': application.mainClass.get()

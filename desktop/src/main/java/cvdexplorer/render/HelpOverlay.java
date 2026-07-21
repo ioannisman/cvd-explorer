@@ -10,7 +10,7 @@ public final class HelpOverlay {
     public static void draw(View view) {
         DrawingUtils.drawInfoText(
                 view,
-                "Cluster Voronoi Explorer",
+                "Cluster Voronoi Diagrams Explorer",
                 "",
                 "Controls:",
                 "    h               - Toggle help",

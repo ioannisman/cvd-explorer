@@ -1,4 +1,4 @@
-# cvd-explorer documentation
+# clusters-voronoi-diagrams documentation
 
 A **Voronoi diagram** partitions the plane into regions: each region contains the points that are closer to one site than to any other. In the classic case every site is a single point and distance is Euclidean. Voronoi diagrams can be generalized in many different ways, for example, the distance to a single point can be measured differently, the sites can be geometric objects other than points, or the plane might be subdivided according to the farthest neighbor.
 

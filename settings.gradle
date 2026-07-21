@@ -5,5 +5,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'cvd-explorer'
+rootProject.name = 'clusters-voronoi-diagrams'
 include 'core', 'desktop', 'web-bridge'

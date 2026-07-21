@@ -1,5 +1,5 @@
 {
-  "name": "cvd-explorer-web",
+  "name": "cluster-voronoi-diagrams-explorer-web",
   "private": true,
   "version": "0.1.0",
   "type": "module",

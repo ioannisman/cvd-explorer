@@ -1,8 +1,8 @@
-# cvd-explorer
+# clusters-voronoi-diagrams
 
-**cvd-explorer** is an interactive visualization software for Voronoi diagrams. It supports **clusters of sites** (each site is a group of geometric members rather than a single point), **different distance metrics**, and **different input site types** (points, segments, circles, ellipses, and lines).
+**clusters-voronoi-diagrams-explorer** is an interactive visualization software for Voronoi diagrams. It supports **clusters of sites** (each site is a group of geometric members rather than a single point), **different distance metrics**, and **different input site types** (points, segments, circles, ellipses, and lines).
 
-![Cluster Voronoi Explorer](docs/figures/instances/cvd_explorer.png)
+![Cluster Voronoi Diagrams Explorer](docs/figures/instances/cvd_explorer.png)
 
 For neighbor order, distance metrics, and input site types, see the **[documentation](docs/README.md)** ([metrics](docs/metrics.md), [site types](docs/site-types.md)).
 
@@ -36,7 +36,7 @@ Run tests with coverage report:
 ./gradlew test jacocoRootReport jacocoTestCoverageVerification -Pcoverage
 ```
 
-GitHub Pages: enable **Actions** as the Pages source, then see [`.github/workflows/pages.yml`](.github/workflows/pages.yml) (site at `https://ioannisman.github.io/cvd-explorer/`, web explorer at [`…/explorer/`](https://ioannisman.github.io/cvd-explorer/explorer/)).
+GitHub Pages: enable **Actions** as the Pages source, then see [`.github/workflows/pages.yml`](.github/workflows/pages.yml) (site at `https://ioannisman.github.io/clusters-voronoi-diagrams/`, web explorer at [`…/explorer/`](https://ioannisman.github.io/clusters-voronoi-diagrams/explorer/)).
 
 ### Web explorer
 
@@ -58,13 +58,13 @@ Produce a fat JAR (same artifact the [release workflow](.github/workflows/releas
 
 ```bash
 ./gradlew shadowJar
-# output: desktop/build/libs/cvd-explorer-all.jar
+# output: desktop/build/libs/cluster-voronoi-diagrams-explorer-all.jar
 ```
 
 Run the JAR with a JDK that includes JavaFX, for example:
 
 ```bash
-java --add-modules javafx.controls -jar desktop/build/libs/cvd-explorer-all.jar
+java --add-modules javafx.controls -jar desktop/build/libs/cluster-voronoi-diagrams-explorer-all.jar
 ```
 
 ## Documentation
