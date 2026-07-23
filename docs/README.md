@@ -23,3 +23,4 @@ The `Metric` defines how a distance between a point in the plane and a site is m
 
 - **[Metrics](metrics.md)** — definitions and images
 - **[Site types](site-types.md)** — definitions and images
+- **[Known issues](known-issues.md)** — small limitations and rough edges
