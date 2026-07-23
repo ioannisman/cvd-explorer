@@ -23,9 +23,9 @@ import cvdexplorer.model.SiteMemberFactory;
 import cvdexplorer.model.SiteMemberKind;
 import cvdexplorer.render.ClusterColorizer;
 import org.teavm.jso.JSBody;
-import xyz.marsavic.geometry.Box;
-import xyz.marsavic.geometry.Transformation;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Box;
+import cvdexplorer.geometry.Transformation;
+import cvdexplorer.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,7 +6,7 @@ import cvdexplorer.model.NeighborOrder;
 import cvdexplorer.model.PointMember;
 import cvdexplorer.model.Rgba;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

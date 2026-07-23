@@ -1,7 +1,7 @@
 package cvdexplorer.model;
 
 import cvdexplorer.metric.MetricKind;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

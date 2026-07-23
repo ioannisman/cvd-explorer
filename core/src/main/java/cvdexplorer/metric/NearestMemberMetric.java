@@ -1,7 +1,7 @@
 package cvdexplorer.metric;
 
 import cvdexplorer.model.ClusterMember;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

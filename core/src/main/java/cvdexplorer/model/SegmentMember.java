@@ -1,6 +1,6 @@
 package cvdexplorer.model;
 
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 public record SegmentMember(Vector a, Vector b) implements ClusterMember {
     @Override

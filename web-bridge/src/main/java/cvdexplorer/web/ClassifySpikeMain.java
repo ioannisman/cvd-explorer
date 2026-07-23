@@ -15,9 +15,9 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
-import xyz.marsavic.geometry.Box;
-import xyz.marsavic.geometry.Transformation;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Box;
+import cvdexplorer.geometry.Transformation;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public final class ClassifySpikeMain {
             log.append("hardcoded: ").append(hardStats).append('\n');
 
             // JSON path deferred until Gson/TeaVM strategy is chosen; geometry+raster only for this step.
-            log.append("OK: mars-bits geometry + sequential DiagramRasterizer\n");
+            log.append("OK: core geometry + sequential DiagramRasterizer\n");
             report(log.toString(), true);
         } catch (Throwable t) {
             String msg = "FAIL: " + t.getClass().getName() + ": " + t.getMessage();

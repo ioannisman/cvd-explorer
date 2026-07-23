@@ -1,7 +1,7 @@
 package cvdexplorer.model;
 
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

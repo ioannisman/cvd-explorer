@@ -2,7 +2,7 @@ package cvdexplorer.model;
 
 import cvdexplorer.metric.MetricKind;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

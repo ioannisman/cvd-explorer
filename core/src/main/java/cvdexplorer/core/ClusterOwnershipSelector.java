@@ -2,7 +2,7 @@ package cvdexplorer.core;
 
 import cvdexplorer.metric.ClusterMetric;
 import cvdexplorer.model.ClusterSite;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

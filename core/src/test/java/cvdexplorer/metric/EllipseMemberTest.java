@@ -2,7 +2,7 @@ package cvdexplorer.metric;
 
 import cvdexplorer.model.EllipseMember;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

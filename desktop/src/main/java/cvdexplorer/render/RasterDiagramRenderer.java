@@ -1,13 +1,13 @@
 package cvdexplorer.render;
 
 import cvdexplorer.core.DiagramRasterizer;
+import cvdexplorer.geometry.Box;
+import cvdexplorer.geometry.Transformation;
+import cvdexplorer.geometry.Vector;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelBuffer;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
-import xyz.marsavic.geometry.Box;
-import xyz.marsavic.geometry.Transformation;
-import xyz.marsavic.geometry.Vector;
 
 import java.nio.IntBuffer;
 

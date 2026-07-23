@@ -16,7 +16,7 @@ import cvdexplorer.model.SegmentMember;
 import cvdexplorer.model.SiteMemberKind;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

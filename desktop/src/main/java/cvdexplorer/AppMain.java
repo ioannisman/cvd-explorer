@@ -3,7 +3,11 @@ package cvdexplorer;
 import cvdexplorer.core.DiagramRasterizer;
 import cvdexplorer.core.ScenePreparation;
 import cvdexplorer.core.ScenePreparation.PreparedScene;
+import cvdexplorer.desktop.DrawingFxGeometry;
 import cvdexplorer.desktop.FxColors;
+import cvdexplorer.geometry.Box;
+import cvdexplorer.geometry.Transformation;
+import cvdexplorer.geometry.Vector;
 import cvdexplorer.io.SceneFileIo;
 import cvdexplorer.io.SceneJsonException;
 import cvdexplorer.model.ClusterMember;
@@ -37,16 +41,15 @@ import xyz.marsavic.drawingfx.drawing.View;
 import xyz.marsavic.drawingfx.gadgets.annotations.RecurseGadgets;
 import xyz.marsavic.drawingfx.utils.camera.CameraSimple;
 import xyz.marsavic.functions.F_R_R;
-import xyz.marsavic.geometry.Box;
-import xyz.marsavic.geometry.Transformation;
-import xyz.marsavic.geometry.Vector;
 import xyz.marsavic.input.InputEvent;
 import xyz.marsavic.input.InputState;
 import xyz.marsavic.input.KeyCode;
 
 public class AppMain implements Drawing {
-    public static final Vector sizeInitial = Vector.xy(960, 960);
-    public static final Vector gridCellD = Vector.xy(16, 16);
+    // Temporary: drawing-fx Options/View use xyz.marsavic.geometry types bundled in drawing-fx.
+    // Switch to cvdexplorer.geometry when the desktop UI no longer depends on drawing-fx.
+    public static final xyz.marsavic.geometry.Vector sizeInitial = xyz.marsavic.geometry.Vector.xy(960, 960);
+    public static final xyz.marsavic.geometry.Vector gridCellD = xyz.marsavic.geometry.Vector.xy(16, 16);
 
     @RecurseGadgets
     final SceneState state = SceneState.demo();
@@ -125,8 +128,10 @@ public class AppMain implements Drawing {
     }
 
     private void drawDiagram(View view, PreparedScene preparedScene) {
-        Transformation transform = view.transformation();
-        Box imageBox = view.nativeBox().positive();
+        xyz.marsavic.geometry.Transformation transform = view.transformation();
+        xyz.marsavic.geometry.Box imageBoxFx = view.nativeBox().positive();
+        Box imageBox = DrawingFxGeometry.fromDrawingFx(imageBoxFx);
+        Transformation tFromPixels = DrawingFxGeometry.fromDrawingFx(transform).inverse();
         ClusterColorizer colorizer = new ClusterColorizer(
                 preparedScene.clusters(),
                 state.backgroundColor(),
@@ -134,7 +139,7 @@ public class AppMain implements Drawing {
         );
         double resolutionScale = (dragging && state.fastDrawPreview) ? DRAG_RASTER_SCALE : 1.0;
         RasterDiagramRenderer.RenderResult result = rasterDiagramRenderer.render(
-                transform.inverse(),
+                tFromPixels,
                 imageBox,
                 p -> classify(p, preparedScene),
                 state.showDiagram ? colorizer::color : null,
@@ -145,31 +150,29 @@ public class AppMain implements Drawing {
             return;
         }
 
-        view.setTransformation(Transformation.IDENTITY);
+        view.setTransformation(xyz.marsavic.geometry.Transformation.IDENTITY);
         Image diagram = result.image();
         if (diagram != null) {
-            view.drawImage(imageBox, diagram);
+            view.drawImage(imageBoxFx, diagram);
         }
         boolean skipHeavyOverlays = dragging && state.fastDrawPreview;
         if (!skipHeavyOverlays && state.showSkeleton) {
-            Transformation tFromPixels = transform.inverse();
             skeletonOverlayRenderer.draw(
                     view,
                     result.ownershipGrid(),
                     // Reuse the active metric so the contour position tracks the true cluster boundary.
                     (pixelPoint, clusterIndex) -> preparedScene.metric().score(
-                            tFromPixels.applyTo(pixelPoint),
+                            tFromPixels.applyTo(DrawingFxGeometry.fromDrawingFx(pixelPoint)),
                             preparedScene.clusters().get(clusterIndex)
                     )
             );
         }
         if (!skipHeavyOverlays && state.showRegionSubdivision) {
-            Transformation tFromPixels = transform.inverse();
             skeletonOverlayRenderer.drawSubdivisions(
                     view,
                     result.ownershipGrid(),
                     (pixelPoint, clusterIndex, memberIndex) -> {
-                        Vector point = tFromPixels.applyTo(pixelPoint);
+                        Vector point = tFromPixels.applyTo(DrawingFxGeometry.fromDrawingFx(pixelPoint));
                         return preparedScene.clusters().get(clusterIndex).members().get(memberIndex).distanceTo(point);
                     }
             );
@@ -368,7 +371,13 @@ public class AppMain implements Drawing {
     }
 
     @Override
-    public void receiveEvent(View view, InputEvent event, InputState inputState, Vector pointerWorld, Vector pointerViewBase) {
+    public void receiveEvent(
+            View view,
+            InputEvent event,
+            InputState inputState,
+            xyz.marsavic.geometry.Vector pointerWorldFx,
+            xyz.marsavic.geometry.Vector pointerViewBase
+    ) {
         if (ignoreControlModifierForCamera
                 && (!inputState.keyPressed(KeyCode.CONTROL) || event.isKeyRelease(KeyCode.CONTROL))) {
             ignoreControlModifierForCamera = false;
@@ -384,11 +393,14 @@ public class AppMain implements Drawing {
         }
         boolean controlForCamera = inputState.keyPressed(KeyCode.CONTROL) && !ignoreControlModifierForCamera;
         if (controlForCamera && !event.isKey()) {
-            camera.receiveEvent(view, event, inputState, pointerWorld, pointerViewBase);
+            camera.receiveEvent(view, event, inputState, pointerWorldFx, pointerViewBase);
             return;
         }
 
-        Vector pointer = state.snapToGrid ? pointerWorld.round(gridCellD) : pointerWorld;
+        Vector pointerWorld = DrawingFxGeometry.fromDrawingFx(pointerWorldFx);
+        Vector pointer = state.snapToGrid
+                ? pointerWorld.round(DrawingFxGeometry.fromDrawingFx(gridCellD))
+                : pointerWorld;
 
         updateSelectionStart(event, pointerWorld);
         updateDraggingState(inputState, pointerWorld);

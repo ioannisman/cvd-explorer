@@ -9,9 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Box;
-import xyz.marsavic.geometry.Transformation;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Box;
+import cvdexplorer.geometry.Transformation;
+import cvdexplorer.geometry.Vector;
 
 import java.nio.IntBuffer;
 import java.util.List;

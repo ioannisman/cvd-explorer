@@ -13,7 +13,7 @@ import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SegmentMember;
 import cvdexplorer.model.SiteMemberKind;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

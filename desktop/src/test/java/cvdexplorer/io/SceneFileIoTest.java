@@ -8,7 +8,7 @@ import cvdexplorer.model.Rgba;
 import cvdexplorer.model.SceneState;
 import cvdexplorer.model.SiteMemberKind;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

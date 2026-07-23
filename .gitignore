@@ -1,11 +1,20 @@
+# Gradle
 .gradle/
 build/
+
+# OS / editor
 .DS_Store
-other_repo/
 .cursor/
+
+# Python (scripts)
 __pycache__/
 *.pyc
+
+# Web
 web/node_modules/
 web/dist/
 # TeaVM source maps embed absolute local paths; regenerate with generateJavaScript.
 web/public/teavm/*.map
+
+# Local construction scenes
+scenes/constructions/

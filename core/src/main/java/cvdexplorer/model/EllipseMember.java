@@ -1,6 +1,6 @@
 package cvdexplorer.model;
 
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

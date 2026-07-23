@@ -8,6 +8,11 @@ import xyz.marsavic.geometry.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Desktop-only skeleton overlay. Pixel geometry uses drawing-fx's {@code xyz.marsavic.geometry.Vector}
+ * temporarily (View stroke APIs). Prefer {@link cvdexplorer.geometry.Vector} for domain work; remove
+ * the drawing-fx vector dependency when replacing drawing-fx.
+ */
 public final class SkeletonOverlayRenderer {
     public record Segment(Vector a, Vector b) {
     }

@@ -1,6 +1,8 @@
 package cvdexplorer.render;
 
 import cvdexplorer.HandleVisibility;
+import cvdexplorer.desktop.DrawingFxGeometry;
+import cvdexplorer.geometry.Vector;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.EllipseMember;
@@ -9,10 +11,13 @@ import cvdexplorer.model.SegmentMember;
 import javafx.scene.paint.Color;
 import xyz.marsavic.drawingfx.drawing.View;
 import xyz.marsavic.geometry.Line;
-import xyz.marsavic.geometry.Vector;
 
 import java.util.List;
 
+/**
+ * Draws member overlays via drawing-fx {@link View}. Converts {@link cvdexplorer.geometry.Vector}
+ * through {@link DrawingFxGeometry} temporarily; that bridge goes away when drawing-fx is replaced.
+ */
 public final class MemberOverlayRenderer {
     private static final Color SNAP_INDICATOR_COLOR = Color.hsb(60, 0.9, 1.0, 0.8);
     /** Stroke for the selected member’s segment and its active handle (distinct from snap yellow and white edges). */
@@ -37,11 +42,11 @@ public final class MemberOverlayRenderer {
         if (member instanceof SegmentMember sm) {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
-            view.strokeLineSegment(sm.a(), sm.b());
+            view.strokeLineSegment(DrawingFxGeometry.toDrawingFx(sm.a()), DrawingFxGeometry.toDrawingFx(sm.b()));
         } else if (member instanceof CircleMember cm) {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
-            view.strokeCircleCentered(cm.center(), cm.radius());
+            view.strokeCircleCentered(DrawingFxGeometry.toDrawingFx(cm.center()), cm.radius());
         } else if (member instanceof EllipseMember em) {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
@@ -50,7 +55,7 @@ public final class MemberOverlayRenderer {
             view.setLineWidth(lw);
             view.setStroke(memberSelected ? SELECTION_STROKE : edge);
             if (lm.b().sub(lm.a()).lengthSquared() > 0.0) {
-                view.strokeLine(Line.pq(lm.a(), lm.b()));
+                view.strokeLine(Line.pq(DrawingFxGeometry.toDrawingFx(lm.a()), DrawingFxGeometry.toDrawingFx(lm.b())));
             }
         }
 
@@ -61,9 +66,9 @@ public final class MemberOverlayRenderer {
             }
             boolean handleSelected = memberSelected && h == selectedHandleIndex;
             view.setFill(clusterColor);
-            view.fillCircleCentered(member.getHandle(h), handleRadiusWorld);
+            view.fillCircleCentered(DrawingFxGeometry.toDrawingFx(member.getHandle(h)), handleRadiusWorld);
             view.setStroke(handleSelected ? SELECTION_STROKE : edge);
-            view.strokeCircleCentered(member.getHandle(h), handleRadiusWorld);
+            view.strokeCircleCentered(DrawingFxGeometry.toDrawingFx(member.getHandle(h)), handleRadiusWorld);
         }
     }
 
@@ -74,7 +79,7 @@ public final class MemberOverlayRenderer {
         }
         Vector prev = outline.get(outline.size() - 1);
         for (Vector point : outline) {
-            view.strokeLineSegment(prev, point);
+            view.strokeLineSegment(DrawingFxGeometry.toDrawingFx(prev), DrawingFxGeometry.toDrawingFx(point));
             prev = point;
         }
     }
@@ -83,6 +88,6 @@ public final class MemberOverlayRenderer {
         double outerRadius = handleRadiusWorld * 1.8;
         view.setLineWidth(2.5 * lineWidthWorld);
         view.setStroke(SNAP_INDICATOR_COLOR);
-        view.strokeCircleCentered(position, outerRadius);
+        view.strokeCircleCentered(DrawingFxGeometry.toDrawingFx(position), outerRadius);
     }
 }

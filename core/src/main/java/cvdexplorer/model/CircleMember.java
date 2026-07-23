@@ -1,6 +1,6 @@
 package cvdexplorer.model;
 
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 public record CircleMember(Vector center, Vector radiusHandle) implements ClusterMember {
     public double radius() {

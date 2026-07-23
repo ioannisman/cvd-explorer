@@ -8,8 +8,7 @@ def javafxModules = ['javafx.controls']
 dependencies {
     implementation project(':core')
     implementation files(
-            "${rootProject.projectDir}/lib/drawing-fx-2-2022-03-18.jar",
-            "${rootProject.projectDir}/lib/mars-bits-2026-03-18.jar"
+            "${rootProject.projectDir}/lib/drawing-fx-2-2022-03-18.jar"
     )
 }
 

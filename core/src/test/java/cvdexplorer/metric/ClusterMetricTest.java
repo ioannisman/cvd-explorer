@@ -4,7 +4,7 @@ import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.CircleMember;
 import cvdexplorer.model.PointMember;
 import org.junit.jupiter.api.Test;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.List;
 

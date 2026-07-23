@@ -6,7 +6,7 @@ import xyz.marsavic.drawingfx.gadgets.annotations.GadgetBoolean;
 import xyz.marsavic.drawingfx.gadgets.annotations.GadgetEnum;
 import xyz.marsavic.drawingfx.gadgets.annotations.GadgetInteger;
 import xyz.marsavic.drawingfx.gadgets.annotations.Properties;
-import xyz.marsavic.geometry.Vector;
+import cvdexplorer.geometry.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
