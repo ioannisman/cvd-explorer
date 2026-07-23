@@ -37,7 +37,7 @@ public final class ClassifySpikeMain {
             RasterStats hardStats = rasterize(hardcoded, 64, 64);
             log.append("hardcoded: ").append(hardStats).append('\n');
 
-            // JSON path deferred until Gson/TeaVM strategy is chosen; geometry+raster only for this step.
+            // JSON load for the live web API uses browser JSON.parse (see SceneJsonJs / loadSceneJson).
             log.append("OK: core geometry + sequential DiagramRasterizer\n");
             report(log.toString(), true);
         } catch (Throwable t) {

@@ -20,7 +20,8 @@ function cvdCore(): CvdCore {
     !core.cycleSelectedMember ||
     !core.setMetricKind ||
     !core.addMemberAt ||
-    !core.setWorldView
+    !core.setWorldView ||
+    !core.loadSceneJson
   ) {
     throw new Error('globalThis.cvdCore was not installed by TeaVM');
   }
@@ -82,6 +83,13 @@ function applyActions(core: CvdCore, actions: CvdAuthoringAction[]): void {
       case 'removeCluster':
         core.removeCluster();
         break;
+      case 'loadSceneJson': {
+        const err = core.loadSceneJson(action.json);
+        if (err) {
+          throw new Error(err);
+        }
+        break;
+      }
     }
   }
 }

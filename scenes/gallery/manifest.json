@@ -1,5 +1,6 @@
 {
   "files": [
-    "default_cvd.json"
+    "default_cvd.json",
+    "point_clusters.json"
   ]
 }

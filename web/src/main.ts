@@ -27,6 +27,7 @@ const statusEl = document.querySelector<HTMLElement>('#status');
 const selectMetric = document.querySelector<HTMLSelectElement>('#select-metric');
 const selectNeighbor = document.querySelector<HTMLSelectElement>('#select-neighbor');
 const inputK = document.querySelector<HTMLInputElement>('#input-k');
+const selectExample = document.querySelector<HTMLSelectElement>('#select-example');
 const selectCluster = document.querySelector<HTMLSelectElement>('#select-cluster');
 const selectSiteKind = document.querySelector<HTMLSelectElement>('#select-site-kind');
 const btnAddMember = document.querySelector<HTMLButtonElement>('#btn-add-member');
@@ -51,6 +52,7 @@ if (
   !selectMetric ||
   !selectNeighbor ||
   !inputK ||
+  !selectExample ||
   !selectCluster ||
   !selectSiteKind ||
   !btnAddMember ||
@@ -351,10 +353,10 @@ function syncControlsFromScene(frame: CvdFrame): void {
   selectMetric!.value = frame.scene.metricKind;
   selectNeighbor!.value = frame.scene.neighborOrder;
   inputK!.value = String(frame.scene.nearestNeighborK);
-  // Keep the site-kind dropdown local. Only snap it back if the worker rejected
-  // the requested kind (e.g. non-point under a point-only metric).
+  // Keep the site-kind dropdown local while a new kind is in flight; snap back on
+  // reject, or refresh after loads that did not request a kind (e.g. Examples).
   if (
-    frame.requestedSiteMemberKind != null &&
+    frame.requestedSiteMemberKind == null ||
     frame.requestedSiteMemberKind !== frame.scene.siteMemberKind
   ) {
     selectSiteKind!.value = frame.scene.siteMemberKind;
@@ -807,6 +809,65 @@ function onKeyDown(event: KeyboardEvent): void {
   }
 }
 
+function galleryUrl(path: string): string {
+  const base = import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
+  return new URL(`${base}scenes/gallery/${path}`, window.location.href).href;
+}
+
+async function populateExamplesDropdown(): Promise<void> {
+  const res = await fetch(galleryUrl('manifest.json'), { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error(`Failed to load gallery manifest (${res.status})`);
+  }
+  const manifest = (await res.json()) as { files?: string[] };
+  const files = Array.isArray(manifest.files) ? manifest.files : [];
+  for (const fileName of files) {
+    const sceneRes = await fetch(galleryUrl(fileName), { cache: 'no-store' });
+    if (!sceneRes.ok) {
+      throw new Error(`Failed to load gallery scene ${fileName} (${sceneRes.status})`);
+    }
+    const scene = (await sceneRes.json()) as { name?: string };
+    const name = typeof scene.name === 'string' ? scene.name.trim() : '';
+    if (!name) {
+      throw new Error(`Gallery scene missing name: ${fileName}`);
+    }
+    const opt = document.createElement('option');
+    opt.value = fileName;
+    opt.textContent = name;
+    selectExample!.appendChild(opt);
+  }
+}
+
+async function onExampleChange(): Promise<void> {
+  if (syncingControls) {
+    return;
+  }
+  const fileName = selectExample!.value;
+  if (!fileName) {
+    return;
+  }
+  try {
+    const res = await fetch(galleryUrl(fileName), { cache: 'no-store' });
+    if (!res.ok) {
+      throw new Error(`Failed to load ${fileName} (${res.status})`);
+    }
+    const json = await res.text();
+    worldView = defaultWorldView();
+    requestClassify({
+      settings: { worldView: boundsOf(worldView) },
+      actions: [{ type: 'loadSceneJson', json }],
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    setStatus(message, true);
+    syncingControls = true;
+    selectExample!.value = '';
+    syncingControls = false;
+  }
+}
+
 function onSceneControlChange(): void {
   if (syncingControls) {
     return;
@@ -841,6 +902,9 @@ function wireControls(): void {
   selectMetric!.addEventListener('change', onSceneControlChange);
   selectNeighbor!.addEventListener('change', onSceneControlChange);
   inputK!.addEventListener('change', onSceneControlChange);
+  selectExample!.addEventListener('change', () => {
+    void onExampleChange();
+  });
   selectCluster!.addEventListener('change', onSceneControlChange);
   selectSiteKind!.addEventListener('change', onSceneControlChange);
 
@@ -893,6 +957,12 @@ async function main(): Promise<void> {
     setStatus(err.message, true);
   };
   await client.whenReady();
+  try {
+    await populateExamplesDropdown();
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    setStatus(message, true);
+  }
 
   updateCursor();
   wireControls();

@@ -22,6 +22,7 @@ import cvdexplorer.model.SegmentMember;
 import cvdexplorer.model.SiteMemberFactory;
 import cvdexplorer.model.SiteMemberKind;
 import cvdexplorer.render.ClusterColorizer;
+import cvdexplorer.io.SceneJsonException;
 import org.teavm.jso.JSBody;
 import cvdexplorer.geometry.Box;
 import cvdexplorer.geometry.Transformation;
@@ -331,6 +332,28 @@ public final class WebClassifyMain {
         selectedMemberIndex = -1;
         selectedHandleIndex = -1;
         endHandleDrag();
+    }
+
+    /**
+     * Replaces the live scene from scene JSON (same schema as desktop Ctrl+O).
+     * @return empty string on success, otherwise an error message (scene unchanged)
+     */
+    public static String loadSceneJson(String json) {
+        if (json == null || json.isBlank()) {
+            lastError = "Scene JSON is empty";
+            return lastError;
+        }
+        try {
+            SceneSnapshot loaded = SceneJsonJs.parse(json);
+            sceneSnapshot = loaded;
+            activeClusterIndex = 0;
+            clearSelection();
+            lastError = "";
+            return "";
+        } catch (SceneJsonException e) {
+            lastError = e.getMessage() != null ? e.getMessage() : "Invalid scene JSON";
+            return lastError;
+        }
     }
 
     /**
@@ -923,6 +946,9 @@ public final class WebClassifyMain {
                     + "  },"
                     + "  removeCluster: function () {"
                     + "    return javaMethods.get('cvdexplorer.web.WebClassifyMain.removeCluster()Ljava/lang/String;').invoke();"
+                    + "  },"
+                    + "  loadSceneJson: function (json) {"
+                    + "    return javaMethods.get('cvdexplorer.web.WebClassifyMain.loadSceneJson(Ljava/lang/String;)Ljava/lang/String;').invoke(json);"
                     + "  }"
                     + "};"
     )

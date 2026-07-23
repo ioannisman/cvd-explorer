@@ -84,7 +84,8 @@ export type CvdAuthoringAction =
   | { type: 'addMemberAt'; worldX: number; worldY: number }
   | { type: 'removeMember' }
   | { type: 'addCluster' }
-  | { type: 'removeCluster' };
+  | { type: 'removeCluster' }
+  | { type: 'loadSceneJson'; json: string };
 
 export type CvdCore = {
   renderFrame: (width: number, height: number) => CvdFrame;
@@ -105,6 +106,7 @@ export type CvdCore = {
   removeMember: () => string;
   addCluster: () => string;
   removeCluster: () => string;
+  loadSceneJson: (json: string) => string;
 };
 
 declare global {

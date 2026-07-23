@@ -1,0 +1,186 @@
+{
+  "version": "1",
+  "name": "Points Voronoi diagram",
+  "metricKind": "MINIMUM_DISTANCE",
+  "neighborOrder": "NEAREST",
+  "siteMemberKind": "POINT",
+  "nearestNeighborK": 1,
+  "clusters": [
+    {
+      "name": "Amber",
+      "color": {
+        "r": 1.0,
+        "g": 0.625,
+        "b": 0.25,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -112.0,
+          "y": 161.0
+        }
+      ]
+    },
+    {
+      "name": "Azure",
+      "color": {
+        "r": 0.3325,
+        "g": 0.5126840716816397,
+        "b": 0.95,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 44.0,
+          "y": -36.0
+        }
+      ]
+    },
+    {
+      "name": "Lime",
+      "color": {
+        "r": 0.692868143363278,
+        "g": 0.95,
+        "b": 0.3325,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -108.0,
+          "y": -90.0
+        }
+      ]
+    },
+    {
+      "name": "Magenta",
+      "color": {
+        "r": 0.95,
+        "g": 0.3325,
+        "b": 0.8730522150449176,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 344.0,
+          "y": -321.0
+        }
+      ]
+    },
+    {
+      "name": "Teal",
+      "color": {
+        "r": 0.3325,
+        "g": 0.95,
+        "b": 0.846763713273444,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 211.0,
+          "y": -141.0
+        }
+      ]
+    },
+    {
+      "name": "Amber",
+      "color": {
+        "r": 0.95,
+        "g": 0.6665796415918046,
+        "b": 0.3325,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -230.0,
+          "y": -406.0
+        }
+      ]
+    },
+    {
+      "name": "Indigo",
+      "color": {
+        "r": 0.4863955699101653,
+        "g": 0.3325,
+        "b": 0.95,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -185.0,
+          "y": 119.0
+        }
+      ]
+    },
+    {
+      "name": "Green",
+      "color": {
+        "r": 0.35878850177147203,
+        "g": 0.95,
+        "b": 0.3325,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 266.0,
+          "y": 181.0
+        }
+      ]
+    },
+    {
+      "name": "Rose",
+      "color": {
+        "r": 0.95,
+        "g": 0.3325,
+        "b": 0.5389725734531118,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 264.0,
+          "y": 166.0
+        }
+      ]
+    },
+    {
+      "name": "Azure",
+      "color": {
+        "r": 0.3325,
+        "g": 0.7191566451347511,
+        "b": 0.95,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": 307.0,
+          "y": 29.0
+        }
+      ]
+    },
+    {
+      "name": "Yellow",
+      "color": {
+        "r": 0.8993407168163907,
+        "g": 0.95,
+        "b": 0.3325,
+        "opacity": 1.0
+      },
+      "members": [
+        {
+          "kind": "POINT",
+          "x": -280.0,
+          "y": 80.0
+        }
+      ]
+    }
+  ]
+}
