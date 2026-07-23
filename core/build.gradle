@@ -6,6 +6,12 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.11.0'
 }
 
+processResources {
+    from("${rootProject.projectDir}/scenes/gallery") {
+        into 'scenes/gallery'
+    }
+}
+
 tasks.named('jacocoTestReport', JacocoReport) {
     dependsOn tasks.named('test')
     onlyIf { rootProject.hasProperty('coverage') }

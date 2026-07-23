@@ -111,6 +111,7 @@ public final class SceneJsonCodec {
         }
         SceneFileV1 root = new SceneFileV1();
         root.version = CURRENT_VERSION;
+        root.name = snapshot.name();
         root.metricKind = snapshot.metricKind().name();
         root.neighborOrder = snapshot.neighborOrder().name();
         root.siteMemberKind = snapshot.siteMemberKind().name();
@@ -204,6 +205,9 @@ public final class SceneJsonCodec {
         }
 
         SceneSnapshot snapshot = new SceneSnapshot();
+        if (dto.name != null && !dto.name.isBlank()) {
+            snapshot.setName(dto.name.trim());
+        }
         snapshot.setMetricKind(metricKind);
         snapshot.setNeighborOrder(neighborOrder);
         snapshot.setSiteMemberKind(siteMemberKind);
@@ -271,6 +275,7 @@ public final class SceneJsonCodec {
     /** Gson DTO; field names match JSON keys. */
     static final class SceneFileV1 {
         String version;
+        String name;
         String metricKind;
         String neighborOrder;
         String siteMemberKind;

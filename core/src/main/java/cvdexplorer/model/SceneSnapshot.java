@@ -7,11 +7,21 @@ import java.util.List;
 
 /** Authoring fields and clusters for scene JSON (no UI gadgets). */
 public final class SceneSnapshot {
+    /** Optional human-readable gallery label; null when unset. */
+    private String name;
     private MetricKind metricKind = MetricKind.MINIMUM_DISTANCE;
     private NeighborOrder neighborOrder = NeighborOrder.NEAREST;
     private SiteMemberKind siteMemberKind = SiteMemberKind.POINT;
     private int nearestNeighborK = 1;
     private final List<ClusterSite> clusters = new ArrayList<>();
+
+    public String name() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public MetricKind metricKind() {
         return metricKind;

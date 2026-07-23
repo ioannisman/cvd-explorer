@@ -16,6 +16,10 @@ public final class SceneState {
     public static final int MAX_CLUSTERS = SceneLimits.MAX_CLUSTERS;
     public static final int MAX_MEMBERS_PER_CLUSTER = SceneLimits.MAX_MEMBERS_PER_CLUSTER;
 
+    @GadgetEnum(enumClass = GalleryExample.class)
+    @Properties(name = "Examples")
+    public GalleryExample galleryExample = GalleryExample.CURRENT;
+
     @GadgetInteger(min = 1, max = MAX_CLUSTERS)
     @Properties(name = "Number of clusters (Shift+a/d)")
     public int numberOfClusters = 1;
@@ -173,6 +177,7 @@ public final class SceneState {
         metricKind = other.metricKind;
         neighborOrder = other.neighborOrder;
         nearestNeighborK = other.nearestNeighborK;
+        galleryExample = other.galleryExample;
         showDiagram = other.showDiagram;
         showRegionSubdivision = other.showRegionSubdivision;
         showMembers = other.showMembers;

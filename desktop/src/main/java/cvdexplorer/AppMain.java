@@ -9,10 +9,13 @@ import cvdexplorer.geometry.Box;
 import cvdexplorer.geometry.Transformation;
 import cvdexplorer.geometry.Vector;
 import cvdexplorer.io.SceneFileIo;
+import cvdexplorer.io.SceneGallery;
 import cvdexplorer.io.SceneJsonException;
 import cvdexplorer.model.ClusterMember;
 import cvdexplorer.model.ClusterSite;
+import cvdexplorer.model.GalleryExample;
 import cvdexplorer.model.SceneState;
+import cvdexplorer.model.SceneSnapshot;
 import cvdexplorer.model.SiteMemberFactory;
 import cvdexplorer.model.SiteMemberKind;
 import cvdexplorer.metric.MetricKind;
@@ -73,6 +76,7 @@ public class AppMain implements Drawing {
     private int selectedHandleIndex = -1;
 
     private int prevGadgetActiveClusterOneBased = 0;
+    private GalleryExample prevGalleryExample = state.galleryExample;
     private MetricKind lastValidMetricKind = state.metricKind;
     private SiteMemberKind lastValidSiteMemberKind = state.siteMemberKind;
     private MetricKind lastRejectedMetricKind = null;
@@ -96,6 +100,7 @@ public class AppMain implements Drawing {
         normalizeClusterCountGadget();
         normalizeActiveClusterMemberCountGadget();
         state.clampNearestNeighborK();
+        applyGalleryExampleSelection();
 
         int g = state.activeClusterOneBased;
         if (g != prevGadgetActiveClusterOneBased) {
@@ -361,11 +366,13 @@ public class AppMain implements Drawing {
 
         if (event.isKeyPress(KeyCode.R)) {
             state.copyFrom(SceneState.demo());
+            state.galleryExample = GalleryExample.CURRENT;
             lastValidMetricKind = state.metricKind;
             lastValidSiteMemberKind = state.siteMemberKind;
             clearRejectedGadgetAttempts();
             activeClusterIndex = state.activeClusterOneBased - 1;
             prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            prevGalleryExample = state.galleryExample;
             clearSelection();
         }
     }
@@ -728,6 +735,38 @@ public class AppMain implements Drawing {
         }
     }
 
+    private void applyGalleryExampleSelection() {
+        GalleryExample selected = state.galleryExample;
+        if (selected == prevGalleryExample) {
+            return;
+        }
+        prevGalleryExample = selected;
+        if (selected == null || selected.fileName() == null) {
+            return;
+        }
+        try {
+            SceneSnapshot snapshot = SceneGallery.loadScene(selected.fileName());
+            state.applyLoadedScene(
+                    snapshot.metricKind(),
+                    snapshot.neighborOrder(),
+                    snapshot.siteMemberKind(),
+                    snapshot.clusters(),
+                    snapshot.nearestNeighborK()
+            );
+            lastValidMetricKind = state.metricKind;
+            lastValidSiteMemberKind = state.siteMemberKind;
+            clearRejectedGadgetAttempts();
+            activeClusterIndex = state.activeClusterOneBased - 1;
+            prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            clearSelection();
+        } catch (SceneJsonException | IOException e) {
+            state.galleryExample = GalleryExample.CURRENT;
+            prevGalleryExample = GalleryExample.CURRENT;
+            showErrorDialog("Examples load failed", e.getMessage());
+            System.err.println("Examples load failed: " + e.getMessage());
+        }
+    }
+
     private void saveSceneToFile() {
         // JSON schema: see SceneJsonCodec (version "1", clusters, metricKind, neighborOrder, siteMemberKind, nearestNeighborK).
         FileChooser chooser = new FileChooser();
@@ -760,12 +799,14 @@ public class AppMain implements Drawing {
         }
         try {
             SceneFileIo.load(state, file.toPath());
+            state.galleryExample = GalleryExample.CURRENT;
             lastValidMetricKind = state.metricKind;
             lastValidSiteMemberKind = state.siteMemberKind;
             clearRejectedGadgetAttempts();
             // Match gadget-driven active cluster and clear stale selection indices.
             activeClusterIndex = state.activeClusterOneBased - 1;
             prevGadgetActiveClusterOneBased = state.activeClusterOneBased;
+            prevGalleryExample = state.galleryExample;
             clearSelection();
         } catch (SceneJsonException e) {
             showErrorDialog("Load failed", e.getMessage());

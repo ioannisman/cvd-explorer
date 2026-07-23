@@ -30,6 +30,7 @@ class SceneJsonCodecTest {
         source.setMetricKind(MetricKind.MINIMUM_DISTANCE);
         source.setNeighborOrder(NeighborOrder.FARTHEST);
         source.setSiteMemberKind(SiteMemberKind.LINE);
+        source.setName("Round-trip example");
         source.setClusters(List.of(
                 new ClusterSite(
                         "Alpha",
@@ -55,6 +56,9 @@ class SceneJsonCodecTest {
 
         String json = SceneJsonCodec.encode(source);
         SceneSnapshot parsed = SceneJsonCodec.parse(json);
+
+        assertEquals("Round-trip example", parsed.name());
+        assertTrue(json.contains("\"name\": \"Round-trip example\""));
 
         SceneState restored = new SceneState();
         restored.metricKind = MetricKind.MINIMUM_DISTANCE;
